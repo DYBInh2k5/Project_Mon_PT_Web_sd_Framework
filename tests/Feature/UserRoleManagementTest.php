@@ -32,7 +32,7 @@ class UserRoleManagementTest extends TestCase
     public function test_admin_can_update_user_role(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);
-        $targetUser = User::factory()->create(['role' => 'viewer']);
+        $targetUser = User::factory()->create(['role' => 'user']);
 
         $this->actingAs($admin)
             ->put("/users/{$targetUser->id}", [
@@ -56,21 +56,22 @@ class UserRoleManagementTest extends TestCase
             ->post('/users', [
                 'name' => 'Demo User',
                 'email' => 'demo-user@example.com',
-                'role' => 'viewer',
+                'role' => 'user',
+                'is_active' => true,
                 'password' => 'password123',
             ])
             ->assertRedirect('/users');
 
         $this->assertDatabaseHas('users', [
             'email' => 'demo-user@example.com',
-            'role' => 'viewer',
+            'role' => 'user',
         ]);
     }
 
     public function test_admin_can_view_user_detail_page(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);
-        $targetUser = User::factory()->create(['role' => 'viewer']);
+        $targetUser = User::factory()->create(['role' => 'user']);
 
         $this->actingAs($admin)
             ->get("/users/{$targetUser->id}")
@@ -81,7 +82,7 @@ class UserRoleManagementTest extends TestCase
     public function test_admin_can_delete_other_user(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);
-        $targetUser = User::factory()->create(['role' => 'viewer']);
+        $targetUser = User::factory()->create(['role' => 'user']);
 
         $this->actingAs($admin)
             ->delete("/users/{$targetUser->id}")

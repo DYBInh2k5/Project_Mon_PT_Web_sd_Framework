@@ -29,13 +29,13 @@ class RoleDemoTest extends TestCase
             ->assertForbidden();
     }
 
-    public function test_viewer_can_access_viewer_demo_page(): void
+    public function test_user_can_access_user_demo_page(): void
     {
-        $viewer = User::factory()->create(['role' => 'viewer']);
+        $user = User::factory()->create(['role' => 'user']);
 
-        $this->actingAs($viewer)
-            ->get('/role-demo/viewer')
+        $this->actingAs($user)
+            ->get('/role-demo/user')
             ->assertOk()
-            ->assertSee('Viewer Area');
+            ->assertSee('User Area');
     }
 }

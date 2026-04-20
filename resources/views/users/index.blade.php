@@ -27,6 +27,8 @@
                             <span class="metric-pill">{{ $summary['total'] }} total users</span>
                             <span class="metric-pill">{{ $summary['admins'] }} admins</span>
                             <span class="metric-pill">{{ $summary['editors'] }} editors</span>
+                            <span class="metric-pill">{{ $summary['users'] }} users</span>
+                            <span class="metric-pill">{{ $summary['active'] }} active</span>
                             <span class="metric-pill">{{ $summary['verified'] }} verified</span>
                         </div>
                     </div>
@@ -56,7 +58,7 @@
                     </button>
                 </div>
 
-                <form x-show="expanded" x-cloak method="GET" action="{{ route('users.index') }}" class="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-3">
+                <form x-show="expanded" x-cloak method="GET" action="{{ route('users.index') }}" class="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-4">
                     <div>
                         <x-forms.input
                             name="search"
@@ -72,7 +74,16 @@
                             <option value="">All roles</option>
                             <option value="admin" @selected(($filters['role'] ?? '') === 'admin')>Admin</option>
                             <option value="editor" @selected(($filters['role'] ?? '') === 'editor')>Editor</option>
-                            <option value="viewer" @selected(($filters['role'] ?? '') === 'viewer')>Viewer</option>
+                            <option value="user" @selected(($filters['role'] ?? '') === 'user')>User</option>
+                        </select>
+                    </div>
+
+                    <div class="w-full px-2.5">
+                        <label for="status" class="mb-2.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Status</label>
+                        <select id="status" name="status" class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90">
+                            <option value="">All statuses</option>
+                            <option value="active" @selected(($filters['status'] ?? '') === 'active')>Active</option>
+                            <option value="inactive" @selected(($filters['status'] ?? '') === 'inactive')>Inactive</option>
                         </select>
                     </div>
 
@@ -100,6 +111,7 @@
                             <tr class="border-b border-gray-100 dark:border-gray-800">
                                 <th class="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 sm:px-6">User</th>
                                 <th class="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 sm:px-6">Role</th>
+                                <th class="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 sm:px-6">Status</th>
                                 <th class="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 sm:px-6">Verified</th>
                                 <th class="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 sm:px-6">Created</th>
                                 <th class="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 sm:px-6">Updated</th>
@@ -123,6 +135,11 @@
                                     <td class="px-5 py-4 sm:px-6">
                                         <span class="data-badge {{ $user->role === 'admin' ? 'data-badge-brand' : ($user->role === 'editor' ? 'data-badge-success' : 'data-badge-neutral') }}">
                                             {{ ucfirst($user->role) }}
+                                        </span>
+                                    </td>
+                                    <td class="px-5 py-4 sm:px-6">
+                                        <span class="data-badge {{ $user->is_active ? 'data-badge-success' : 'data-badge-neutral' }}">
+                                            {{ $user->is_active ? 'Active' : 'Inactive' }}
                                         </span>
                                     </td>
                                     <td class="px-5 py-4 sm:px-6">
@@ -166,7 +183,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="px-5 py-10 text-center sm:px-6">
+                                    <td colspan="7" class="px-5 py-10 text-center sm:px-6">
                                         <div class="empty-state">
                                             <p class="text-base font-semibold text-gray-900 dark:text-white">No users found.</p>
                                             <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Thử đổi bộ lọc để tìm đúng tài khoản bạn cần.</p>
@@ -227,6 +244,11 @@
                                     <td class="px-5 py-4 sm:px-6">
                                         <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium {{ $user->role === 'admin' ? 'bg-brand-50 text-brand-700 dark:bg-brand-500/15 dark:text-brand-400' : ($user->role === 'editor' ? 'bg-success-50 text-success-700 dark:bg-success-500/15 dark:text-success-400' : 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300') }}">
                                             {{ ucfirst($user->role) }}
+                                        </span>
+                                    </td>
+                                    <td class="px-5 py-4 sm:px-6">
+                                        <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium {{ $user->is_active ? 'bg-success-50 text-success-700 dark:bg-success-500/15 dark:text-success-400' : 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300' }}">
+                                            {{ $user->is_active ? 'Active' : 'Inactive' }}
                                         </span>
                                     </td>
                                     <td class="px-5 py-4 sm:px-6">

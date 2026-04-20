@@ -39,9 +39,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/role-demo/editor', [RoleDemoController::class, 'editor'])
         ->middleware('role:editor,admin')
         ->name('role-demo.editor');
-    Route::get('/role-demo/viewer', [RoleDemoController::class, 'viewer'])
-        ->middleware('role:viewer,editor,admin')
-        ->name('role-demo.viewer');
+    Route::get('/role-demo/user', [RoleDemoController::class, 'user'])
+        ->middleware('role:user,editor,admin')
+        ->name('role-demo.user');
+    Route::get('/role-demo/viewer', [RoleDemoController::class, 'user'])
+        ->middleware('role:user,editor,admin');
 });
 
 require __DIR__.'/auth.php';

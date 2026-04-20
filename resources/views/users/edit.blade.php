@@ -41,11 +41,22 @@
                         name="role"
                         class="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-3 text-sm text-gray-800 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:text-white/90"
                     >
-                        @foreach (['admin' => 'Admin', 'editor' => 'Editor', 'viewer' => 'Viewer'] as $value => $label)
+                        @foreach (['admin' => 'Admin', 'editor' => 'Editor', 'user' => 'User'] as $value => $label)
                             <option value="{{ $value }}" @selected(old('role', $user->role) === $value)>{{ $label }}</option>
                         @endforeach
                     </select>
                     @error('role')
+                        <p class="mt-2 text-sm text-error-500">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="mt-4 w-full px-2.5">
+                    <label class="mb-2.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Status</label>
+                    <label class="inline-flex items-center gap-3 text-sm text-gray-700 dark:text-gray-300">
+                        <input type="checkbox" name="is_active" value="1" class="h-4 w-4 rounded border-gray-300 text-brand-500 focus:ring-brand-500" @checked(old('is_active', $user->is_active))>
+                        <span>User is active</span>
+                    </label>
+                    @error('is_active')
                         <p class="mt-2 text-sm text-error-500">{{ $message }}</p>
                     @enderror
                 </div>

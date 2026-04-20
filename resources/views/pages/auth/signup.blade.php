@@ -136,10 +136,10 @@
                     <x-common.common-grid-shape />
                     <div class="flex max-w-xs flex-col items-center">
                         <a href="{{ route('dashboard') }}" class="mb-4 block">
-                            <img src="{{ asset('images/logo/auth-logo.svg') }}" alt="Logo" />
+                            <x-app-logo variant="auth" />
                         </a>
-                        <p class="text-center text-gray-400 dark:text-white/60">
-                            Free and Open-Source Tailwind CSS Admin Dashboard Template
+                        <p class="max-w-sm text-center text-gray-400 dark:text-white/60">
+                            Logo ca nhan se tu dong cat vua khung o day khi ban dat anh vao dung thu muc.
                         </p>
                     </div>
                 </div>

@@ -373,6 +373,50 @@
 @utility subtle-gradient {
   @apply bg-linear-to-br from-brand-25 via-white to-blue-light-25 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800;
 }
+
+@utility app-logo-shell {
+  @apply inline-flex items-center gap-3 rounded-2xl border border-gray-200 bg-white/90 px-3 py-2 shadow-theme-sm dark:border-gray-800 dark:bg-gray-900/90;
+}
+
+@utility app-logo-shell-mobile {
+  @apply border-none bg-transparent px-0 py-0 shadow-none;
+}
+
+@utility app-logo-avatar {
+  @apply overflow-hidden rounded-2xl border border-white/60 bg-linear-to-br from-brand-100 via-brand-50 to-blue-light-100 shadow-theme-sm dark:border-white/10 dark:from-gray-800 dark:via-gray-800 dark:to-gray-700;
+}
+
+@utility app-logo-avatar-sidebar {
+  @apply h-12 w-12;
+}
+
+@utility app-logo-avatar-compact {
+  @apply h-10 w-10 rounded-xl;
+}
+
+@utility app-logo-avatar-mobile {
+  @apply h-10 w-10 rounded-xl;
+}
+
+@utility app-logo-avatar-auth {
+  @apply h-24 w-24 rounded-[28px] border-white/20 shadow-theme-lg;
+}
+
+@utility app-logo-image {
+  @apply h-full w-full object-cover object-center;
+}
+
+@utility app-logo-fallback {
+  @apply flex h-full w-full items-center justify-center bg-linear-to-br from-brand-500 via-brand-400 to-blue-light-400 text-sm font-bold tracking-[0.2em] text-white;
+}
+
+@utility app-logo-fallback-compact {
+  @apply text-xs tracking-[0.16em];
+}
+
+@utility app-logo-fallback-auth {
+  @apply text-xl tracking-[0.24em];
+}
 @layer utilities {
   /* For Remove Date Icon */
   input[type='date']::-webkit-inner-spin-button,

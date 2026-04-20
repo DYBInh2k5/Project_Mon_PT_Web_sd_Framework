@@ -28,7 +28,15 @@ class UpdateUserRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique(User::class)->ignore($user?->id)],
-            'role' => ['required', Rule::in(['admin', 'editor', 'viewer'])],
+            'role' => ['required', Rule::in(['admin', 'editor', 'user'])],
+            'is_active' => ['nullable', 'boolean'],
         ];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'is_active' => $this->boolean('is_active'),
+        ]);
     }
 }

@@ -71,7 +71,7 @@
                 <div class="stat-card">
                     <p class="text-sm text-gray-500 dark:text-gray-400">Total users</p>
                     <p class="mt-3 text-3xl font-semibold text-gray-900 dark:text-white">{{ $stats['totalUsers'] }}</p>
-                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Quản lý quyền admin, editor và viewer.</p>
+                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Quản lý quyền admin, editor và user.</p>
                 </div>
                 <div class="stat-card">
                     <p class="text-sm text-gray-500 dark:text-gray-400">Verified users</p>

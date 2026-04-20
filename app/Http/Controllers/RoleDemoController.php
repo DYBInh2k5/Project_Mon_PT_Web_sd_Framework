@@ -25,9 +25,9 @@ class RoleDemoController extends Controller
         return $this->renderAccessPage($request, 'Editor Area', 'editor');
     }
 
-    public function viewer(Request $request): View
+    public function user(Request $request): View
     {
-        return $this->renderAccessPage($request, 'Viewer Area', 'viewer');
+        return $this->renderAccessPage($request, 'User Area', 'user');
     }
 
     private function renderAccessPage(Request $request, string $title, string $requiredRole): View

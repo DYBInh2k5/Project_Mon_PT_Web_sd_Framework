@@ -19,7 +19,7 @@
                 <div>
                     <h2 class="text-3xl font-semibold tracking-tight text-gray-900 dark:text-white">Demo middleware role theo tung khu vuc.</h2>
                     <p class="mt-2 max-w-2xl text-sm leading-7 text-gray-600 dark:text-gray-300">
-                        Dung trang nay de mo nhanh cac route chi cho phep <code>admin</code>, <code>editor</code>, hoac <code>viewer</code>.
+                        Dung trang nay de mo nhanh cac route chi cho phep <code>admin</code>, <code>editor</code>, hoac <code>user</code>.
                     </p>
                 </div>
                 <div class="flex flex-wrap gap-3">
@@ -44,10 +44,10 @@
                 <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Cho phep `editor` va `admin` truy cap.</p>
             </a>
 
-            <a href="{{ route('role-demo.viewer') }}" class="surface-panel block p-6 transition hover:-translate-y-1 hover:shadow-theme-lg">
+            <a href="{{ route('role-demo.user') }}" class="surface-panel block p-6 transition hover:-translate-y-1 hover:shadow-theme-lg">
                 <span class="data-badge data-badge-neutral">All logged-in roles</span>
-                <h3 class="mt-4 text-xl font-semibold text-gray-900 dark:text-white">Viewer Area</h3>
-                <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Cho phep `viewer`, `editor`, va `admin`.</p>
+                <h3 class="mt-4 text-xl font-semibold text-gray-900 dark:text-white">User Area</h3>
+                <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Cho phep `user`, `editor`, va `admin`.</p>
             </a>
         </div>
     </div>

@@ -30,6 +30,9 @@ class UserController extends Controller
             ->when($request->filled('role'), function ($query) use ($request) {
                 $query->where('role', $request->string('role')->toString());
             })
+            ->when($request->filled('status'), function ($query) use ($request) {
+                $query->where('is_active', $request->string('status')->toString() === 'active');
+            })
             ->latest()
             ->paginate(10)
             ->withQueryString();
@@ -37,11 +40,13 @@ class UserController extends Controller
         return view('users.index', [
             'title' => 'Users',
             'users' => $users,
-            'filters' => $request->only(['search', 'role']),
+            'filters' => $request->only(['search', 'role', 'status']),
             'summary' => [
                 'total' => (clone $baseQuery)->count(),
                 'admins' => (clone $baseQuery)->where('role', 'admin')->count(),
                 'editors' => (clone $baseQuery)->where('role', 'editor')->count(),
+                'users' => (clone $baseQuery)->where('role', 'user')->count(),
+                'active' => (clone $baseQuery)->where('is_active', true)->count(),
                 'verified' => (clone $baseQuery)->whereNotNull('email_verified_at')->count(),
             ],
         ]);

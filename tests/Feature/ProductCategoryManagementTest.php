@@ -20,11 +20,11 @@ class ProductCategoryManagementTest extends TestCase
             ->assertSee('Product Categories');
     }
 
-    public function test_viewer_is_forbidden_from_product_categories_page(): void
+    public function test_user_is_forbidden_from_product_categories_page(): void
     {
-        $viewer = User::factory()->create(['role' => 'viewer']);
+        $user = User::factory()->create(['role' => 'user']);
 
-        $this->actingAs($viewer)
+        $this->actingAs($user)
             ->get('/product-categories')
             ->assertForbidden();
     }
