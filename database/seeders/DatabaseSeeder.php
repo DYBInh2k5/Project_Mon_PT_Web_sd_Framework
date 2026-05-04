@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\Profile;
 use App\Models\ProductCategory;
 use App\Models\Product;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -40,6 +41,20 @@ class DatabaseSeeder extends Seeder
 
         if ($extraUsersNeeded > 0) {
             User::factory($extraUsersNeeded)->create();
+        }
+
+        foreach (User::all() as $user) {
+            Profile::query()->updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'full_name' => $user->name,
+                    'address' => 'Dia chi cua '.$user->name,
+                    'avatar' => 'https://ui-avatars.com/api/?name='.urlencode($user->name).'&background=465fff&color=ffffff&size=160',
+                    'birthday' => now()->subYears(rand(18, 30))->toDateString(),
+                    'gender' => ['Nam', 'Nu', 'Khac'][array_rand(['Nam', 'Nu', 'Khac'])],
+                    'phone' => '090'.str_pad((string) rand(1000000, 9999999), 7, '0', STR_PAD_LEFT),
+                ]
+            );
         }
 
         $editor = User::where('email', 'support@example.com')->first();

@@ -1,6 +1,10 @@
 @extends('layouts.app')
 
 @section('content')
+    {{-- Trang nay nhan du lieu tu UserController@index:
+         - $users   : danh sach user sau khi tim kiem / loc / phan trang
+         - $filters : du lieu hien tai cua form filter
+         - $summary : so lieu tong hop hien thi o dau trang --}}
     <x-common.page-breadcrumb pageTitle="Users" />
 
     @php($modernUsers = true)
@@ -44,6 +48,8 @@
                 x-data="{ expanded: {{ (! empty($filters['search']) || ! empty($filters['role'])) ? 'true' : 'false' }} }"
                 class="surface-panel p-5"
             >
+                {{-- Form nay gui GET len route users.index.
+                     Controller se doc search / role / status de tao query loc du lieu. --}}
                 <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                     <div>
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Filter users</h3>
@@ -138,9 +144,21 @@
                                         </span>
                                     </td>
                                     <td class="px-5 py-4 sm:px-6">
-                                        <span class="data-badge {{ $user->is_active ? 'data-badge-success' : 'data-badge-neutral' }}">
-                                            {{ $user->is_active ? 'Active' : 'Inactive' }}
-                                        </span>
+                                        {{-- Badge status duoc dat trong form PATCH.
+                                             Khi bam vao, route users.toggle-status se cap nhat field is_active
+                                             trong bang users de giao dien va database dong bo voi nhau. --}}
+                                        <form action="{{ route('users.toggle-status', $user) }}" method="POST" class="inline-flex">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button
+                                                type="submit"
+                                                class="data-badge {{ $user->is_active ? 'data-badge-success' : 'data-badge-neutral' }} {{ auth()->user()?->is($user) ? 'cursor-not-allowed opacity-70' : 'transition hover:-translate-y-0.5' }}"
+                                                @disabled(auth()->user()?->is($user))
+                                                title="{{ auth()->user()?->is($user) ? 'Bạn không thể đổi status của tài khoản đang dùng' : 'Bấm để đổi status' }}"
+                                            >
+                                                {{ $user->is_active ? 'Active' : 'Inactive' }}
+                                            </button>
+                                        </form>
                                     </td>
                                     <td class="px-5 py-4 sm:px-6">
                                         @if ($user->email_verified_at)
@@ -152,6 +170,12 @@
                                     <td class="px-5 py-4 sm:px-6 text-sm text-gray-500 dark:text-gray-400">{{ $user->created_at?->format('d/m/Y H:i') }}</td>
                                     <td class="px-5 py-4 sm:px-6 text-sm text-gray-500 dark:text-gray-400">{{ $user->updated_at?->format('d/m/Y H:i') }}</td>
                                     <td class="px-5 py-4 sm:px-6 text-right">
+                                        {{-- Menu Actions gom cac thao tac:
+                                             - View detail
+                                             - Edit user
+                                             - Set active / inactive
+                                             - Delete
+                                             Cach nay gon hon viec de nhieu nut tren cung 1 dong. --}}
                                         <div class="relative inline-block text-left" x-data="{ open: false }">
                                             <button @click="open = !open" type="button" class="action-button">
                                                 Actions
@@ -164,11 +188,22 @@
                                                 x-show="open"
                                                 x-cloak
                                                 @click.away="open = false"
-                                                class="absolute right-0 z-20 mt-2 w-44 rounded-2xl border border-gray-200 bg-white p-2 shadow-theme-lg dark:border-gray-800 dark:bg-gray-900"
+                                                class="absolute right-0 z-20 mt-2 w-48 rounded-2xl border border-gray-200 bg-white p-2 shadow-theme-lg dark:border-gray-800 dark:bg-gray-900"
                                             >
-                                                <a href="{{ route('users.show', $user) }}" class="block rounded-xl px-3 py-2 text-left text-sm font-medium text-gray-700 transition hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/[0.03]">View detail</a>
-                                                <a href="{{ route('users.edit', $user) }}" class="block rounded-xl px-3 py-2 text-left text-sm font-medium text-gray-700 transition hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/[0.03]">Edit role</a>
+                                                <a href="{{ route('users.show', $user) }}" class="block rounded-xl px-3 py-2 text-left text-sm font-medium text-gray-700 transition hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/[0.03]">
+                                                    View detail
+                                                </a>
+                                                <a href="{{ route('users.edit', $user) }}" class="block rounded-xl px-3 py-2 text-left text-sm font-medium text-gray-700 transition hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/[0.03]">
+                                                    Edit user
+                                                </a>
                                                 @if (! auth()->user()?->is($user))
+                                                    <form action="{{ route('users.toggle-status', $user) }}" method="POST">
+                                                        @csrf
+                                                        @method('PATCH')
+                                                        <button type="submit" class="block w-full rounded-xl px-3 py-2 text-left text-sm font-medium text-gray-700 transition hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/[0.03]">
+                                                            {{ $user->is_active ? 'Set inactive' : 'Set active' }}
+                                                        </button>
+                                                    </form>
                                                     <form action="{{ route('users.destroy', $user) }}" method="POST">
                                                         @csrf
                                                         @method('DELETE')

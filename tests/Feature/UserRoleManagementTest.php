@@ -79,6 +79,24 @@ class UserRoleManagementTest extends TestCase
             ->assertSee($targetUser->email);
     }
 
+    public function test_admin_can_toggle_user_status(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $targetUser = User::factory()->create([
+            'role' => 'user',
+            'is_active' => true,
+        ]);
+
+        $this->actingAs($admin)
+            ->patch("/users/{$targetUser->id}/status")
+            ->assertRedirect('/users');
+
+        $this->assertDatabaseHas('users', [
+            'id' => $targetUser->id,
+            'is_active' => false,
+        ]);
+    }
+
     public function test_admin_can_delete_other_user(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);

@@ -1,18 +1,18 @@
 @extends('layouts.app')
 
 @section('content')
-    <x-common.page-breadcrumb pageTitle="Profile">
+    <x-common.page-breadcrumb pageTitle="Profile Settings">
         <x-slot:breadcrumbs>
             <li>
                 <a href="{{ route('dashboard') }}" class="text-gray-700 hover:text-brand-600 dark:text-gray-400 dark:hover:text-brand-500">Dashboard</a>
             </li>
             <li>
-                <span class="text-gray-700 dark:text-gray-400">Profile</span>
+                <span class="text-gray-700 dark:text-gray-400">Profile Settings</span>
             </li>
         </x-slot:breadcrumbs>
     </x-common.page-breadcrumb>
 
-    <x-layouts.settings title="Profile" description="Update your name and email address">
+    <x-layouts.settings title="Profile" description="Cap nhat thong tin profile tu bang profiles bang Query Builder">
         @if (session('status'))
             <div class="mb-6">
                 <x-ui.alert variant="success" :message="session('status')" />
@@ -23,38 +23,87 @@
             @csrf
             @method('PUT')
 
-            <!-- Name Input -->
             <div>
                 <x-forms.input
                     name="name"
-                    label="Name"
+                    label="Display name (users table)"
                     type="text"
-                    :value="$user->name"
+                    :value="old('name', $user->name)"
+                />
+            </div>
+
+            <div>
+                <x-forms.input
+                    name="email"
+                    label="Email (users table)"
+                    type="email"
+                    :value="old('email', $user->email)"
+                />
+            </div>
+
+            <div>
+                <x-forms.input
+                    name="full_name"
+                    label="Full name"
+                    type="text"
+                    :value="old('full_name', $profile->full_name)"
                     required
                     autofocus
                 />
             </div>
 
-            <!-- Email Input -->
             <div>
                 <x-forms.input
-                    name="email"
-                    label="Email"
-                    type="email"
-                    :value="$user->email"
-                    required
+                    name="address"
+                    label="Address"
+                    type="text"
+                    :value="old('address', $profile->address)"
                 />
             </div>
 
-            <!-- Save Button -->
+            <div>
+                <x-forms.input
+                    name="avatar"
+                    label="Avatar URL"
+                    type="text"
+                    :value="old('avatar', $profile->avatar)"
+                />
+            </div>
+
+            <div>
+                <x-forms.input
+                    name="birthday"
+                    label="Birthday"
+                    type="date"
+                    :value="old('birthday', $profile->birthday)"
+                />
+            </div>
+
+            <div>
+                <x-forms.input
+                    name="gender"
+                    label="Gender"
+                    type="text"
+                    :value="old('gender', $profile->gender)"
+                />
+            </div>
+
+            <div>
+                <x-forms.input
+                    name="phone"
+                    label="Phone"
+                    type="text"
+                    :value="old('phone', $profile->phone)"
+                />
+            </div>
+
             <div>
                 <x-ui.button type="submit" variant="primary">
-                    Save
+                    Save profile
                 </x-ui.button>
             </div>
         </form>
 
-        <!-- Delete Account Section -->
         <div class="mt-8 border-t border-gray-200 pt-8 dark:border-gray-700">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Delete account</h3>
             <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Delete your account and all of its resources</p>
@@ -71,9 +120,6 @@
                         type="password"
                         required
                     />
-                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                        Please enter your current password before deleting your account.
-                    </p>
                 </div>
 
                 <x-ui.button

@@ -22,7 +22,12 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        // role dung de phan quyen user trong he thong.
+        // Gia tri hien tai dang dung: admin, editor, user.
         'role',
+        // is_active la trang thai hoat dong cua tai khoan.
+        // true  = dang hoat dong
+        // false = tam khoa / ngung hoat dong
         'is_active',
     ];
 
@@ -46,6 +51,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            // Ep kieu du lieu de code xu ly dung kieu gia tri.
             'role' => 'string',
             'is_active' => 'boolean',
         ];
@@ -64,6 +70,10 @@ class User extends Authenticatable
 
     public function hasRole(string ...$roles): bool
     {
+        // Ham ho tro de kiem tra user hien tai co nam trong nhom role cho phep hay khong.
+        // Vi du:
+        // $user->hasRole('admin')
+        // $user->hasRole('editor', 'admin')
         return in_array($this->role, $roles, true);
     }
 }

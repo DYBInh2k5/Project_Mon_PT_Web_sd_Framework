@@ -1,6 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
+    {{-- Trang nay dung de xem chi tiet 1 user.
+         Day la noi de giai thich voi co:
+         - role cua user
+         - status active / inactive
+         - email da verify hay chua
+         - thoi gian tao va cap nhat --}}
     <x-common.page-breadcrumb pageTitle="User Detail">
         <x-slot:breadcrumbs>
             <li>
@@ -23,6 +29,9 @@
                 <div class="flex flex-wrap gap-3">
                     <span class="data-badge {{ $user->role === 'admin' ? 'data-badge-brand' : ($user->role === 'editor' ? 'data-badge-success' : 'data-badge-neutral') }}">
                         {{ ucfirst($user->role) }}
+                    </span>
+                    <span class="data-badge {{ $user->is_active ? 'data-badge-success' : 'data-badge-neutral' }}">
+                        {{ $user->is_active ? 'Active' : 'Inactive' }}
                     </span>
                     <span class="metric-pill">{{ $user->email_verified_at ? 'Verified email' : 'Email pending' }}</span>
                 </div>
