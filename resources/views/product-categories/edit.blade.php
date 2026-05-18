@@ -17,9 +17,20 @@
             <h3 class="text-base font-medium text-gray-800 dark:text-white/90">Edit: {{ $category->name }}</h3>
         </div>
 
-        <form action="{{ route('product-categories.update', $category) }}" method="POST" class="p-6">
+        <form action="{{ route('product-categories.update', $category) }}" method="POST" class="p-6" novalidate>
             @csrf
             @method('PUT')
+
+            @if ($errors->any())
+                <div class="mb-6">
+                    <x-package-alert
+                        type="danger"
+                        message="Khong the cap nhat danh muc. Vui long kiem tra lai du lieu."
+                        :messages="$errors->all()"
+                    />
+                </div>
+            @endif
+
             @include('product-categories._form', ['submitLabel' => 'Update Category', 'category' => $category])
         </form>
     </div>

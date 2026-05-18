@@ -17,8 +17,19 @@
             <h3 class="text-base font-medium text-gray-800 dark:text-white/90">New category</h3>
         </div>
 
-        <form action="{{ route('product-categories.store') }}" method="POST" class="p-6">
+        <form action="{{ route('product-categories.store') }}" method="POST" class="p-6" novalidate>
             @csrf
+
+            @if ($errors->any())
+                <div class="mb-6">
+                    <x-package-alert
+                        type="danger"
+                        message="Khong the tao danh muc. Vui long kiem tra lai du lieu."
+                        :messages="$errors->all()"
+                    />
+                </div>
+            @endif
+
             @include('product-categories._form', ['submitLabel' => 'Create Category'])
         </form>
     </div>

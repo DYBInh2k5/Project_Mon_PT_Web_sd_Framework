@@ -17,6 +17,14 @@
         @csrf
         @method('patch')
 
+        @if ($errors->any())
+            <x-package-alert
+                type="danger"
+                message="Khong the cap nhat profile. Vui long kiem tra lai."
+                :messages="$errors->all()"
+            />
+        @endif
+
         <div>
             <x-input-label for="name" :value="__('Name')" />
             <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $user->name)" required autofocus autocomplete="name" />

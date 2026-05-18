@@ -19,6 +19,15 @@
             @csrf
             @method('delete')
 
+            @if ($errors->userDeletion->any())
+                <x-package-alert
+                    class="mb-4"
+                    type="danger"
+                    message="Khong the xoa tai khoan. Vui long kiem tra lai."
+                    :messages="$errors->userDeletion->all()"
+                />
+            @endif
+
             <h2 class="text-lg font-medium text-gray-900">
                 {{ __('Are you sure you want to delete your account?') }}
             </h2>

@@ -2,6 +2,15 @@
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
+    @if ($errors->any())
+        <x-package-alert
+            class="mb-4"
+            type="danger"
+            message="Dang nhap khong thanh cong. Vui long kiem tra lai thong tin."
+            :messages="$errors->all()"
+        />
+    @endif
+
     <form method="POST" action="{{ route('login') }}">
         @csrf
 

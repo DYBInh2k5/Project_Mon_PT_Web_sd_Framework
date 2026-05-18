@@ -19,7 +19,17 @@
                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Them user moi de demo danh sach, role va phan quyen.</p>
             </div>
 
-            <form action="{{ route('users.store') }}" method="POST" class="space-y-4">
+            @if ($errors->any())
+                <div class="mb-6">
+                    <x-package-alert
+                        type="danger"
+                        message="Khong the tao user. Vui long sua cac loi ben duoi."
+                        :messages="$errors->all()"
+                    />
+                </div>
+            @endif
+
+            <form action="{{ route('users.store') }}" method="POST" class="space-y-4" novalidate>
                 @csrf
 
                 <x-forms.input label="Name" name="name" :value="old('name')" required />

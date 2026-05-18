@@ -1,4 +1,13 @@
 <x-guest-layout>
+    @if ($errors->any())
+        <x-package-alert
+            class="mb-4"
+            type="danger"
+            message="Khong the dat lai mat khau. Vui long kiem tra lai."
+            :messages="$errors->all()"
+        />
+    @endif
+
     <form method="POST" action="{{ route('password.store') }}">
         @csrf
 

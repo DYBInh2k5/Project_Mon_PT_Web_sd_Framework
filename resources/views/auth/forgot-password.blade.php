@@ -6,6 +6,15 @@
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
+    @if ($errors->any())
+        <x-package-alert
+            class="mb-4"
+            type="danger"
+            message="Khong the gui email dat lai mat khau. Vui long kiem tra lai."
+            :messages="$errors->all()"
+        />
+    @endif
+
     <form method="POST" action="{{ route('password.email') }}">
         @csrf
 

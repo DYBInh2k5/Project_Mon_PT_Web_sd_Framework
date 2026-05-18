@@ -2,10 +2,12 @@
 
 namespace Database\Seeders;
 
+use App\Models\Article;
+use App\Models\Tag;
 use App\Models\User;
+use App\Models\Product;
 use App\Models\Profile;
 use App\Models\ProductCategory;
-use App\Models\Product;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -49,7 +51,7 @@ class DatabaseSeeder extends Seeder
                 [
                     'full_name' => $user->name,
                     'address' => 'Dia chi cua '.$user->name,
-                    'avatar' => 'https://ui-avatars.com/api/?name='.urlencode($user->name).'&background=465fff&color=ffffff&size=160',
+                    'avatar' => null,
                     'birthday' => now()->subYears(rand(18, 30))->toDateString(),
                     'gender' => ['Nam', 'Nu', 'Khac'][array_rand(['Nam', 'Nu', 'Khac'])],
                     'phone' => '090'.str_pad((string) rand(1000000, 9999999), 7, '0', STR_PAD_LEFT),
@@ -95,5 +97,30 @@ class DatabaseSeeder extends Seeder
                 ]
             );
         }
+
+        $existingTagCount = Tag::count();
+        if ($existingTagCount < 20) {
+            Tag::factory(20 - $existingTagCount)->create();
+        }
+
+        $existingArticleCount = Article::count();
+        if ($existingArticleCount < 50) {
+            Article::factory(50 - $existingArticleCount)->create();
+        }
+
+        $tagIds = Tag::query()->pluck('id')->all();
+
+        Article::with('tags')->get()->each(function (Article $article) use ($tagIds): void {
+            if ($tagIds === []) {
+                return;
+            }
+
+            $shuffled = $tagIds;
+            shuffle($shuffled);
+
+            $attachIds = array_slice($shuffled, 0, min(10, count($shuffled)));
+
+            $article->tags()->syncWithoutDetaching($attachIds);
+        });
     }
 }

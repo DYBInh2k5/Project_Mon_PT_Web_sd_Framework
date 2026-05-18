@@ -4,6 +4,8 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -75,5 +77,20 @@ class User extends Authenticatable
         // $user->hasRole('admin')
         // $user->hasRole('editor', 'admin')
         return in_array($this->role, $roles, true);
+    }
+
+    public function profile(): HasOne
+    {
+        // Quan he 1-1:
+        // Mot user chi co duy nhat 1 profile.
+        // Laravel se noi user.id voi profiles.user_id.
+        return $this->hasOne(Profile::class);
+    }
+
+    public function articles(): HasMany
+    {
+        // Quan he 1-n:
+        // Mot user co the viet nhieu article.
+        return $this->hasMany(Article::class);
     }
 }

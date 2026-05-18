@@ -26,11 +26,20 @@
                         </div>
                         <div>
                             @if (session('status'))
-                                <div class="mb-4 rounded-lg bg-success-50 p-4 text-sm text-success-700 dark:bg-success-500/10 dark:text-success-400">
-                                    {{ session('status') }}
+                                <div class="mb-5">
+                                    <x-package-alert type="success" :message="session('status')" />
                                 </div>
                             @endif
-                            <form method="POST" action="{{ route('password.email') }}">
+                            @if ($errors->any())
+                                <div class="mb-5">
+                                    <x-package-alert
+                                        type="danger"
+                                        message="Khong the gui email dat lai mat khau. Vui long kiem tra lai."
+                                        :messages="$errors->all()"
+                                    />
+                                </div>
+                            @endif
+                            <form method="POST" action="{{ route('password.email') }}" novalidate>
                                 @csrf
                                 <div class="space-y-5">
                                     <!-- Email -->

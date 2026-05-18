@@ -5,25 +5,25 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class Profile extends Model
+class Article extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'user_id',
-        'full_name',
-        'address',
-        'avatar',
-        'birthday',
-        'gender',
-        'phone',
+        'title',
+        'body',
     ];
 
     public function user(): BelongsTo
     {
-        // Chieu nguoc cua quan he 1-1:
-        // Moi profile thuoc ve duy nhat 1 user.
         return $this->belongsTo(User::class);
+    }
+
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(Tag::class);
     }
 }

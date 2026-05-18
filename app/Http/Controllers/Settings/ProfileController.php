@@ -7,6 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
@@ -60,20 +61,29 @@ class ProfileController extends Controller
                 Rule::unique('users', 'email')->ignore($user->id),
             ],
             'address' => ['nullable', 'string'],
-            'avatar' => ['nullable', 'string', 'max:2048'],
+            'avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
             'birthday' => ['nullable', 'date'],
             'gender' => ['nullable', 'string', 'max:20'],
             'phone' => ['nullable', 'string', 'max:20'],
         ]);
 
         $fullName = $validated['full_name'] ?? $validated['name'] ?? $profile->full_name;
+        $avatarPath = $profile->avatar;
+
+        if ($request->hasFile('avatar')) {
+            if ($avatarPath && ! str_starts_with($avatarPath, 'http')) {
+                Storage::disk('public')->delete($avatarPath);
+            }
+
+            $avatarPath = $request->file('avatar')->store('profiles', 'public');
+        }
 
         DB::table('profiles')
             ->where('id', $profile->id)
             ->update([
                 'full_name' => $fullName,
                 'address' => $validated['address'] ?? null,
-                'avatar' => $validated['avatar'] ?? null,
+                'avatar' => $avatarPath,
                 'birthday' => $validated['birthday'] ?? null,
                 'gender' => $validated['gender'] ?? null,
                 'phone' => $validated['phone'] ?? null,
@@ -135,7 +145,7 @@ class ProfileController extends Controller
             'user_id' => $userId,
             'full_name' => $fallbackName,
             'address' => 'Cap nhat dia chi',
-            'avatar' => 'https://ui-avatars.com/api/?name='.urlencode($fallbackName).'&background=465fff&color=ffffff&size=160',
+            'avatar' => null,
             'birthday' => now()->subYears(20)->toDateString(),
             'gender' => 'Khac',
             'phone' => 'Chua cap nhat',

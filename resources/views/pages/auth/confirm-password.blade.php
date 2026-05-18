@@ -30,7 +30,17 @@
                             </p>
                         </div>
                         <div>
-                            <form method="POST" action="{{ route('confirmation.store') }}">
+                            @if ($errors->any())
+                                <div class="mb-5">
+                                    <x-package-alert
+                                        type="danger"
+                                        message="Xac nhan mat khau khong thanh cong. Vui long thu lai."
+                                        :messages="$errors->all()"
+                                    />
+                                </div>
+                            @endif
+
+                            <form method="POST" action="{{ route('confirmation.store') }}" novalidate>
                                 @csrf
                                 <div class="space-y-5">
                                     <!-- Password -->

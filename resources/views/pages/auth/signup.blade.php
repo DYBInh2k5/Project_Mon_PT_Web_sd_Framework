@@ -15,7 +15,17 @@
                         </p>
                     </div>
                     <div>
-                        <form method="POST" action="{{ route('register') }}">
+                        @if ($errors->any())
+                            <div class="mb-5">
+                                <x-package-alert
+                                    type="danger"
+                                    message="Dang ky khong thanh cong. Vui long kiem tra lai thong tin."
+                                    :messages="$errors->all()"
+                                />
+                            </div>
+                        @endif
+
+                        <form method="POST" action="{{ route('register') }}" novalidate>
                             @csrf
                             <div class="space-y-5">
                                 <!-- Full Name -->

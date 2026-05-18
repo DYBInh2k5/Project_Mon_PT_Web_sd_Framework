@@ -25,7 +25,17 @@
                             </p>
                         </div>
                         <div>
-                            <form method="POST" action="{{ route('password.store') }}">
+                            @if ($errors->any())
+                                <div class="mb-5">
+                                    <x-package-alert
+                                        type="danger"
+                                        message="Khong the dat lai mat khau. Vui long kiem tra lai."
+                                        :messages="$errors->all()"
+                                    />
+                                </div>
+                            @endif
+
+                            <form method="POST" action="{{ route('password.store') }}" novalidate>
                                 @csrf
                                 <input type="hidden" name="token" value="{{ $request->route('token') }}">
                                 <div class="space-y-5">

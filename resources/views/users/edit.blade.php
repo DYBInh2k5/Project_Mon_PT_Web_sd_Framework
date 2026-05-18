@@ -20,7 +20,17 @@
                 </h3>
             </div>
 
-            <form action="{{ route('users.update', $user) }}" method="POST" class="p-6">
+            @if ($errors->any())
+                <div class="px-6 pt-6">
+                    <x-package-alert
+                        type="danger"
+                        message="Khong the cap nhat user. Vui long kiem tra lai."
+                        :messages="$errors->all()"
+                    />
+                </div>
+            @endif
+
+            <form action="{{ route('users.update', $user) }}" method="POST" class="p-6" novalidate>
                 @csrf
                 @method('PUT')
 

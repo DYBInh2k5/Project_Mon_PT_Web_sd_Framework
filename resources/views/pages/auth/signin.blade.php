@@ -16,7 +16,23 @@
                             </p>
                         </div>
                         <div>
-                            <form method="POST" action="{{ route('login') }}">
+                            @if (session('status'))
+                                <div class="mb-5">
+                                    <x-package-alert type="success" :message="session('status')" />
+                                </div>
+                            @endif
+
+                            @if ($errors->any())
+                                <div class="mb-5">
+                                    <x-package-alert
+                                        type="danger"
+                                        message="Dang nhap khong thanh cong. Vui long kiem tra lai thong tin."
+                                        :messages="$errors->all()"
+                                    />
+                                </div>
+                            @endif
+
+                            <form method="POST" action="{{ route('login') }}" novalidate>
                                 @csrf
                                 <div class="space-y-5">
                                     <!-- Email -->

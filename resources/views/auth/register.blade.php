@@ -1,4 +1,13 @@
 <x-guest-layout>
+    @if ($errors->any())
+        <x-package-alert
+            class="mb-4"
+            type="danger"
+            message="Dang ky khong thanh cong. Vui long kiem tra lai thong tin."
+            :messages="$errors->all()"
+        />
+    @endif
+
     <form method="POST" action="{{ route('register') }}">
         @csrf
 

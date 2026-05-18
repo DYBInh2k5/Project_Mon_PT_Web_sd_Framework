@@ -13,13 +13,23 @@
     </x-common.page-breadcrumb>
 
     <x-layouts.settings title="Password" description="Update your password to keep your account secure">
-        @if (session('status') === 'password-updated')
+        @if ($errors->any())
             <div class="mb-6">
-                <x-ui.alert variant="success" message="Password updated successfully" />
+                <x-package-alert
+                    type="danger"
+                    message="Sai Mat khau roi em oi. dung khoc"
+                    :messages="$errors->all()"
+                />
             </div>
         @endif
 
-        <form method="POST" action="{{ route('settings.password.update') }}" class="space-y-6">
+        @if (session('status') === 'password-updated')
+            <div class="mb-6">
+                <x-package-alert type="success" message="Password updated successfully" />
+            </div>
+        @endif
+
+        <form method="POST" action="{{ route('settings.password.update') }}" class="space-y-6" novalidate>
             @csrf
             @method('PUT')
 
