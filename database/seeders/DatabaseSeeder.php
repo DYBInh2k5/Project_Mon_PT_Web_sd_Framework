@@ -3,13 +3,16 @@
 namespace Database\Seeders;
 
 use App\Models\Article;
-use App\Models\Tag;
-use App\Models\User;
+use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\Profile;
 use App\Models\ProductCategory;
+use App\Models\Tag;
+use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
@@ -122,5 +125,47 @@ class DatabaseSeeder extends Seeder
 
             $article->tags()->syncWithoutDetaching($attachIds);
         });
+
+        $products = Product::query()->where('is_active', true)->get();
+
+        if ($products->isNotEmpty()) {
+            $targetOrders = 25;
+
+            while (Order::count() < $targetOrders) {
+                $sequence = Order::count() + 1;
+                $placedAt = Carbon::now()->subDays(rand(0, 20))->subHours(rand(0, 23));
+                $order = Order::create([
+                    'order_number' => 'ORD-'.str_pad((string) $sequence, 5, '0', STR_PAD_LEFT),
+                    'customer_name' => fake()->name(),
+                    'customer_email' => fake()->unique()->safeEmail(),
+                    'customer_phone' => '09'.rand(10000000, 99999999),
+                    'customer_address' => fake()->address(),
+                    'notes' => fake()->boolean(40) ? fake()->sentence() : null,
+                    'status' => fake()->randomElement(Order::STATUSES),
+                    'total_amount' => 0,
+                    'placed_at' => $placedAt,
+                ]);
+
+                $selectedProducts = $products->shuffle()->take(rand(1, min(4, $products->count())));
+                $totalAmount = 0;
+
+                foreach ($selectedProducts as $product) {
+                    $quantity = rand(1, 3);
+                    $lineTotal = $quantity * (float) $product->price;
+                    $totalAmount += $lineTotal;
+
+                    OrderItem::create([
+                        'order_id' => $order->id,
+                        'product_id' => $product->id,
+                        'product_name' => $product->name,
+                        'quantity' => $quantity,
+                        'unit_price' => $product->price,
+                        'line_total' => $lineTotal,
+                    ]);
+                }
+
+                $order->update(['total_amount' => $totalAmount]);
+            }
+        }
     }
 }

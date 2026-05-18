@@ -1,9 +1,12 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\OrderPaymentController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RoleDemoController;
+use App\Http\Controllers\SupportChatController;
 use App\Http\Controllers\Settings\ProfileController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -44,6 +47,30 @@ Route::middleware(['auth'])->group(function () {
         ->middleware('role:editor,admin');
     Route::resource('products', ProductController::class)
         ->middleware('role:editor,admin');
+    Route::get('orders', [OrderController::class, 'index'])
+        ->middleware('role:editor,admin')
+        ->name('orders.index');
+    Route::get('orders/{order}', [OrderController::class, 'show'])
+        ->middleware('role:editor,admin')
+        ->name('orders.show');
+    Route::patch('orders/{order}/status', [OrderController::class, 'updateStatus'])
+        ->middleware('role:editor,admin')
+        ->name('orders.update-status');
+    Route::get('orders/{order}/payment', [OrderPaymentController::class, 'create'])
+        ->middleware('role:editor,admin')
+        ->name('orders.payment.create');
+    Route::post('orders/{order}/payment', [OrderPaymentController::class, 'store'])
+        ->middleware('role:editor,admin')
+        ->name('orders.payment.store');
+    Route::get('support-chat', [SupportChatController::class, 'index'])
+        ->middleware('role:user,editor,admin')
+        ->name('support-chat.index');
+    Route::post('support-chat', [SupportChatController::class, 'store'])
+        ->middleware('role:user,editor,admin')
+        ->name('support-chat.store');
+    Route::post('support-chat/clear', [SupportChatController::class, 'clear'])
+        ->middleware('role:user,editor,admin')
+        ->name('support-chat.clear');
 
     // Nhom route demo de kiem tra middleware role theo tung muc quyen.
     Route::get('/role-demo', [RoleDemoController::class, 'index'])->name('role-demo.index');

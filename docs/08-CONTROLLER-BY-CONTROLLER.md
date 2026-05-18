@@ -378,18 +378,116 @@ Chuc nang:
 - gui lai mail verify
 - xac nhan email
 
-## 11. Controller nao nen nho ky nhat
+## 11. OrderController
+
+File:
+
+- [OrderController.php](../app/Http/Controllers/OrderController.php)
+
+Vai tro:
+
+- quan ly danh sach don hang
+- loc theo ngay, trang thai, tu khoa
+- xem chi tiet don hang
+- doi trang thai don hang va gui mail
+
+### Cac method chinh
+
+#### `index(Request $request)`
+
+- lay danh sach order
+- tim theo ma don, ten khach, email
+- loc theo `status`
+- loc theo `date_from`, `date_to`
+- sap xep moi den cu
+- tra ve view:
+  - `orders.index`
+
+#### `show(Order $order)`
+
+- load `items.product`
+- hien chi tiet don hang
+- tra ve view:
+  - `orders.show`
+
+#### `updateStatus(UpdateOrderStatusRequest $request, Order $order)`
+
+- validate status
+- cap nhat trang thai don
+- gui mail qua `OrderStatusUpdatedMail`
+- redirect lai trang chi tiet
+
+## 12. OrderPaymentController
+
+File:
+
+- [OrderPaymentController.php](../app/Http/Controllers/OrderPaymentController.php)
+
+Vai tro:
+
+- mo man checkout demo
+- xu ly online payment mo phong
+
+### Cac method chinh
+
+#### `create(Order $order)`
+
+- mo trang payment cho mot don hang
+- tra ve view:
+  - `orders.payment`
+
+#### `store(ProcessOrderPaymentRequest $request, Order $order)`
+
+- validate thong tin thanh toan
+- cap nhat `payment_status`, `payment_method`, `transaction_code`, `paid_at`
+- neu don dang `pending` thi doi sang `processing`
+
+## 13. SupportChatController
+
+File:
+
+- [SupportChatController.php](../app/Http/Controllers/SupportChatController.php)
+
+Vai tro:
+
+- hien man chatbot
+- nhan cau hoi
+- luu lich su chat trong session
+
+### Cac method chinh
+
+#### `index(Request $request)`
+
+- lay lich su chat tu session
+- tra ve view:
+  - `support.chat`
+
+#### `store(Request $request, CustomerSupportChatbot $chatbot)`
+
+- validate cau hoi
+- them tin nhan user vao session
+- goi `CustomerSupportChatbot` de lay cau tra loi
+- them tra loi cua bot vao session
+
+#### `clear(Request $request)`
+
+- xoa lich su hoi thoai trong session
+
+## 14. Controller nao nen nho ky nhat
 
 Neu van dap, nen nho ky:
 
 - [UserController.php](../app/Http/Controllers/UserController.php)
 - [ProductController.php](../app/Http/Controllers/ProductController.php)
 - [ProductCategoryController.php](../app/Http/Controllers/ProductCategoryController.php)
+- [OrderController.php](../app/Http/Controllers/OrderController.php)
+- [OrderPaymentController.php](../app/Http/Controllers/OrderPaymentController.php)
+- [SupportChatController.php](../app/Http/Controllers/SupportChatController.php)
 - [Settings/ProfileController.php](../app/Http/Controllers/Settings/ProfileController.php)
 - [RoleDemoController.php](../app/Http/Controllers/RoleDemoController.php)
 - [Auth/LoginController.php](../app/Http/Controllers/Auth/LoginController.php)
 
-## 12. Cach tra loi khi bi hoi “luong chay di dau”
+## 15. Cach tra loi khi bi hoi “luong chay di dau”
 
 Ban co the noi:
 

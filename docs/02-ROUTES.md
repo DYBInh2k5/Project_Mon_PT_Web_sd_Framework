@@ -42,6 +42,20 @@
 - `/products/{id}`
 - `/products/{id}/edit`
 
+### Orders
+
+- `/orders`
+- `/orders/{order}`
+- `PATCH /orders/{order}/status`
+- `/orders/{order}/payment`
+- `POST /orders/{order}/payment`
+
+### Customer support
+
+- `/support-chat`
+- `POST /support-chat`
+- `POST /support-chat/clear`
+
 ### Role demo
 
 - `/role-demo`

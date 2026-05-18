@@ -8,6 +8,9 @@ Day la project Laravel dung Blade, Tailwind va Alpine de demo:
 - role
 - user management
 - product/category CRUD
+- order management
+- chatbot ho tro khach hang
+- thanh toan online dang demo
 - profile
 - Blade component
 - migration cho demo quan he n-n
@@ -96,6 +99,31 @@ Tra loi:
 - em them `Schema::defaultStringLength(191)` trong `AppServiceProvider`
 - muc dich la tranh loi `Specified key was too long`
 
-## 12. Cau tra loi tong ket ngan
+## 12. Neu co hoi ve don hang
 
-“Project cua em gom auth, role, user management, product/category CRUD va profile. Em dung middleware de phan quyen, dung Query Builder cho profile, tao Blade component `Alert` de hien thong bao loi/thanh cong. Ngoai ra em da tao model `Article`, `Tag`, bang trung gian `article_tag`, dinh nghia quan he, tao factory va seed du lieu gia de chuan bi cho demo quan he nhieu-nhieu.” 
+Tra loi:
+
+- em co model `Order` va `OrderItem`
+- co danh sach don hang, chi tiet don hang, loc theo ngay, loc theo trang thai
+- chi tiet don hang cho xem thong tin khach hang va san pham trong don
+- khi cap nhat trang thai, he thong gui mail thong bao cho khach
+
+## 13. Neu co hoi ve chatbot
+
+Tra loi:
+
+- em tao chatbot ho tro khach hang ngay trong admin app
+- bot tra loi theo tu khoa ve don hang, giao hang, huy don, mail thong bao
+- neu nhap ma don nhu `ORD-00023` thi bot doc du lieu that trong SQLite
+
+## 14. Neu co hoi ve thanh toan online
+
+Tra loi:
+
+- em lam man checkout demo cho tung don hang
+- khi thanh toan thanh cong, he thong cap nhat `payment_status`, `payment_method`, `transaction_code`, `paid_at`
+- dong thoi neu don dang `pending` thi doi sang `processing`
+
+## 15. Cau tra loi tong ket ngan
+
+“Project cua em gom auth, role, user management, product/category CRUD, order management, chatbot ho tro khach hang, payment demo va profile. Em dung middleware de phan quyen, dung Query Builder cho profile, tao Blade component `Alert` de hien thong bao loi/thanh cong. Ngoai ra em da tao model `Article`, `Tag`, bang trung gian `article_tag`, dinh nghia quan he, tao factory va seed du lieu gia. Phan don hang cua em co doi trang thai, gui mail, chatbot va checkout demo de phuc vu bai project.” 

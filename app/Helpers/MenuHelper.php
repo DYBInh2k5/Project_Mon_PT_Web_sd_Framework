@@ -29,6 +29,17 @@ class MenuHelper
                     ],
                 ],
             ],
+            [
+                'icon' => 'chat',
+                'name' => 'Customer Support',
+                'subItems' => [
+                    [
+                        'name' => 'Support Chatbot',
+                        'path' => route('support-chat.index', absolute: false),
+                        'pro' => false,
+                    ],
+                ],
+            ],
         ];
 
         if (auth()->check() && auth()->user()->hasRole('editor', 'admin')) {
@@ -54,6 +65,18 @@ class MenuHelper
                     [
                         'name' => 'Add Product',
                         'path' => route('products.create', absolute: false),
+                        'pro' => false,
+                    ],
+                ],
+            ];
+
+            $items[] = [
+                'icon' => 'tables',
+                'name' => 'Order Management',
+                'subItems' => [
+                    [
+                        'name' => 'Orders',
+                        'path' => route('orders.index', absolute: false),
                         'pro' => false,
                     ],
                 ],

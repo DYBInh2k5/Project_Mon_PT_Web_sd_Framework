@@ -9,6 +9,9 @@ Day la project Laravel dung de hoc va demo cac noi dung:
 - phan quyen theo role
 - quan ly danh muc san pham
 - quan ly san pham
+- quan ly don hang
+- chatbot ho tro khach hang
+- thanh toan online dang demo
 - ho so nguoi dung (profile)
 - Blade Component
 - migration va model cho demo quan he nhieu-nhieu
@@ -48,6 +51,8 @@ Day la project Laravel dung de hoc va demo cac noi dung:
 - `Product`
 - `Article`
 - `Tag`
+- `Order`
+- `OrderItem`
 
 ## 5. Chuc nang chinh hien co
 
@@ -55,6 +60,10 @@ Day la project Laravel dung de hoc va demo cac noi dung:
 - user management
 - role demo
 - product/category CRUD
+- order management
+- update order status + send mail
+- customer support chatbot
+- payment demo cho tung order
 - profile dung Query Builder
 - Alert component
 - migration cho `articles`, `tags`, `article_tag`

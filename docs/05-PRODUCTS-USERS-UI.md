@@ -59,7 +59,26 @@ View:
 - [products/show.blade.php](../resources/views/products/show.blade.php)
 - [products/_form.blade.php](../resources/views/products/_form.blade.php)
 
-## 4. Blade Component Alert
+## 4. Orders, chatbot, payment
+
+View:
+
+- [orders/index.blade.php](../resources/views/orders/index.blade.php)
+- [orders/show.blade.php](../resources/views/orders/show.blade.php)
+- [orders/payment.blade.php](../resources/views/orders/payment.blade.php)
+- [support/chat.blade.php](../resources/views/support/chat.blade.php)
+
+Chuc nang:
+
+- danh sach don hang
+- loc theo ngay va trang thai
+- xem chi tiet don hang va khach hang
+- doi trang thai don hang
+- gui mail khi doi trang thai
+- chatbot goi y cau hoi va doc ma don that
+- checkout demo cho online payment
+
+## 5. Blade Component Alert
 
 File class:
 
@@ -79,7 +98,7 @@ Dung de hien:
 - thong bao loi
 - danh sach nhieu loi
 
-## 5. Tai sao co `novalidate`
+## 6. Tai sao co `novalidate`
 
 Neu form co `required`, trinh duyet se chan submit truoc khi Laravel xu ly.
 
@@ -96,7 +115,7 @@ De:
 3. tra loi ve view
 4. alert tong hien ra
 
-## 6. Cach test nhanh alert
+## 7. Cach test nhanh alert
 
 Vi du:
 
