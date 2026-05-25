@@ -12,6 +12,8 @@
 - `/`
 - `/check_fail`
 - `/check_age/{age?}`
+- `/articles`
+- `/articles/{article}`
 
 ### Can dang nhap
 
@@ -41,6 +43,13 @@
 - `/products/create`
 - `/products/{id}`
 - `/products/{id}/edit`
+
+### Articles demo Eloquent
+
+- `/articles`
+- `/articles/create`
+- `/articles/{article}`
+- `/articles/{article}/edit`
 
 ### Orders
 
@@ -86,6 +95,18 @@ Nghia la:
 - route `users` dung `UserController`
 - chi `admin` moi duoc vao
 - request se di qua middleware `role`
+
+Vi du bai articles:
+
+```php
+Route::resource('articles', ArticleController::class);
+```
+
+Nghia la:
+
+- route `articles` dung `ArticleController`
+- `/articles` se chay `ArticleController@index`
+- controller lay article bang Eloquent va tra ve view `article.list`
 
 ## 5. Luong xu ly route
 

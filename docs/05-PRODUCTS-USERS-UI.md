@@ -9,9 +9,10 @@ Controller:
 Chuc nang:
 
 - xem danh sach user
+- xem thong tin profile cua user
 - tao user
 - xem chi tiet user
-- sua user
+- sua user va cap nhat profile cua user
 - xoa user
 - doi `is_active`
 - loc theo role va status
@@ -72,6 +73,7 @@ Chuc nang:
 
 - danh sach don hang
 - loc theo ngay va trang thai
+- tim kiem theo ma don, ten khach, email, so dien thoai
 - xem chi tiet don hang va khach hang
 - doi trang thai don hang
 - gui mail khi doi trang thai

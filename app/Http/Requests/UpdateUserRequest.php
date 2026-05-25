@@ -30,6 +30,12 @@ class UpdateUserRequest extends FormRequest
             'email' => ['required', 'email', 'max:255', Rule::unique(User::class)->ignore($user?->id)],
             'role' => ['required', Rule::in(['admin', 'editor', 'user'])],
             'is_active' => ['nullable', 'boolean'],
+            'full_name' => ['nullable', 'string', 'max:100'],
+            'address' => ['nullable', 'string'],
+            'avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'birthday' => ['nullable', 'date'],
+            'gender' => ['nullable', 'string', 'max:20'],
+            'phone' => ['nullable', 'string', 'max:20'],
         ];
     }
 

@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Models\Profile;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class UserController extends Controller
@@ -76,7 +78,12 @@ class UserController extends Controller
     {
         // Validation da duoc xu ly trong StoreUserRequest.
         // Neu hop le thi tao moi user trong database.
-        User::create($request->validated());
+        $user = User::create($request->validated());
+
+        Profile::create([
+            'user_id' => $user->id,
+            'full_name' => $user->name,
+        ]);
 
         return redirect()
             ->route('users.index')
@@ -88,6 +95,8 @@ class UserController extends Controller
      */
     public function show(User $user): View
     {
+        $user->load('profile');
+
         return view('users.show', [
             'title' => 'User Detail',
             'user' => $user,
@@ -101,9 +110,12 @@ class UserController extends Controller
     {
         // Route model binding:
         // {user} tren URL se tu dong duoc map thanh model User $user.
+        $user->load('profile');
+
         return view('users.edit', [
             'title' => 'Edit User',
             'user' => $user,
+            'profile' => $user->profile,
         ]);
     }
 
@@ -112,9 +124,38 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, User $user): RedirectResponse
     {
-        // Update thong tin user gom:
-        // name, email, role, is_active
-        $user->update($request->validated());
+        $validated = $request->validated();
+
+        // Update thong tin account trong bang users.
+        $user->update([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'role' => $validated['role'],
+            'is_active' => $validated['is_active'],
+        ]);
+
+        $profile = $user->profile ?: new Profile(['user_id' => $user->id]);
+        $avatarPath = $profile->avatar;
+
+        if ($request->hasFile('avatar')) {
+            if ($avatarPath && ! str_starts_with($avatarPath, 'http')) {
+                Storage::disk('public')->delete($avatarPath);
+            }
+
+            $avatarPath = $request->file('avatar')->store('profiles', 'public');
+        }
+
+        // Update thong tin profile cua user de admin co the xem va cap nhat.
+        $profile->fill([
+            'full_name' => ($validated['full_name'] ?? null) ?: $validated['name'],
+            'address' => $validated['address'] ?? null,
+            'avatar' => $avatarPath,
+            'birthday' => $validated['birthday'] ?? null,
+            'gender' => $validated['gender'] ?? null,
+            'phone' => $validated['phone'] ?? null,
+        ]);
+
+        $profile->save();
 
         return redirect()->route('users.index')->with('success', 'User updated successfully');
     }

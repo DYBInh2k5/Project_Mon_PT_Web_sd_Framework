@@ -75,6 +75,7 @@ Vai tro:
 #### `show(User $user)`
 
 - hien chi tiet 1 user
+- load va hien thong tin profile cua user
 - tra ve view:
   - `users.show`
 
@@ -87,6 +88,7 @@ Vai tro:
 #### `update(UpdateUserRequest $request, User $user)`
 
 - cap nhat `name`, `email`, `role`, `is_active`
+- cap nhat them `full_name`, `address`, `avatar`, `birthday`, `gender`, `phone` trong `profiles`
 - redirect ve danh sach user
 
 #### `toggleStatus(User $user, Request $request)`
@@ -259,7 +261,29 @@ Vai tro:
 - ham private
 - neu user chua co profile thi tao profile mac dinh
 
-## 8. Settings\\PasswordController
+## 8. ArticleController
+
+File:
+
+- [ArticleController.php](../app/Http/Controllers/ArticleController.php)
+
+Vai tro:
+
+- xu ly route resource `/articles`
+- demo Eloquent relationship giua `Article`, `User`, `Tag`
+- hien danh sach articles va tags tuong ung
+
+### Cac method chinh
+
+#### `index()`
+
+- lay danh sach article bang `Article::all()`
+- view se goi quan he `$article->user` de lay user
+- view se goi quan he `$article->tags` de lay danh sach tag
+- tra ve view:
+  - `article.list`
+
+## 9. Settings\\PasswordController
 
 File:
 
@@ -274,7 +298,7 @@ Thuong co:
 - `edit()`
 - `update()`
 
-## 9. RoleDemoController
+## 10. RoleDemoController
 
 File:
 
@@ -308,7 +332,7 @@ Vai tro:
 - ham private dung chung
 - gom logic tra ve view demo
 
-## 10. Auth Controllers quan trong
+## 11. Auth Controllers quan trong
 
 ### LoginController
 
@@ -378,7 +402,7 @@ Chuc nang:
 - gui lai mail verify
 - xac nhan email
 
-## 11. OrderController
+## 12. OrderController
 
 File:
 
@@ -396,7 +420,7 @@ Vai tro:
 #### `index(Request $request)`
 
 - lay danh sach order
-- tim theo ma don, ten khach, email
+- tim theo ma don, ten khach, email, so dien thoai
 - loc theo `status`
 - loc theo `date_from`, `date_to`
 - sap xep moi den cu
@@ -417,7 +441,7 @@ Vai tro:
 - gui mail qua `OrderStatusUpdatedMail`
 - redirect lai trang chi tiet
 
-## 12. OrderPaymentController
+## 13. OrderPaymentController
 
 File:
 
@@ -442,7 +466,7 @@ Vai tro:
 - cap nhat `payment_status`, `payment_method`, `transaction_code`, `paid_at`
 - neu don dang `pending` thi doi sang `processing`
 
-## 13. SupportChatController
+## 14. SupportChatController
 
 File:
 
@@ -473,7 +497,7 @@ Vai tro:
 
 - xoa lich su hoi thoai trong session
 
-## 14. Controller nao nen nho ky nhat
+## 15. Controller nao nen nho ky nhat
 
 Neu van dap, nen nho ky:
 
@@ -484,10 +508,11 @@ Neu van dap, nen nho ky:
 - [OrderPaymentController.php](../app/Http/Controllers/OrderPaymentController.php)
 - [SupportChatController.php](../app/Http/Controllers/SupportChatController.php)
 - [Settings/ProfileController.php](../app/Http/Controllers/Settings/ProfileController.php)
+- [ArticleController.php](../app/Http/Controllers/ArticleController.php)
 - [RoleDemoController.php](../app/Http/Controllers/RoleDemoController.php)
 - [Auth/LoginController.php](../app/Http/Controllers/Auth/LoginController.php)
 
-## 15. Cach tra loi khi bi hoi “luong chay di dau”
+## 16. Cach tra loi khi bi hoi “luong chay di dau”
 
 Ban co the noi:
 
@@ -501,3 +526,4 @@ Vi du:
 
 - `/users/create` -> `UserController@create` -> `users.create`
 - submit form `/users` -> `UserController@store` -> validate -> tao user -> redirect
+- `/articles` -> `ArticleController@index` -> `Article::all()` -> `article.list`

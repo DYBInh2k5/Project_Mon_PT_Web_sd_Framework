@@ -56,7 +56,7 @@
                         label="Search"
                         type="text"
                         :value="$filters['search'] ?? ''"
-                        placeholder="Order number, customer name or email"
+                        placeholder="Order number, customer name, email or phone"
                     />
                 </div>
 

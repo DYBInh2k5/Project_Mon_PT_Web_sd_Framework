@@ -18,6 +18,11 @@ Ba thanh phan chinh:
 - [app/Models/Tag.php](../app/Models/Tag.php)
 - [app/Models/User.php](../app/Models/User.php)
 
+### Controller va route
+
+- [app/Http/Controllers/ArticleController.php](../app/Http/Controllers/ArticleController.php)
+- [routes/web.php](../routes/web.php)
+
 ### Migration
 
 - [2026_05_11_090000_create_articles_table.php](../database/migrations/2026_05_11_090000_create_articles_table.php)
@@ -33,6 +38,11 @@ Ba thanh phan chinh:
 ### Seeder
 
 - [database/seeders/DatabaseSeeder.php](../database/seeders/DatabaseSeeder.php)
+
+### View
+
+- [resources/views/article/list.blade.php](../resources/views/article/list.blade.php)
+- [resources/views/layouts/app1.blade.php](../resources/views/layouts/app1.blade.php)
 
 ## 3. Quan he giua cac model
 
@@ -169,13 +179,37 @@ Sau khi seed, so luong du lieu da kiem tra:
 - `tags = 20`
 - `article_tag = 500`
 
-## 9. Cach giai thich khi van dap
+## 9. Trang hien thi danh sach Articles
+
+De khop bai tren lop, project co them:
+
+```php
+Route::resource('articles', ArticleController::class);
+```
+
+Trong `ArticleController@index`:
+
+```php
+$articles = Article::all();
+
+return view('article.list', ['articles' => $articles]);
+```
+
+View `article.list` hien thi:
+
+- title cua article
+- user tao article qua `$article->user->name`
+- body
+- created_at
+- danh sach tag qua `$article->tags`
+
+## 10. Cach giai thich khi van dap
 
 Ban co the noi:
 
-“Em tao `Article` va `Tag` de demo quan he nhieu-nhieu. `Article` thuoc ve `User` va co nhieu `Tag`. `Tag` cung co the thuoc nhieu `Article`, nen em dung `belongsToMany` o ca hai model. Bang trung gian `article_tag` dung de luu cap `article_id` va `tag_id`. Sau do em tao factory de sinh du lieu gia va dung `DatabaseSeeder` de do du lieu vao SQLite.”
+“Em tao `Article` va `Tag` de demo quan he nhieu-nhieu. `Article` thuoc ve `User` va co nhieu `Tag`. `Tag` cung co the thuoc nhieu `Article`, nen em dung `belongsToMany` o ca hai model. Bang trung gian `article_tag` dung de luu cap `article_id` va `tag_id`. Sau do em tao factory de sinh du lieu gia va dung `DatabaseSeeder` de do du lieu vao SQLite. Em tao them `ArticleController@index` dung `Article::all()` va view `article.list` de hien danh sach article kem user va tags bang Eloquent.”
 
-## 10. Lenh hay dung
+## 11. Lenh hay dung
 
 ```powershell
 php artisan migrate

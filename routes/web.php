@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OrderPaymentController;
 use App\Http\Controllers\ProductCategoryController;
@@ -26,6 +27,8 @@ Route::get('/check_age/{age?}', function (?string $age = null) {
 
     return view('home.check-age-demo');
 })->middleware(\App\Http\Middleware\CheckAge::class);
+
+Route::resource('articles', ArticleController::class);
 
 Route::middleware(['auth'])->group(function () {
     // Toan bo route trong nhom nay deu yeu cau user phai dang nhap truoc.

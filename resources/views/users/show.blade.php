@@ -50,6 +50,32 @@
                 </div>
             </div>
 
+            <div class="mt-8 border-t border-gray-200 pt-6 dark:border-gray-800">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Profile information</h3>
+                <div class="mt-4 grid gap-4 md:grid-cols-2">
+                    <div>
+                        <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">Full name</p>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ $user->profile?->full_name ?? 'Chua cap nhat' }}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">Phone</p>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ $user->profile?->phone ?? 'Chua cap nhat' }}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">Birthday</p>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ $user->profile?->birthday ?? 'Chua cap nhat' }}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">Gender</p>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ $user->profile?->gender ?? 'Chua cap nhat' }}</p>
+                    </div>
+                    <div class="md:col-span-2">
+                        <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">Address</p>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ $user->profile?->address ?? 'Chua cap nhat' }}</p>
+                    </div>
+                </div>
+            </div>
+
             <div class="mt-6 flex items-center gap-3">
                 <a href="{{ route('users.edit', $user) }}" class="action-button-primary">Edit User</a>
                 <a href="{{ route('users.index') }}" class="action-button">Back</a>

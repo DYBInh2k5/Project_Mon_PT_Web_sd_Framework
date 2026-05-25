@@ -23,7 +23,8 @@ class OrderController extends Controller
                 $query->where(function ($nested) use ($search) {
                     $nested->where('order_number', 'like', "%{$search}%")
                         ->orWhere('customer_name', 'like', "%{$search}%")
-                        ->orWhere('customer_email', 'like', "%{$search}%");
+                        ->orWhere('customer_email', 'like', "%{$search}%")
+                        ->orWhere('customer_phone', 'like', "%{$search}%");
                 });
             })
             ->when($request->filled('status'), function ($query) use ($request) {

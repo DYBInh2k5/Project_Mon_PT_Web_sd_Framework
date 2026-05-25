@@ -30,7 +30,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('users.update', $user) }}" method="POST" class="p-6" novalidate>
+            <form action="{{ route('users.update', $user) }}" method="POST" enctype="multipart/form-data" class="p-6" novalidate>
                 @csrf
                 @method('PUT')
 
@@ -69,6 +69,54 @@
                     @error('is_active')
                         <p class="mt-2 text-sm text-error-500">{{ $message }}</p>
                     @enderror
+                </div>
+
+                <div class="mt-8 border-t border-gray-200 pt-6 dark:border-gray-800">
+                    <h4 class="text-base font-semibold text-gray-900 dark:text-white">Profile information</h4>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Admin cap nhat thong tin profile cua user.</p>
+                </div>
+
+                <div class="mt-4">
+                    <x-forms.input label="Full name" name="full_name" :value="old('full_name', $profile?->full_name ?? $user->name)" />
+                </div>
+
+                <div class="mt-4">
+                    <x-forms.input label="Address" name="address" :value="old('address', $profile?->address)" />
+                </div>
+
+                <div class="mt-4 w-full px-2.5">
+                    <label for="avatar" class="mb-2.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Avatar image</label>
+                    @if ($profile?->avatar)
+                        <div class="mb-4">
+                            <img
+                                src="{{ str_starts_with($profile->avatar, 'http') ? $profile->avatar : asset('storage/'.$profile->avatar) }}"
+                                alt="{{ $profile->full_name }}"
+                                class="h-20 w-20 rounded-2xl object-cover shadow-theme-sm"
+                            >
+                        </div>
+                    @endif
+                    <input
+                        id="avatar"
+                        name="avatar"
+                        type="file"
+                        accept=".jpg,.jpeg,.png,.webp"
+                        class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-800 shadow-theme-xs file:mr-4 file:rounded-lg file:border-0 file:bg-brand-500 file:px-4 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-brand-600 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
+                    >
+                    @error('avatar')
+                        <p class="mt-2 text-sm text-error-500">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="mt-4">
+                    <x-forms.input label="Birthday" name="birthday" type="date" :value="old('birthday', $profile?->birthday)" />
+                </div>
+
+                <div class="mt-4">
+                    <x-forms.input label="Gender" name="gender" :value="old('gender', $profile?->gender)" />
+                </div>
+
+                <div class="mt-4">
+                    <x-forms.input label="Phone" name="phone" :value="old('phone', $profile?->phone)" />
                 </div>
 
                 <div class="mt-4 w-full px-2.5">

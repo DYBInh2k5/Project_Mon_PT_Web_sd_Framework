@@ -62,6 +62,7 @@ Demo route:
 Controller chinh:
 
 - [Settings/ProfileController.php](../app/Http/Controllers/Settings/ProfileController.php)
+- [UserController.php](../app/Http/Controllers/UserController.php)
 
 Controller nay dung `Query Builder` de lay va cap nhat `profiles`.
 
@@ -77,6 +78,12 @@ Trong model:
 
 - [User.php](../app/Models/User.php): `hasOne(Profile::class)`
 - [Profile.php](../app/Models/Profile.php): `belongsTo(User::class)`
+
+Trong user management:
+
+- admin vao `/users/{user}` de xem thong tin account va profile cua user
+- admin vao `/users/{user}/edit` de cap nhat `name`, `email`, `role`, `is_active`
+- cung form edit nay cap nhat them `full_name`, `address`, `avatar`, `birthday`, `gender`, `phone`
 
 ## 7. View auth/profile dang dung
 

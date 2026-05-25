@@ -15,6 +15,7 @@ Day la project Laravel dung de hoc va demo cac noi dung:
 - ho so nguoi dung (profile)
 - Blade Component
 - migration va model cho demo quan he nhieu-nhieu
+- trang hien thi danh sach articles va tags tuong ung bang Eloquent
 
 ## 2. Cong nghe dang dung
 
@@ -65,9 +66,11 @@ Day la project Laravel dung de hoc va demo cac noi dung:
 - customer support chatbot
 - payment demo cho tung order
 - profile dung Query Builder
+- admin xem va cap nhat profile cua user trong phan user management
 - Alert component
 - migration cho `articles`, `tags`, `article_tag`
 - factory va seeding cho `Article`, `Tag`, `article_tag`
+- trang `/articles` hien thi danh sach article, user va tag bang Eloquent relationship
 
 ## 6. Cac file can nho
 
@@ -76,3 +79,5 @@ Day la project Laravel dung de hoc va demo cac noi dung:
 - [app/Providers/AppServiceProvider.php](../app/Providers/AppServiceProvider.php)
 - [app/Http/Middleware/EnsureUserHasRole.php](../app/Http/Middleware/EnsureUserHasRole.php)
 - [app/View/Components/Alert.php](../app/View/Components/Alert.php)
+- [app/Http/Controllers/ArticleController.php](../app/Http/Controllers/ArticleController.php)
+- [resources/views/article/list.blade.php](../resources/views/article/list.blade.php)

@@ -20,7 +20,7 @@ Chuc nang:
 
 - xem danh sach don hang
 - loc theo trang thai
-- tim theo ma don, ten khach, email
+- tim theo ma don, ten khach, email, so dien thoai
 - tim theo ngay `from - to`
 - sap xep moi den cu
 - xem chi tiet don hang
