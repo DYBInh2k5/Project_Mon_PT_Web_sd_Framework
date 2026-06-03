@@ -12,7 +12,7 @@
         </x-slot:breadcrumbs>
     </x-common.page-breadcrumb>
 
-    <x-layouts.settings title="Profile" description="Cap nhat thong tin profile tu bang profiles bang Query Builder">
+    <x-layouts.settings title="Profile" description="Cap nhat thong tin profile bang Eloquent qua quan he User - Profile">
         @if ($errors->any())
             <div class="mb-6">
                 <x-package-alert

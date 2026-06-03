@@ -54,6 +54,7 @@ Day la project Laravel dung de hoc va demo cac noi dung:
 - `Tag`
 - `Order`
 - `OrderItem`
+- `OrderStatusHistory`
 
 ## 5. Chuc nang chinh hien co
 
@@ -62,10 +63,12 @@ Day la project Laravel dung de hoc va demo cac noi dung:
 - role demo
 - product/category CRUD
 - order management
-- update order status + send mail
+- update order status bang `OrderService`
+- luu lich su doi trang thai don hang
+- gui mail bang Event/Listener
 - customer support chatbot
 - payment demo cho tung order
-- profile dung Query Builder
+- profile dung Eloquent qua quan he `User hasOne Profile`
 - admin xem va cap nhat profile cua user trong phan user management
 - Alert component
 - migration cho `articles`, `tags`, `article_tag`
@@ -81,3 +84,6 @@ Day la project Laravel dung de hoc va demo cac noi dung:
 - [app/View/Components/Alert.php](../app/View/Components/Alert.php)
 - [app/Http/Controllers/ArticleController.php](../app/Http/Controllers/ArticleController.php)
 - [resources/views/article/list.blade.php](../resources/views/article/list.blade.php)
+- [app/Services/OrderService.php](../app/Services/OrderService.php)
+- [app/Events/OrderStatusUpdated.php](../app/Events/OrderStatusUpdated.php)
+- [app/Listeners/SendOrderStatusUpdatedMail.php](../app/Listeners/SendOrderStatusUpdatedMail.php)

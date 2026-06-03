@@ -225,7 +225,7 @@ File:
 Vai tro:
 
 - xu ly profile cua user dang dang nhap
-- phan nay dung `Query Builder`
+- phan nay dung Eloquent va quan he `User hasOne Profile`
 
 ### Cac method chinh
 
@@ -233,7 +233,7 @@ Vai tro:
 
 - lay user hien tai
 - dam bao profile ton tai
-- lay du lieu profile tu bang `profiles`
+- lay du lieu profile bang Eloquent tu model `Profile`
 - tra ve view:
   - `pages.profile`
 
@@ -247,8 +247,8 @@ Vai tro:
 
 - validate du lieu
 - upload avatar neu co
-- cap nhat bang `profiles`
-- neu doi `name` hoac `email` thi cap nhat them bang `users`
+- cap nhat profile bang Eloquent
+- neu doi `name` hoac `email` thi cap nhat them bang `users` bang Eloquent
 
 #### `destroy(Request $request)`
 
@@ -259,7 +259,7 @@ Vai tro:
 #### `ensureProfileExists(...)`
 
 - ham private
-- neu user chua co profile thi tao profile mac dinh
+- neu user chua co profile thi tao profile mac dinh bang `firstOrCreate()` qua quan he `profile()`
 
 ## 8. ArticleController
 
@@ -277,7 +277,7 @@ Vai tro:
 
 #### `index()`
 
-- lay danh sach article bang `Article::all()`
+- lay danh sach article bang `Article::with(['user', 'tags'])->get()`
 - view se goi quan he `$article->user` de lay user
 - view se goi quan he `$article->tags` de lay danh sach tag
 - tra ve view:
@@ -413,16 +413,16 @@ Vai tro:
 - quan ly danh sach don hang
 - loc theo ngay, trang thai, tu khoa
 - xem chi tiet don hang
-- doi trang thai don hang va gui mail
+- doi trang thai don hang thong qua `OrderService`
 
 ### Cac method chinh
 
 #### `index(Request $request)`
 
 - lay danh sach order
-- tim theo ma don, ten khach, email, so dien thoai
-- loc theo `status`
-- loc theo `date_from`, `date_to`
+- tim theo ma don, ten khach, email, so dien thoai bang `scopeSearch`
+- loc theo `status` bang `scopeStatus`
+- loc theo `date_from`, `date_to` bang `scopePlacedFrom`, `scopePlacedUntil`
 - sap xep moi den cu
 - tra ve view:
   - `orders.index`
@@ -430,18 +430,39 @@ Vai tro:
 #### `show(Order $order)`
 
 - load `items.product`
+- load `statusHistories.changer`
 - hien chi tiet don hang
+- hien lich su doi trang thai don hang
 - tra ve view:
   - `orders.show`
 
 #### `updateStatus(UpdateOrderStatusRequest $request, Order $order)`
 
 - validate status
-- cap nhat trang thai don
-- gui mail qua `OrderStatusUpdatedMail`
+- goi `OrderService@updateStatus`
+- service cap nhat trang thai, ghi lich su, phat event
+- listener gui mail qua `OrderStatusUpdatedMail`
 - redirect lai trang chi tiet
 
-## 13. OrderPaymentController
+## 13. OrderService, Event, Listener
+
+File:
+
+- [OrderService.php](../app/Services/OrderService.php)
+- [OrderStatusUpdated.php](../app/Events/OrderStatusUpdated.php)
+- [SendOrderStatusUpdatedMail.php](../app/Listeners/SendOrderStatusUpdatedMail.php)
+
+Vai tro:
+
+- tach logic nghiep vu khoi controller
+- ghi lich su status vao `order_status_histories`
+- gui mail bang Event/Listener cua Laravel
+
+Luong:
+
+`OrderController -> OrderService -> OrderStatusUpdated -> SendOrderStatusUpdatedMail`
+
+## 14. OrderPaymentController
 
 File:
 
@@ -464,9 +485,9 @@ Vai tro:
 
 - validate thong tin thanh toan
 - cap nhat `payment_status`, `payment_method`, `transaction_code`, `paid_at`
-- neu don dang `pending` thi doi sang `processing`
+- neu don dang `pending` thi goi `OrderService` doi sang `processing`
 
-## 14. SupportChatController
+## 15. SupportChatController
 
 File:
 
@@ -491,13 +512,14 @@ Vai tro:
 - validate cau hoi
 - them tin nhan user vao session
 - goi `CustomerSupportChatbot` de lay cau tra loi
+- neu khong co rule phu hop, `CustomerSupportChatbot` se goi `GeminiChatService`
 - them tra loi cua bot vao session
 
 #### `clear(Request $request)`
 
 - xoa lich su hoi thoai trong session
 
-## 15. Controller nao nen nho ky nhat
+## 16. Controller nao nen nho ky nhat
 
 Neu van dap, nen nho ky:
 
@@ -506,24 +528,25 @@ Neu van dap, nen nho ky:
 - [ProductCategoryController.php](../app/Http/Controllers/ProductCategoryController.php)
 - [OrderController.php](../app/Http/Controllers/OrderController.php)
 - [OrderPaymentController.php](../app/Http/Controllers/OrderPaymentController.php)
+- [OrderService.php](../app/Services/OrderService.php)
 - [SupportChatController.php](../app/Http/Controllers/SupportChatController.php)
 - [Settings/ProfileController.php](../app/Http/Controllers/Settings/ProfileController.php)
 - [ArticleController.php](../app/Http/Controllers/ArticleController.php)
 - [RoleDemoController.php](../app/Http/Controllers/RoleDemoController.php)
 - [Auth/LoginController.php](../app/Http/Controllers/Auth/LoginController.php)
 
-## 16. Cach tra loi khi bi hoi “luong chay di dau”
+## 17. Cach tra loi khi bi hoi “luong chay di dau”
 
 Ban co the noi:
 
 1. route duoc khai bao trong `routes/web.php` hoac `routes/auth.php`
 2. request di qua middleware neu route co gan middleware
 3. controller nhan request va xu ly logic
-4. controller truy van model hoac Query Builder
+4. controller truy van model/Eloquent
 5. controller tra ve view hoac redirect
 
 Vi du:
 
 - `/users/create` -> `UserController@create` -> `users.create`
 - submit form `/users` -> `UserController@store` -> validate -> tao user -> redirect
-- `/articles` -> `ArticleController@index` -> `Article::all()` -> `article.list`
+- `/articles` -> `ArticleController@index` -> `Article::with(['user', 'tags'])->get()` -> `article.list`

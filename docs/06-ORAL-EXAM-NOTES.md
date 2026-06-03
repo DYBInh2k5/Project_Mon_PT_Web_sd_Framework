@@ -38,7 +38,7 @@ Tra loi:
 
 - profile tach rieng thanh bang `profiles`
 - quan he `1-1` voi `users`
-- `ProfileController` dung `Query Builder`
+- `ProfileController` dung Eloquent qua quan he `User hasOne Profile`
 - du lieu profile khong chi lay tu `users` nua
 
 ## 5. Neu co hoi ve Alert Component
@@ -99,7 +99,7 @@ Tra loi:
 
 - em tao `ArticleController` bang resource controller
 - em dang ky `Route::resource('articles', ArticleController::class)` trong `routes/web.php`
-- method `index()` dung `Article::all()` de lay danh sach article bang Eloquent
+- method `index()` dung `Article::with(['user', 'tags'])->get()` de lay article kem user va tag bang Eloquent
 - view `resources/views/article/list.blade.php` hien thi title, user, body, created_at va tags
 - trong view em dung quan he `$article->user->name` va `$article->tags`
 
@@ -137,4 +137,4 @@ Tra loi:
 
 ## 16. Cau tra loi tong ket ngan
 
-“Project cua em gom auth, role, user management, product/category CRUD, order management, chatbot ho tro khach hang, payment demo va profile. Em dung middleware de phan quyen, dung Query Builder cho profile, tao Blade component `Alert` de hien thong bao loi/thanh cong. Ngoai ra em da tao model `Article`, `Tag`, bang trung gian `article_tag`, dinh nghia quan he, tao factory va seed du lieu gia. Phan don hang cua em co doi trang thai, gui mail, chatbot va checkout demo de phuc vu bai project.” 
+“Project cua em gom auth, role, user management, product/category CRUD, order management, chatbot ho tro khach hang, payment demo va profile. Em dung middleware de phan quyen, dung Eloquent qua quan he `User hasOne Profile` cho profile, tao Blade component `Alert` de hien thong bao loi/thanh cong. Ngoai ra em da tao model `Article`, `Tag`, bang trung gian `article_tag`, dinh nghia quan he, tao factory va seed du lieu gia. Phan don hang cua em co doi trang thai, gui mail, chatbot va checkout demo de phuc vu bai project.” 

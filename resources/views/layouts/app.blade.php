@@ -129,6 +129,17 @@
 
     </div>
 
+    @unless (request()->routeIs('support-chat.*'))
+        <a
+            href="{{ route('support-chat.index') }}"
+            class="fixed bottom-5 right-5 z-50 inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-lg shadow-gray-900/10 transition hover:border-brand-300 hover:text-brand-600 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-200 dark:hover:text-brand-400"
+            aria-label="Open support chatbot"
+        >
+            <span class="inline-flex h-2.5 w-2.5 rounded-full bg-brand-500"></span>
+            Support Chat
+        </a>
+    @endunless
+
 </body>
 
 @stack('scripts')

@@ -1,0 +1,78 @@
+=============================================================================================================================
+						TẠO TRANG WEB HIỂN THỊ DANH SÁCH ARTICLES VÀ TAGS TƯƠNG ỨNG
+									DÙNG VỚI ELOQUENT 
+=============================================================================================================================
+LƯU Ý: Demo này tương đương và có thể áp dụng cho trang quản lý đơn hàng, xem chi tiết đơn hàng, 
+		xem thông tin khách hàng từ trang quản lý đơn hàng
+-----------------------------------------------------------------------------------------------------------
+1. Tạo ArticleController
+	php artisan make:controller ArticleController --resource
+2. Đăng kí route trong file routes/web.php
+	Route::resource('articles', ArticleController::class);
+3. Bổ sung code cho file ArticleController
+		class ArticleController extends Controller
+		{
+			/**
+			 * Display a listing of the resource.
+			 *
+			 * @return \Illuminate\Http\Response
+			 */
+			public function index()
+			{
+			   $articles = Article::all();
+			   return View('article.list',['articles' => $articles]);
+			}
+			...
+		}
+4. Tạo view list.blade.php để hiển thị danh sách articles
+	-Views
+	--article
+	---list.blade.php
+	
+	+ Nội dung view như sau: 
+			@extends('layouts.app1')
+
+			@section('content')
+				<!-- DataTales Example -->
+				<div class="card shadow mb-4">
+					<div class="card-header py-3">
+						<h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+					</div>
+					<div class="card-body">
+						<div class="table-responsive">
+							<table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+								<thead>
+								<tr>
+									<th>Title</th>
+									<th>User</th>
+									<th>Body</th>
+									<th>Create At</th>
+									<th>Tags</th>
+									<th>Edit</th>
+								</tr>
+								</thead>
+								<tbody>
+								@foreach($articles as $article)
+									<tr>
+										<td>{{$article->title}}</td>
+										<td><a href="/profiles/{{$article->user_id}}">{{$article->user->name}}</a></td>
+										<td>{{$article->body}}</td>
+										<td>{{$article->created_at}}</td>
+										<td>
+											@foreach($article->tags as $tag)
+												<a href="#">{{$tag->tag}} </a> ,
+											 @endforeach
+										</td>
+										<th>Edit</th>
+									</tr>
+								@endforeach
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			@endsection
+
+5. Run Project và truy cập url : http://127.0.0.1:8000/articles/ để xem kết quả
+6. Vận dụng làm các trang xem chi tiết đơn hàng, cập nhật trạng thái đơn hàng, tìm kiếm đơn hàng theo số điện thoại của khách hàng, lọc đơn hàng theo thời gian
+

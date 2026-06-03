@@ -13,7 +13,16 @@
         }
     @endphp
 
-    <x-common.component-card title="Test profile" desc="Thong tin profile dang duoc lay tu bang profiles bang Query Builder.">
+    <x-common.component-card title="Test profile" desc="Thong tin profile dang duoc lay bang Eloquent qua quan he User hasOne Profile.">
+        <div class="mb-6 flex items-center justify-end">
+            <a
+                href="{{ route('settings.profile.edit') }}"
+                class="inline-flex items-center rounded-xl bg-brand-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-700"
+            >
+                Edit profile
+            </a>
+        </div>
+
         <div class="flex flex-col gap-6 md:flex-row md:items-start">
             @if ($avatarUrl)
                 <img

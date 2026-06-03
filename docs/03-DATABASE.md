@@ -6,6 +6,12 @@ Project hien dang dung SQLite:
 
 - [database/database.sqlite](../database/database.sqlite)
 
+Luu y tren may nay:
+
+- file SQLite trong thu muc `database/` co the gap `disk I/O error` khi ghi
+- de demo on dinh, `.env` dang tro sang ban SQLite trong thu muc temp cua Windows
+- day la workaround cho moi truong hien tai, khong doi logic nghiep vu
+
 ## 2. Cac migration hien co
 
 - `create_users_table`
@@ -23,6 +29,8 @@ Project hien dang dung SQLite:
 - `create_orders_table`
 - `create_order_items_table`
 - `add_payment_fields_to_orders_table`
+- `create_order_status_histories_table`
+- `add_search_indexes_to_orders_table`
 
 ## 3. Bang users
 
@@ -131,7 +139,39 @@ Thong tin chinh:
 - `unit_price`
 - `line_total`
 
-## 10. Du lieu gia dang co trong SQLite
+## 10. Bang order_status_histories
+
+Thong tin chinh:
+
+- `order_id`
+- `changed_by`
+- `previous_status`
+- `new_status`
+- `note`
+- `created_at`
+
+Y nghia:
+
+- luu lich su moi lan doi trang thai don hang
+- biet ai doi trang thai
+- ho tro demo toi uu Laravel bang Service, Event, Listener
+
+## 11. Index toi uu cho orders
+
+Project da them index cho:
+
+- `status`
+- `placed_at`
+- `customer_phone`
+- `customer_email`
+
+Y nghia:
+
+- loc theo status nhanh hon
+- loc theo ngay nhanh hon
+- tim theo phone/email tot hon
+
+## 12. Du lieu gia dang co trong SQLite
 
 Sau khi seed, du lieu hien tai da co:
 
@@ -152,7 +192,7 @@ Y nghia:
 - co order item de demo san pham trong tung don
 - co field thanh toan de demo online payment
 
-## 11. AppServiceProvider va bug MySQL
+## 13. AppServiceProvider va bug MySQL
 
 Trong [app/Providers/AppServiceProvider.php](../app/Providers/AppServiceProvider.php) co:
 
@@ -164,7 +204,7 @@ Dong nay de tranh loi:
 
 - `Specified key was too long`
 
-## 12. Lenh hay dung
+## 14. Lenh hay dung
 
 ```powershell
 php artisan migrate

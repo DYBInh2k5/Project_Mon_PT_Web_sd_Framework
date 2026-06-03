@@ -35,7 +35,10 @@ class SupportChatController extends Controller
             'content' => trim($validated['message']),
         ];
 
-        $response = $chatbot->respond($validated['message']);
+        $response = $chatbot->respond(
+            $validated['message'],
+            $request->session()->get('support_chat.messages', $this->defaultMessages())
+        );
 
         $messages[] = [
             'role' => 'bot',

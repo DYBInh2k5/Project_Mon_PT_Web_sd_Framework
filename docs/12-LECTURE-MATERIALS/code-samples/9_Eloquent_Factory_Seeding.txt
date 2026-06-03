@@ -1,0 +1,113 @@
+============================================================================================================
+				ĐỊNH NGHĨA QUAN HỆ CHO MODEL - FACTORY - SEEDING
+============================================================================================================
+
+********* ĐỊNH CÁC HÀM QUAN HỆ CHO MODEL ****************** 
+-----------------------------------------------------------------------------------
+
+1. Bổ sung các thuộc tính và hàm tạo quan hệ cho model Article
+
+		class Article extends Model
+		{
+			//
+			protected $fillable = [
+				'user_id', 'title', 'body', //các thuộc tính
+			];
+
+			public function user():BelongsTo {
+				return $this->belongsTo(User::class);
+				//xác định quan hệ có thể đảo ngược nhau  1 article có thể truy cập đến user, 
+				//và ngược lại 1 user cũng có thể truy cập lấy thông tin 1 article
+			}
+
+			/**
+			 * Get the tags for the article
+			*/
+
+		   public function tags(): BelongsToMany {
+			   return $this->belongsToMany(Tag::class);
+		   }
+
+		  
+		}
+
+2. Bổ sung các thuộc tính và hàm tạo quan hệ cho model  Tag
+		<?php
+
+		namespace App;
+
+		use Illuminate\Database\Eloquent\Model;
+
+		class Tag extends Model
+		{
+			//
+			protected $fillable = [
+				'tag'
+			];
+			
+			public function articles():BelongsToMany{
+				
+				return $this->belongsToMany(Articles::class);
+				
+			}
+		}
+	
+-----------------------------------------------------------------------------------
+********* TẠO DỮ LIỆU GIẢ DÙNG FACTORY AND  SEEDING ****************** 
+-----------------------------------------------------------------------------------
+
+1.Tạo các Factory tương ứng với Model
+		php artisan make:factory TagFactory --model=Tag
+		php artisan make:factory ArticleFactory --model=Article
+
+2. Nội dung các file factory như sau, nên làm theo thứ tự
+	- File UserFactory:
+			...
+			 public function definition()
+			{
+				return [
+					'name' => $this->faker->name,
+					'email' => $this->faker->unique()->safeEmail,
+					'email_verified_at' => now(),
+					'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
+					'remember_token' => Str::random(10),
+				];
+			}
+	- File ArticleFactory:
+			...
+			public function definition()
+			{
+				return [
+					'user_id' => User::all()->random()->id,//lấy danh sách user rồi chọn ngẫu nhiên id để thêm vào bảng articles
+					'title' => $this->faker->sentence,
+					'body' => $this->faker->paragraph(random_int(3, 5))
+				];
+			}
+			...
+	- File TagFactory:
+			...
+			return [
+					'tag' => $this->faker->word
+				];
+			...
+3. Bổ sung code cho file DatabaseSeeder như sau:
+	...
+	public function run()
+    {
+         User::factory(10)->create();
+         Tag::factory(20)->create();
+         Article::factory(50)->create()->each(function($article){
+            $ids = range(1, 20);
+            shuffle($ids);//trộn
+            $sliced = array_slice($ids, 1, 10);
+            $article->tags()->attach($sliced);
+        });
+
+    }
+	...
+4. Chạy migration 
+	php artisan migrate ( reset dùng:  php artisan migrate:reset)
+5. Chạy SEEDING
+	php artisan db:seed
+6. Mở database xem các bảng đã có dữ liệu chưa
+7.Áp dụng tương tự cho để tạo các model và quan hệ của nó, tiến hành tạo bảng và đổ dữ liệu giả cho các bảng trong database phục vụ cho các chức năng của đồ án

@@ -64,12 +64,13 @@ Controller chinh:
 - [Settings/ProfileController.php](../app/Http/Controllers/Settings/ProfileController.php)
 - [UserController.php](../app/Http/Controllers/UserController.php)
 
-Controller nay dung `Query Builder` de lay va cap nhat `profiles`.
+Controller nay dung Eloquent va quan he `User hasOne Profile` de lay va cap nhat `profiles`.
+Khi user thay doi email, `email_verified_at` se duoc reset ve `null` de Laravel yeu cau xac minh lai.
 
 Vi du:
 
 ```php
-DB::table('profiles')->where('user_id', $user->id)->first();
+$profile = $user->profile()->firstOrCreate([]);
 ```
 
 ## 6. Quan he 1-1 User - Profile
@@ -84,6 +85,12 @@ Trong user management:
 - admin vao `/users/{user}` de xem thong tin account va profile cua user
 - admin vao `/users/{user}/edit` de cap nhat `name`, `email`, `role`, `is_active`
 - cung form edit nay cap nhat them `full_name`, `address`, `avatar`, `birthday`, `gender`, `phone`
+
+Avatar sau khi upload se hien o:
+
+- man `Profile Settings`
+- man `User Profile`
+- dropdown user o goc tren ben phai cua header
 
 ## 7. View auth/profile dang dung
 

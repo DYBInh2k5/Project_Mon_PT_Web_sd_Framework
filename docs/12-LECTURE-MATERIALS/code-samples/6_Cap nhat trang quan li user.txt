@@ -1,0 +1,91 @@
+========================================================================================================
+******************* HIỆU CHỈNH TRANG QUẢN LÝ USER VÀ CẬP NHẬT THÔNG TIN CỦA USER *************************
+========================================================================================================
+1. Thực hiện lệnh sau để biết các route đã tự động đăng kí với route trên
+		php artisan route:list
+	
+	Mở file routes/auth.php
+	— Xem kĩ các routes khai báo trong file này để hiểu hiện tại Auth hỗ trợ những chức năng gì
+	— Đọc kĩ các routes nhóm profile và tìm hiểu để trả lời các câu hỏi sau:
+		+ Route::get('settings/profile', [Settings\ProfileController::class, 'edit'])->name('settings.profile.edit');
+		+ Route::put('settings/profile', [Settings\ProfileController::class, 'update'])->name('settings.profile.update');
+    		+ Route::delete('settings/profile', [Settings\ProfileController::class, 'destroy'])->name('settings.profile.destroy');
+    		+ Route::get('settings/password', [Settings\PasswordController::class, 'edit'])->name('settings.password.edit');
+    		+ Route::put('settings/password', [Settings\PasswordController::class, 'update'])->name('settings.password.update');
+		—> mở file controller tương ứng, hàm nào trong file này được gọi hãy đọc để hiểu và mở tìm file view tương ứng đọc để hiểu các thành phần trên view. Sau đó vận 			dụng cho thực hành cho phần bên dưới.
+	—  Hãy tìm và mở các trang tương ứng với các routes ở trên bằng trình duyệt.
+
+2. Bổ sung các field App/Models/UserModel.php
+	- role : dùng để xác định quyền cho user
+	- is_active: kiểu bool cho biết user có đang active hay không
+
+	... 
+	 
+	protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'role',
+        'is_active',
+    ];
+
+	... 
+	
+	protected function casts(): array
+    {
+        return [
+           
+			. . . 
+
+            'role' => 'string',
+            'is_active' => 'boolean',
+        ];
+    }
+	... 
+
+
+3. Bổ sung lệnh tạo thêm 2 cột 
+	public function up(): void
+    {
+        Schema::create('users', function (Blueprint $table) {
+           
+			... 
+
+            $table->string('role')->default('user');
+            $table->boolean('is_active')->default(true);
+        });
+	
+		... 
+
+      
+    }
+
+
+Thực hiện lệnh cập nhật cấu trúc bảng trong database
+		php artisan migrate:refesh
+
+4. Mở file database/factories/UserFactory.php
+	Bổ sung 2 dòng code bên dưới vào trong hàm definition
+
+	public function definition(): array
+    {
+        return [
+			
+			... 
+           
+			// bổ sung thèm 2 dòng bên dưới
+            
+            'role' => fake()->randomElement(['admin', 'editor', 'user']),
+            'is_active' => fake()->boolean(80), // 80% chance of being active
+        ];
+    }
+	
+	Chạy SEEDING:
+			php artisan db:seed
+
+5. Cập nhật file View cho các trang hiển thị danh sách user và trang edit thông tin user
+	- Tự bổ sung thêm giao diện hiển thị thêm 2 cột Role và Status cho bảng hiển thị danh sách user trong nhóm chức năng User Management
+
+6. Test lại kết quả
+7. Tích hợp phần middleware của tuần trước vào project sau khi bổ sung trường Role vào User model
+	

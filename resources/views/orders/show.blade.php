@@ -161,7 +161,7 @@
 
                 <section class="surface-panel p-6">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Update order status</h3>
-                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Khi đổi trạng thái, hệ thống sẽ gửi email thông báo cho khách hàng qua mailer hiện tại.</p>
+                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Khi đổi trạng thái, service sẽ ghi lịch sử và phát event để listener gửi email cho khách hàng.</p>
 
                     <form method="POST" action="{{ route('orders.update-status', $order) }}" class="mt-5 space-y-4" novalidate>
                         @csrf
@@ -178,6 +178,32 @@
 
                         <button type="submit" class="action-button-primary w-full">Save status and send mail</button>
                     </form>
+                </section>
+
+                <section class="surface-panel p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Status history</h3>
+                    <div class="mt-5 space-y-4">
+                        @forelse ($order->statusHistories->sortByDesc('created_at') as $history)
+                            <div class="rounded-xl border border-gray-100 p-4 dark:border-gray-800">
+                                <div class="flex flex-wrap items-center gap-2 text-sm">
+                                    <span class="data-badge data-badge-neutral">{{ ucfirst($history->previous_status) }}</span>
+                                    <span class="text-gray-400">to</span>
+                                    <span class="data-badge data-badge-brand">{{ ucfirst($history->new_status) }}</span>
+                                </div>
+                                <p class="mt-3 text-sm text-gray-500 dark:text-gray-400">
+                                    {{ $history->created_at?->format('d/m/Y H:i') }}
+                                    @if ($history->changer)
+                                        by {{ $history->changer->name }}
+                                    @endif
+                                </p>
+                                @if ($history->note)
+                                    <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">{{ $history->note }}</p>
+                                @endif
+                            </div>
+                        @empty
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Chua co lich su doi trang thai cho don hang nay.</p>
+                        @endforelse
+                    </div>
                 </section>
             </div>
         </div>

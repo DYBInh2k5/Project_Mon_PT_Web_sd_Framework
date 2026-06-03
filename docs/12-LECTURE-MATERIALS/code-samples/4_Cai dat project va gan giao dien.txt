@@ -1,0 +1,24 @@
+HƯỚNG DẪN CÀI ĐẶT LARAVEL 12
+1.	Cài đặt PHP
+⁃	Tải Chọn tải file Zip ở mục VS16 x64 Thread Safe (nếu máy bạn 64-bit).
+⁃	Giải nén thư mục vào ổ C:\php
+⁃	Trong thư mục đó, tìm file php.ini-development, đổi tên nó thành php.ini
+⁃	Mở file php.ini bằng Notepad, tìm dòng  các dòng 
+⁃		;extension=openssl 
+⁃		;extension=fileinfo
+⁃		;extension=zip 
+	;extrension=pdo_Sqlite
+⁃		và bỏ dấu chấm phẩy (;) ở đầu để Composer có thể kết nối internet.
+⁃	Cài biến môi trường: thêm đường dẫn C:\php vào danh sách biến môi trường.
+⁃	Máy phải có sẵn phần mềm zip hoặc 7-zip (để khi cài bước 3, lệnh tự tải và có thể unzip được)
+2.	Tải và cài đặt composer: khi bộ cài đặt hỏi đường dẫn Php thì chỉ đường dẫn đến: C:\php\php.exe
+3.	Cài đặt Laravel bằng lệnh:
+		composer global require laravel/installer
+4.	Tạo project dùng với breeze (giao diện dùng Tailwinds và Alpine.js):
+⁃		laravel new example-app  --using=laraveldaily/tailadmin-starter-kit
+		npm install && npm run dev
+		php artisan migrate
+//	composer require laravel/breeze --dev
+	
+
+

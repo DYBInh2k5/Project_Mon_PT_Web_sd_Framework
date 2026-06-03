@@ -3,11 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateOrderStatusRequest;
-use App\Mail\OrderStatusUpdatedMail;
 use App\Models\Order;
+use App\Services\OrderService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
 
 class OrderController extends Controller
@@ -16,26 +15,14 @@ class OrderController extends Controller
     {
         $baseQuery = Order::query();
 
-        $orders = Order::withCount('items')
-            ->when($request->filled('search'), function ($query) use ($request) {
-                $search = $request->string('search')->toString();
-
-                $query->where(function ($nested) use ($search) {
-                    $nested->where('order_number', 'like', "%{$search}%")
-                        ->orWhere('customer_name', 'like', "%{$search}%")
-                        ->orWhere('customer_email', 'like', "%{$search}%")
-                        ->orWhere('customer_phone', 'like', "%{$search}%");
-                });
-            })
-            ->when($request->filled('status'), function ($query) use ($request) {
-                $query->where('status', $request->string('status')->toString());
-            })
-            ->when($request->filled('date_from'), function ($query) use ($request) {
-                $query->whereDate('placed_at', '>=', $request->date('date_from'));
-            })
-            ->when($request->filled('date_to'), function ($query) use ($request) {
-                $query->whereDate('placed_at', '<=', $request->date('date_to'));
-            })
+        // Cac dieu kien search/filter duoc dua vao local scope trong Order model
+        // de controller gon hon va co the tai su dung cho API/dashboard sau nay.
+        $orders = Order::query()
+            ->withCount('items')
+            ->search($request->string('search')->toString())
+            ->status($request->string('status')->toString())
+            ->placedFrom($request->date('date_from'))
+            ->placedUntil($request->date('date_to'))
             ->orderByDesc('placed_at')
             ->paginate(10)
             ->withQueryString();
@@ -57,7 +44,8 @@ class OrderController extends Controller
 
     public function show(Order $order): View
     {
-        $order->load(['items.product']);
+        // Load san san pham trong don va nguoi da doi status de tranh N+1 query tren view.
+        $order->load(['items.product', 'statusHistories.changer']);
 
         return view('orders.show', [
             'title' => 'Order Detail',
@@ -66,22 +54,24 @@ class OrderController extends Controller
         ]);
     }
 
-    public function updateStatus(UpdateOrderStatusRequest $request, Order $order): RedirectResponse
+    public function updateStatus(UpdateOrderStatusRequest $request, Order $order, OrderService $orders): RedirectResponse
     {
-        $previousStatus = $order->status;
         $newStatus = $request->validated('status');
 
-        if ($previousStatus === $newStatus) {
+        // Controller chi nhan request va goi service.
+        // Nghiep vu cap nhat status, ghi history va phat event nam trong OrderService.
+        $history = $orders->updateStatus(
+            $order,
+            $newStatus,
+            $request->user(),
+            'Manual status update from order detail page.'
+        );
+
+        if (! $history) {
             return redirect()
                 ->route('orders.show', $order)
                 ->with('success', 'Order status is already up to date.');
         }
-
-        $order->update([
-            'status' => $newStatus,
-        ]);
-
-        Mail::to($order->customer_email)->send(new OrderStatusUpdatedMail($order, $previousStatus));
 
         return redirect()
             ->route('orders.show', $order)

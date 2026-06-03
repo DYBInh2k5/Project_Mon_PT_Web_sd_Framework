@@ -12,7 +12,9 @@ class ArticleController extends Controller
      */
     public function index()
     {
-        $articles = Article::all();
+        // Eager loading user va tags de khi view goi $article->user / $article->tags
+        // Laravel khong phai query lap lai cho tung dong article.
+        $articles = Article::with(['user', 'tags'])->get();
 
         return view('article.list', ['articles' => $articles]);
     }

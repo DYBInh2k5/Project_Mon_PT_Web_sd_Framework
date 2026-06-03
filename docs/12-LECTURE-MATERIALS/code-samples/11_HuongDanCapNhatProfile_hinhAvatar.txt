@@ -1,0 +1,110 @@
+========================================================================================================================
+			HIỂN THỊ THÔNG TIN PROFILE VÀ CẬP NHẬT THÔNG TIN PROFILE DÙNG VỚI ELOQUENT
+			  VALIDATION FORM CẬP NHẬT PROFILE & UPLOAD HÌNH ẢNH CHO AVATAR PROFILE
+			**************************************************************************
+========================================================================================================================
+1. Mở file view cần thêm trường Upload Avatar
+	Form cập nhật
+	Bổ sung thuộc tính:
+	<form
+		...
+		method="POST"
+		enctype="multipart/form-data" >
+		...		
+	</form>
+2. Control Upload File dùng Alpine.js
+	  	<div x-data="{ fileName: '{{ basename($profile->avatar ?? '') }}' }">
+			<label for="avatar">Avatar</label>
+			<input
+				type="file"
+				id="avatar"
+				name="avatar"
+				@change="fileName = $event.target.files[0]?.name">
+
+			<p class="text-sm text-gray-500" x-text="fileName"></p>
+		</div>
+3. Validation trong ProfileController
+	public function update(Request $request, string $id)
+	{
+		$validated = $request->validate([
+			'avatar' => [
+				'nullable',
+				'image',
+				'mimes:jpg,jpeg,png,webp',
+				'max:2048',
+			],
+			'birthday' => [
+				'nullable',
+				'date',
+			],
+			'full_name' => [
+				'required',
+				'string',
+				'max:255',
+			],
+			'address' => [
+				'required',
+				'string',
+				'max:255',
+			],
+		]);
+
+		$profile = Profile::findOrFail($user->id);
+
+		$profile->full_name = $validated['full_name'];
+		$profile->address = $validated['address'];
+		$profile->birthday = $validated['birthday'] ?? null;
+4. Upload Avatar
+Tạo symbolic link
+Chạy một lần: php artisan storage:link
+Laravel sẽ tạo: public/storage --> storage/app/public
+
+5. Lưu file (bổ sung vào hàm update)
+ 	
+    if ($request->hasFile('avatar')) {
+
+        $path = $request
+            ->file('avatar')
+            ->store('avatars', 'public');
+
+        $profile->avatar = '/storage/' . $path;
+    }
+	$user->save();
+    $profile->save();
+    return back()->with([
+        'success' => 'Profile updated successfully.',
+    ]);
+6. Hiển thị Avatar
+	@if($profile->avatar)
+		<img
+			src="{{ asset($profile->avatar) }}"
+			alt="Avatar"
+			width="150"
+		>
+	@endif
+7. Hiển thị Thông Báo Thành Công
+	Khuyến khích dùng Blade Component.
+	Ví dụ:
+	@if(session('success'))
+		<x-alert type="success">
+			{{ session('success') }}
+		</x-alert>
+	@endif
+8. Hiển thị lỗi Validation
+	@if ($errors->any())
+		<div class="alert alert-danger">
+			<ul>
+				@foreach ($errors->all() as $error)
+					<li>{{ $error }}</li>
+				@endforeach
+			</ul>
+		</div>
+	@endif
+
+	Hoặc hiển thị ngay dưới từng ô nhập:
+	<input type="text" name="full_name">
+	@error('full_name')
+		<div class="text-danger">
+			{{ $message }}
+		</div>
+	@enderror

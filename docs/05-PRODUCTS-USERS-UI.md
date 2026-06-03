@@ -76,7 +76,8 @@ Chuc nang:
 - tim kiem theo ma don, ten khach, email, so dien thoai
 - xem chi tiet don hang va khach hang
 - doi trang thai don hang
-- gui mail khi doi trang thai
+- luu lich su doi trang thai
+- gui mail khi doi trang thai bang Event/Listener
 - chatbot goi y cau hoi va doc ma don that
 - checkout demo cho online payment
 
@@ -125,3 +126,11 @@ Vi du:
 2. de trong form
 3. bam `Create User`
 4. alert do hien o dau form
+
+## 8. Ghi chu ve contrast UI
+
+Project da duoc chinh lai contrast o cac component dung chung:
+
+- body co mau chu mac dinh ro hon
+- breadcrumb, settings nav, card description va user dropdown co do tuong phan cao hon
+- muc dich la tranh chu bi chim tren nen sang hoac nen toi

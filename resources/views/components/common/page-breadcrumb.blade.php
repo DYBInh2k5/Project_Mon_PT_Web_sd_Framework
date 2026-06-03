@@ -8,9 +8,9 @@
         <ol class="flex items-center gap-1.5">
             <li>
                 <a
-                    class="inline-flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400"
-                    href="{{ url('/') }}"
-                >
+                class="inline-flex items-center gap-1.5 text-sm text-gray-600 dark:text-gray-300"
+                href="{{ url('/') }}"
+            >
                     Home
                     <svg
                         class="stroke-current"
@@ -30,7 +30,7 @@
                     </svg>
                 </a>
             </li>
-            <li class="text-sm text-gray-800 dark:text-white/90">
+            <li class="text-sm text-gray-900 dark:text-white/90">
                 {{ $pageTitle }}
             </li>
         </ol>

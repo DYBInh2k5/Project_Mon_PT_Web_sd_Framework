@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
+use App\Models\Profile;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
@@ -17,9 +18,8 @@ class ProfileController extends Controller
     {
         $user = $request->user();
 
-        $this->ensureProfileExists($user->id, $user->name);
-
-        $profile = DB::table('profiles')->where('user_id', $user->id)->first();
+        // Lay profile bang Eloquent qua relationship de khong dung Query Builder nua.
+        $profile = $this->ensureProfileExists($user);
 
         return view('pages.profile', [
             'profile' => $profile,
@@ -31,9 +31,8 @@ class ProfileController extends Controller
     {
         $user = $request->user();
 
-        $this->ensureProfileExists($user->id, $user->name);
-
-        $profile = DB::table('profiles')->where('user_id', $user->id)->first();
+        // Cung luong Eloquent cho trang edit profile.
+        $profile = $this->ensureProfileExists($user);
 
         return view('pages.auth.settings.profile', [
             'user' => $user,
@@ -45,9 +44,7 @@ class ProfileController extends Controller
     {
         $user = $request->user();
 
-        $this->ensureProfileExists($user->id, $user->name);
-
-        $profile = DB::table('profiles')->where('user_id', $user->id)->first();
+        $profile = $this->ensureProfileExists($user);
 
         $validated = $request->validate([
             'full_name' => ['nullable', 'string', 'max:100', 'required_without:name'],
@@ -78,20 +75,20 @@ class ProfileController extends Controller
             $avatarPath = $request->file('avatar')->store('profiles', 'public');
         }
 
-        DB::table('profiles')
-            ->where('id', $profile->id)
-            ->update([
-                'full_name' => $fullName,
-                'address' => $validated['address'] ?? null,
-                'avatar' => $avatarPath,
-                'birthday' => $validated['birthday'] ?? null,
-                'gender' => $validated['gender'] ?? null,
-                'phone' => $validated['phone'] ?? null,
-                'updated_at' => now(),
-            ]);
+        $profile->fill([
+            'full_name' => $fullName,
+            'address' => $validated['address'] ?? null,
+            'avatar' => $avatarPath,
+            'birthday' => $validated['birthday'] ?? null,
+            'gender' => $validated['gender'] ?? null,
+            'phone' => $validated['phone'] ?? null,
+        ]);
+
+        $profile->save();
 
         if (array_key_exists('name', $validated) || array_key_exists('email', $validated)) {
             $userUpdate = [];
+            $emailChanged = false;
 
             if (! empty($validated['name'])) {
                 $userUpdate['name'] = $validated['name'];
@@ -101,14 +98,20 @@ class ProfileController extends Controller
                 $userUpdate['email'] = $validated['email'];
 
                 if ($validated['email'] !== $user->email) {
-                    $userUpdate['email_verified_at'] = null;
+                    $emailChanged = true;
                 }
             }
 
             if ($userUpdate !== []) {
-                DB::table('users')
-                    ->where('id', $user->id)
-                    ->update($userUpdate);
+                $user->fill($userUpdate);
+
+                // email_verified_at khong nam trong fillable nen phai gan truc tiep
+                // de dam bao Laravel reset trang thai xac minh khi email thay doi.
+                if ($emailChanged) {
+                    $user->email_verified_at = null;
+                }
+
+                $user->save();
             }
         }
 
@@ -122,9 +125,11 @@ class ProfileController extends Controller
         ]);
 
         $user = $request->user();
+        $profile = $this->ensureProfileExists($user);
 
         Auth::logout();
 
+        $profile->delete();
         $user->delete();
 
         $request->session()->invalidate();
@@ -133,24 +138,19 @@ class ProfileController extends Controller
         return to_route('home');
     }
 
-    private function ensureProfileExists(int $userId, string $fallbackName): void
+    private function ensureProfileExists(User $user): Profile
     {
-        $exists = DB::table('profiles')->where('user_id', $userId)->exists();
-
-        if ($exists) {
-            return;
-        }
-
-        DB::table('profiles')->insert([
-            'user_id' => $userId,
-            'full_name' => $fallbackName,
-            'address' => 'Cap nhat dia chi',
-            'avatar' => null,
-            'birthday' => now()->subYears(20)->toDateString(),
-            'gender' => 'Khac',
-            'phone' => 'Chua cap nhat',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        // firstOrCreate qua relationship hasOne giup giu logic profile nam dung cho User.
+        return $user->profile()->firstOrCreate(
+            [],
+            [
+                'full_name' => $user->name,
+                'address' => 'Cap nhat dia chi',
+                'avatar' => null,
+                'birthday' => now()->subYears(20)->toDateString(),
+                'gender' => 'Khac',
+                'phone' => 'Chua cap nhat',
+            ]
+        );
     }
 }

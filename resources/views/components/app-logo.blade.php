@@ -26,7 +26,7 @@
         </div>
         <div class="min-w-0">
             <p class="truncate text-sm font-semibold text-gray-900 dark:text-white">{{ $title }}</p>
-            <p class="truncate text-xs text-gray-500 dark:text-gray-400">{{ $subtitle }}</p>
+            <p class="truncate text-xs text-gray-600 dark:text-gray-300">{{ $subtitle }}</p>
         </div>
     </div>
 @elseif ($variant === 'sidebar-compact')
@@ -61,7 +61,7 @@
         </div>
         <div class="space-y-1 text-center">
             <p class="text-base font-semibold text-white">{{ $title }}</p>
-            <p class="text-sm text-gray-300">{{ $subtitle }}</p>
+            <p class="text-sm text-gray-200">{{ $subtitle }}</p>
         </div>
     </div>
 @endif

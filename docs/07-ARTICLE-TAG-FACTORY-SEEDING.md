@@ -190,7 +190,7 @@ Route::resource('articles', ArticleController::class);
 Trong `ArticleController@index`:
 
 ```php
-$articles = Article::all();
+$articles = Article::with(['user', 'tags'])->get();
 
 return view('article.list', ['articles' => $articles]);
 ```
@@ -207,7 +207,7 @@ View `article.list` hien thi:
 
 Ban co the noi:
 
-“Em tao `Article` va `Tag` de demo quan he nhieu-nhieu. `Article` thuoc ve `User` va co nhieu `Tag`. `Tag` cung co the thuoc nhieu `Article`, nen em dung `belongsToMany` o ca hai model. Bang trung gian `article_tag` dung de luu cap `article_id` va `tag_id`. Sau do em tao factory de sinh du lieu gia va dung `DatabaseSeeder` de do du lieu vao SQLite. Em tao them `ArticleController@index` dung `Article::all()` va view `article.list` de hien danh sach article kem user va tags bang Eloquent.”
+“Em tao `Article` va `Tag` de demo quan he nhieu-nhieu. `Article` thuoc ve `User` va co nhieu `Tag`. `Tag` cung co the thuoc nhieu `Article`, nen em dung `belongsToMany` o ca hai model. Bang trung gian `article_tag` dung de luu cap `article_id` va `tag_id`. Sau do em tao factory de sinh du lieu gia va dung `DatabaseSeeder` de do du lieu vao SQLite. Em tao them `ArticleController@index` dung `Article::with(['user', 'tags'])->get()` va view `article.list` de hien danh sach article kem user va tags bang Eloquent, dong thoi tranh N+1 query.”
 
 ## 11. Lenh hay dung
 

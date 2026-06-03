@@ -3,12 +3,18 @@
 namespace App\Support;
 
 use App\Models\Order;
-use App\Models\ProductCategory;
+use App\Services\GeminiChatService;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
 class CustomerSupportChatbot
 {
-    public function respond(string $message): array
+    public function __construct(
+        protected GeminiChatService $geminiChatService
+    ) {
+    }
+
+    public function respond(string $message, array $history = []): array
     {
         $normalized = Str::lower(trim($message));
 
@@ -16,87 +22,33 @@ class CustomerSupportChatbot
             return $this->fallback();
         }
 
-        if ($orderResponse = $this->handleOrderLookup($message)) {
-            return $orderResponse;
+        $orderContext = $this->handleOrderLookup($message);
+        $projectContext = $this->buildProjectContext();
+        $boostContext = $this->buildBoostContext();
+        $historyContext = $this->buildHistoryContext($history);
+
+        $geminiResponse = $this->geminiChatService->answer($message, [
+            'module' => 'support-chat',
+            'order_context' => $orderContext,
+            'project_context' => $projectContext,
+            'boost_context' => $boostContext,
+            'chat_history' => $historyContext,
+            'answer_strategy' => 'answer_everything_with_project_context',
+        ]);
+
+        if (is_array($geminiResponse) && ! empty($geminiResponse['message'])) {
+            if (is_array($orderContext)) {
+                $geminiResponse['message'] = $geminiResponse['message']."\n\nThông tin đơn hàng liên quan:\n".$orderContext['message'];
+            }
+
+            return $geminiResponse;
         }
 
-        if ($this->containsAny($normalized, ['don hang', 'order', 'trang thai'])) {
-            return [
-                'message' => 'Bạn có thể gửi mã đơn hàng như ORD-00023 để mình kiểm tra trạng thái. Nếu chưa có mã đơn, bạn vào mục Orders để xem danh sách và chi tiết đơn hàng.',
-                'suggestions' => [
-                    'Kiểm tra đơn ORD-00023',
-                    'Đơn hàng đang xử lý bao lâu?',
-                    'Làm sao cập nhật trạng thái đơn hàng?',
-                ],
-            ];
+        if (is_array($orderContext)) {
+            return $orderContext;
         }
 
-        if ($this->containsAny($normalized, ['giao hang', 'van chuyen', 'ship'])) {
-            return [
-                'message' => 'Với đơn hàng đang ở trạng thái shipped, hệ thống hiểu là đơn đã bàn giao cho vận chuyển. Bạn có thể theo dõi và cập nhật tiếp sang completed khi khách xác nhận đã nhận hàng.',
-                'suggestions' => [
-                    'Khi nào nên chuyển sang completed?',
-                    'Làm sao tìm đơn theo ngày?',
-                    'Kiểm tra đơn ORD-00023',
-                ],
-            ];
-        }
-
-        if ($this->containsAny($normalized, ['huy', 'cancel', 'tra hang', 'doi tra'])) {
-            return [
-                'message' => 'Nếu khách muốn hủy đơn, bạn có thể mở chi tiết đơn hàng và đổi trạng thái sang cancelled. Trước khi đổi, nên xác nhận lại tình trạng giao hàng để tránh hủy nhầm đơn đã giao.',
-                'suggestions' => [
-                    'Đổi trạng thái đơn hàng như thế nào?',
-                    'Kiểm tra đơn ORD-00023',
-                    'Gửi mail khi hủy đơn có tự động không?',
-                ],
-            ];
-        }
-
-        if ($this->containsAny($normalized, ['thanh toan', 'payment', 'chuyen khoan'])) {
-            return [
-                'message' => 'Hệ thống hiện đã có màn thanh toán online dạng demo cho từng đơn hàng. Bạn có thể mở Order Detail, bấm Open checkout và hoàn tất thanh toán để cập nhật payment status, payment method và transaction code.',
-                'suggestions' => [
-                    'Cách mở checkout cho đơn hàng',
-                    'Kiểm tra đơn ORD-00023',
-                    'Khi đổi trạng thái có gửi mail không?',
-                ],
-            ];
-        }
-
-        if ($this->containsAny($normalized, ['san pham', 'danh muc', 'catalog'])) {
-            $categories = ProductCategory::query()
-                ->where('is_active', true)
-                ->limit(3)
-                ->pluck('name')
-                ->all();
-
-            $categoryList = $categories === []
-                ? 'Hiện tại hệ thống đang có khu quản lý sản phẩm và danh mục riêng.'
-                : 'Một vài danh mục đang hoạt động là: '.implode(', ', $categories).'.';
-
-            return [
-                'message' => $categoryList.' Bạn có thể vào Product Catalog để xem, thêm hoặc chỉnh sửa sản phẩm và danh mục.',
-                'suggestions' => [
-                    'Cách thêm sản phẩm mới',
-                    'Kiểm tra tồn kho sản phẩm',
-                    'Quản lý danh mục ở đâu?',
-                ],
-            ];
-        }
-
-        if ($this->containsAny($normalized, ['email', 'mail', 'gui thu'])) {
-            return [
-                'message' => 'Khi cập nhật trạng thái đơn hàng ở màn Order Detail, hệ thống sẽ gửi mail thông báo cho khách qua mailer hiện tại. Trong môi trường demo này, mail đang được ghi vào log để kiểm tra dễ hơn.',
-                'suggestions' => [
-                    'Khi nào mail được gửi?',
-                    'Kiểm tra đơn ORD-00023',
-                    'Mở quản lý đơn hàng',
-                ],
-            ];
-        }
-
-        return $this->fallback();
+        return $this->mergeWithLocalAnswer($this->fallback(), $normalized);
     }
 
     protected function handleOrderLookup(string $message): ?array
@@ -133,6 +85,177 @@ class CustomerSupportChatbot
         ];
     }
 
+    protected function buildProjectContext(): array
+    {
+        return [
+            'title' => config('app.name'),
+            'modules' => [
+                'auth',
+                'roles',
+                'users',
+                'profile',
+                'products',
+                'categories',
+                'orders',
+                'chatbot',
+                'payment demo',
+                'articles',
+                'tags',
+            ],
+            'routes' => [
+                '/support-chat',
+                '/orders',
+                '/products',
+                '/product-categories',
+                '/users',
+                '/articles',
+                '/settings/profile',
+            ],
+            'key_rules' => [
+                'admin manages users and profile',
+                'editor manages products, categories, and orders',
+                'user can access support chatbot and profile',
+                'order updates send mail and record history',
+                'profile avatar is stored on public disk',
+            ],
+        ];
+    }
+
+    protected function buildBoostContext(): array
+    {
+        return [
+            'package' => 'laravel/boost',
+            'guideline_file' => '.ai/guidelines/project-chatbot.md',
+            'guideline_excerpt' => $this->readContextFile('.ai/guidelines/project-chatbot.md', 2200),
+            'docs_excerpt' => $this->readContextFile('docs/11-FULL-PROJECT-GUIDE.md', 2200),
+            'notes' => [
+                'use Boost guidance as project context',
+                'keep answers consistent with docs/11-FULL-PROJECT-GUIDE.md',
+                'prefer local project knowledge first, Gemini second',
+            ],
+        ];
+    }
+
+    protected function buildHistoryContext(array $history): array
+    {
+        return collect($history)
+            ->take(-8)
+            ->map(function (array $message): array {
+                return [
+                    'role' => $message['role'] ?? 'unknown',
+                    'content' => Str::limit((string) ($message['content'] ?? ''), 240, '...'),
+                ];
+            })
+            ->values()
+            ->all();
+    }
+
+    protected function fallback(): array
+    {
+        return [
+            'message' => 'Mình chưa lấy được câu trả lời từ Gemini lúc này. Bạn có thể thử hỏi lại ngắn gọn hơn hoặc gửi kèm mã đơn như ORD-00023.',
+            'suggestions' => [
+                'Kiểm tra đơn ORD-00023',
+                'Làm sao cập nhật trạng thái đơn hàng?',
+                'Mail thông báo hoạt động thế nào?',
+            ],
+        ];
+    }
+
+    protected function mergeWithLocalAnswer(array $baseResponse, string $message): array
+    {
+        $local = $this->answerFromProjectKnowledge($message);
+
+        if ($local === null) {
+            return $baseResponse;
+        }
+
+        return [
+            'message' => $local['message'] ?? $baseResponse['message'],
+            'suggestions' => $local['suggestions'] ?? ($baseResponse['suggestions'] ?? []),
+        ];
+    }
+
+    protected function answerFromProjectKnowledge(string $message): ?array
+    {
+        $normalized = Str::lower($message);
+
+        if ($this->containsAny($normalized, ['dang nhap', 'login', 'auth', 'role', 'middleware'])) {
+            return [
+                'message' => 'Phần auth của project dùng middleware `auth`, `guest` và middleware role tự viết `EnsureUserHasRole`. Route quan trọng sẽ được chặn theo `admin`, `editor`, `user`, nên đúng role mới vào được màn tương ứng.',
+                'suggestions' => [
+                    'Role admin có gì?',
+                    'Middleware role hoạt động thế nào?',
+                    'Xem luồng đăng nhập',
+                ],
+            ];
+        }
+
+        if ($this->containsAny($normalized, ['profile', 'avatar', 'thong tin ca nhan'])) {
+            return [
+                'message' => 'Profile của project dùng quan hệ `User hasOne Profile`. Avatar được upload lên `storage/app/public/profiles` và hiển thị qua `public/storage`. Sau khi upload, avatar sẽ hiện ở trang profile và dropdown user trên header.',
+                'suggestions' => [
+                    'Avatar lưu ở đâu?',
+                    'Cách update profile',
+                    'User - Profile relation',
+                ],
+            ];
+        }
+
+        if ($this->containsAny($normalized, ['san pham', 'product', 'danh muc', 'category'])) {
+            return [
+                'message' => 'Module sản phẩm và danh mục dùng Eloquent CRUD. `editor` hoặc `admin` được quản lý sản phẩm/danh mục, còn sản phẩm có ảnh upload riêng. Đây là phần dễ đem đi vấn đáp vì có đủ controller, request validation và view.',
+                'suggestions' => [
+                    'Quản lý sản phẩm gồm gì?',
+                    'Danh mục sản phẩm có gì?',
+                    'Upload ảnh sản phẩm thế nào?',
+                ],
+            ];
+        }
+
+        if ($this->containsAny($normalized, ['don hang', 'order', 'trang thai', 'status', 'payment', 'mail'])) {
+            return [
+                'message' => 'Module đơn hàng có danh sách, chi tiết, lọc ngày, lọc trạng thái, xem khách hàng, cập nhật trạng thái và gửi mail khi đổi status. Thanh toán demo cũng có luồng riêng để cập nhật `payment_status`, `payment_method`, `transaction_code` và `paid_at`.',
+                'suggestions' => [
+                    'Xem chi tiết đơn hàng',
+                    'Gửi mail khi đổi status',
+                    'Thanh toán demo hoạt động sao?',
+                ],
+            ];
+        }
+
+        if ($this->containsAny($normalized, ['article', 'tag', 'articles', 'tags'])) {
+            return [
+                'message' => 'Bài articles dùng Eloquent relationship: `Article belongsTo User` và `Article belongsToMany Tag`. Trang `/articles` hiển thị title, user, body, ngày tạo và tags tương ứng.',
+                'suggestions' => [
+                    'Quan hệ Article - Tag',
+                    'Trang articles hiển thị gì?',
+                    'Tại sao dùng Eloquent?',
+                ],
+            ];
+        }
+
+        if ($this->containsAny($normalized, ['chatbot', 'support chat', 'gemini', 'boost'])) {
+            return [
+                'message' => 'Chatbot của project là module hỗ trợ khách hàng trong admin. Bot ưu tiên đọc dữ liệu đơn hàng thật khi có mã đơn, còn các câu hỏi khác sẽ được xử lý bằng Gemini nếu API còn quota; nếu Gemini lỗi, bot vẫn có câu trả lời nội bộ theo context của project.',
+                'suggestions' => [
+                    'Chatbot đọc dữ liệu gì?',
+                    'Gemini dùng khi nào?',
+                    'Boost có vai trò gì?',
+                ],
+            ];
+        }
+
+        return [
+            'message' => 'Mình có thể giải thích theo đúng project Laravel này: auth, role, user, profile, sản phẩm, danh mục, đơn hàng, chatbot, payment demo, articles và tags. Nếu bạn hỏi cụ thể hơn, mình sẽ bám đúng module đó và trả lời chi tiết hơn.',
+            'suggestions' => [
+                'Tóm tắt project',
+                'Giải thích module orders',
+                'Giải thích module profile',
+            ],
+        ];
+    }
+
     protected function containsAny(string $message, array $keywords): bool
     {
         foreach ($keywords as $keyword) {
@@ -144,15 +267,14 @@ class CustomerSupportChatbot
         return false;
     }
 
-    protected function fallback(): array
+    protected function readContextFile(string $relativePath, int $limit): ?string
     {
-        return [
-            'message' => 'Mình có thể hỗ trợ về trạng thái đơn hàng, vận chuyển, hủy đơn, danh mục sản phẩm và mail thông báo. Bạn thử hỏi ngắn gọn hơn hoặc gửi kèm mã đơn như ORD-00023 nhé.',
-            'suggestions' => [
-                'Kiểm tra đơn ORD-00023',
-                'Làm sao cập nhật trạng thái đơn hàng?',
-                'Mail thông báo hoạt động thế nào?',
-            ],
-        ];
+        $path = base_path($relativePath);
+
+        if (! File::exists($path)) {
+            return null;
+        }
+
+        return Str::limit(trim(File::get($path)), $limit, '...');
     }
 }
