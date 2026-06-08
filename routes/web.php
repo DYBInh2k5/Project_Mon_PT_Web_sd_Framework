@@ -2,8 +2,12 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OrderPaymentController;
+use App\Http\Controllers\ShopCartController;
+use App\Http\Controllers\ShopCheckoutController;
+use App\Http\Controllers\ShopController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RoleDemoController;
@@ -12,9 +16,18 @@ use App\Http\Controllers\Settings\ProfileController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+Route::get('/', [ShopController::class, 'index'])->name('home');
+Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
+Route::get('/shop/products/{product}', [ShopController::class, 'show'])->name('shop.products.show');
+Route::get('/cart', [ShopCartController::class, 'index'])->name('shop.cart.index');
+Route::post('/cart/items/{product}', [ShopCartController::class, 'store'])->name('shop.cart.store');
+Route::patch('/cart/items/{product}', [ShopCartController::class, 'update'])->name('shop.cart.update');
+Route::delete('/cart/items/{product}', [ShopCartController::class, 'destroy'])->name('shop.cart.destroy');
+Route::delete('/cart', [ShopCartController::class, 'clear'])->name('shop.cart.clear');
+Route::get('/checkout', [ShopCheckoutController::class, 'create'])->name('shop.checkout.create');
+Route::post('/checkout', [ShopCheckoutController::class, 'store'])->name('shop.checkout.store');
+Route::get('/checkout/momo/return', [ShopCheckoutController::class, 'callback'])->name('shop.checkout.return');
+Route::post('/checkout/momo/ipn', [ShopCheckoutController::class, 'ipn'])->name('shop.checkout.ipn');
 
 Route::get('/check_fail', function () {
     echo 'checkfail page';
@@ -68,9 +81,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('support-chat', [SupportChatController::class, 'index'])
         ->middleware('role:user,editor,admin')
         ->name('support-chat.index');
-    Route::post('support-chat', [SupportChatController::class, 'store'])
+    Route::post('support-chat', ChatController::class)
         ->middleware('role:user,editor,admin')
         ->name('support-chat.store');
+    Route::post('chat/send', ChatController::class)
+        ->middleware('role:user,editor,admin')
+        ->name('chat.send');
     Route::post('support-chat/clear', [SupportChatController::class, 'clear'])
         ->middleware('role:user,editor,admin')
         ->name('support-chat.clear');

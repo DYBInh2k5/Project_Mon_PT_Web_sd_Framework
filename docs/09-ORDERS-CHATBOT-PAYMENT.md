@@ -115,7 +115,47 @@ Luong demo:
 6. sinh `transaction_code`
 7. neu status cu la `pending` thi goi `OrderService` doi sang `processing`
 
-## 5. Seeder lien quan
+## 5. Public shop + cart + MoMo checkout
+
+File:
+
+- [ShopController.php](../app/Http/Controllers/ShopController.php)
+- [ShopCartController.php](../app/Http/Controllers/ShopCartController.php)
+- [ShopCheckoutController.php](../app/Http/Controllers/ShopCheckoutController.php)
+- [ShoppingCartService.php](../app/Services/ShoppingCartService.php)
+- [MomoPaymentService.php](../app/Services/MomoPaymentService.php)
+- [shop/index.blade.php](../resources/views/shop/index.blade.php)
+- [shop/cart.blade.php](../resources/views/shop/cart.blade.php)
+- [shop/checkout.blade.php](../resources/views/shop/checkout.blade.php)
+- [shop/payment-result.blade.php](../resources/views/shop/payment-result.blade.php)
+
+Route:
+
+- `/`
+- `/shop`
+- `/cart`
+- `/checkout`
+- `/checkout/momo/return`
+- `/checkout/momo/ipn`
+
+Chuc nang:
+
+- hien mat tien shop cong khai cho khach xem san pham
+- tim san pham va loc theo danh muc
+- them san pham vao gio hang
+- cap nhat so luong va xoa san pham trong gio
+- tao don hang tu gio hang
+- gui request sang MoMo sandbox de lay `payUrl`
+- nhan ket qua quay ve qua `redirectUrl`
+- nhan thong bao server-to-server qua `ipnUrl`
+- cap nhat `payment_status`, `payment_method`, `transaction_code`, `paid_at` khi giao dich thanh cong
+
+Luu y:
+
+- vi MoMo thanh toan bang VND, shop public hien thi gia theo VND khi checkout
+- neu chua cau hinh du `MOMO_PARTNER_CODE`, `MOMO_ACCESS_KEY`, `MOMO_SECRET_KEY` thi thanh toan se bao loi ro rang
+
+## 6. Seeder lien quan
 
 File:
 
@@ -131,7 +171,7 @@ Vi du ma don co the demo:
 - `ORD-00023`
 - `ORD-00025`
 
-## 6. Cach demo nhanh tren lop
+## 7. Cach demo nhanh tren lop
 
 1. vao `/orders`
 2. loc theo `pending` hoac `processing`
@@ -140,6 +180,6 @@ Vi du ma don co the demo:
 5. bam `Open checkout` de demo payment
 6. vao `/support-chat` va nhap `Kiem tra don ORD-00023`
 
-## 7. Cau tra loi ngan de van dap
+## 8. Cau tra loi ngan de van dap
 
 “Em da bo sung module don hang gom danh sach, chi tiet, loc theo ngay va trang thai. Khi doi trang thai don hang, controller goi `OrderService`, service ghi lich su vao `order_status_histories`, phat event va listener gui mail thong bao cho khach. Em cung tao chatbot ho tro khach hang co the doc ma don that trong SQLite. Ngoai ra em lam man thanh toan online dang demo cho tung don hang, cap nhat `payment_status`, `payment_method`, `transaction_code` va `paid_at`.”

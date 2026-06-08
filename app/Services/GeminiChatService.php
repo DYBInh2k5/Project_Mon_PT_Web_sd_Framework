@@ -13,14 +13,14 @@ class GeminiChatService
      */
     public function answer(string $message, array $context = []): ?array
     {
-        $apiKey = config('services.gemini.key');
+        $apiKey = config('ai.providers.gemini.api_key') ?: config('services.gemini.key');
 
         if (! $apiKey) {
             return null;
         }
 
-        $model = config('services.gemini.model', 'gemini-2.0-flash');
-        $baseUrl = rtrim(config('services.gemini.base_url', 'https://generativelanguage.googleapis.com'), '/');
+        $model = config('ai.model', config('services.gemini.model', 'gemini-2.0-flash'));
+        $baseUrl = rtrim(config('ai.providers.gemini.base_url', config('services.gemini.base_url', 'https://generativelanguage.googleapis.com')), '/');
 
         $payload = [
             'contents' => [

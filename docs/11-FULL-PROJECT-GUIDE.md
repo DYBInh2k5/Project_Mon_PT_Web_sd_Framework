@@ -14,6 +14,8 @@ Project nay tap trung vao cac chuc nang:
 - quan ly danh muc san pham
 - quan ly san pham co hinh anh
 - quan ly don hang
+- mat tien shop cong khai de khach xem san pham
+- gio hang va checkout MoMo sandbox
 - cap nhat trang thai don hang
 - gui mail khi doi trang thai don hang
 - chatbot ho tro khach hang
@@ -183,6 +185,27 @@ File route:
 
 - `/dashboard`
 
+### Public shop
+
+- `/`
+- `/shop`
+- `/shop/products/{product}`
+- `/cart`
+- `/checkout`
+- `/checkout/momo/return`
+- `/checkout/momo/ipn`
+
+Day la mat tien cong khai cua website:
+
+- khach co the xem danh muc
+- tim san pham
+- loc san pham theo danh muc
+- xem chi tiet san pham
+- them san pham vao gio
+- cap nhat so luong / xoa san pham trong gio
+- tao don hang va chuyen sang MoMo sandbox
+- xem gia va trang thai ton kho
+
 ### User management
 
 - `/users`
@@ -233,6 +256,7 @@ Role:
 
 - `/support-chat`
 - `POST /support-chat`
+- `POST /chat/send`
 - `POST /support-chat/clear`
 - bot dung Gemini de tra loi broad question ve project, khong chi keyword
 - neu co ma don, bot se tra cuu order that truoc khi tong hop tra loi

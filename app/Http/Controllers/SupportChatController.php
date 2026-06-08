@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Support\CustomerSupportChatbot;
+use App\Models\AgentConversation;
+use App\Models\AgentConversationMessage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -11,49 +12,41 @@ class SupportChatController extends Controller
 {
     public function index(Request $request): View
     {
+        $conversation = AgentConversation::firstOrCreate([
+            'user_id' => $request->user()->id,
+            'title' => 'New Conversation',
+        ]);
+
+        $messages = $conversation->messages()
+            ->orderBy('created_at')
+            ->get()
+            ->map(function (AgentConversationMessage $message): array {
+                return [
+                    'role' => $message->role,
+                    'content' => $message->content,
+                    'agent' => $message->agent,
+                    'suggestions' => data_get($message->meta, 'suggestions', []),
+                ];
+            })
+            ->values()
+            ->all();
+
         return view('support.chat', [
             'title' => 'Customer Support Chatbot',
-            'messages' => $request->session()->get('support_chat.messages', $this->defaultMessages()),
+            'conversationId' => $conversation->id,
+            'messages' => $messages !== [] ? $messages : $this->defaultMessages(),
             'quickPrompts' => [
-                'Kiểm tra đơn ORD-00023',
-                'Làm sao cập nhật trạng thái đơn hàng?',
-                'Mail thông báo hoạt động thế nào?',
-                'Khách muốn hủy đơn thì xử lý sao?',
+                'Kiem tra don ORD-00023',
+                'Lam sao cap nhat trang thai don hang?',
+                'Mail thong bao hoat dong the nao?',
+                'Khach muon huy don thi xu ly sao?',
             ],
         ]);
     }
 
-    public function store(Request $request, CustomerSupportChatbot $chatbot): RedirectResponse
-    {
-        $validated = $request->validate([
-            'message' => ['required', 'string', 'max:500'],
-        ]);
-
-        $messages = $request->session()->get('support_chat.messages', $this->defaultMessages());
-        $messages[] = [
-            'role' => 'user',
-            'content' => trim($validated['message']),
-        ];
-
-        $response = $chatbot->respond(
-            $validated['message'],
-            $request->session()->get('support_chat.messages', $this->defaultMessages())
-        );
-
-        $messages[] = [
-            'role' => 'bot',
-            'content' => $response['message'],
-            'suggestions' => $response['suggestions'] ?? [],
-        ];
-
-        $request->session()->put('support_chat.messages', array_slice($messages, -14));
-
-        return redirect()->route('support-chat.index');
-    }
-
     public function clear(Request $request): RedirectResponse
     {
-        $request->session()->forget('support_chat.messages');
+        AgentConversation::where('user_id', $request->user()->id)->delete();
 
         return redirect()
             ->route('support-chat.index')
@@ -64,12 +57,12 @@ class SupportChatController extends Controller
     {
         return [
             [
-                'role' => 'bot',
-                'content' => 'Xin chào, mình là chatbot hỗ trợ khách hàng của hệ thống bán hàng. Bạn có thể hỏi về đơn hàng, giao hàng, hủy đơn, danh mục sản phẩm hoặc mail thông báo.',
+                'role' => 'assistant',
+                'content' => 'Xin chào, mình là chatbot hỗ trợ khách hàng của hệ thống bán hàng. Bạn có thể hỏi về đơn hàng, giao hàng, huỷ đơn, danh mục sản phẩm hoặc mail thông báo.',
                 'suggestions' => [
-                    'Kiểm tra đơn ORD-00023',
-                    'Đơn hàng đang xử lý bao lâu?',
-                    'Khi đổi trạng thái có gửi mail không?',
+                    'Kiem tra don ORD-00023',
+                    'Don hang dang xu ly bao lau?',
+                    'Khi doi trang thai co gui mail khong?',
                 ],
             ],
         ];

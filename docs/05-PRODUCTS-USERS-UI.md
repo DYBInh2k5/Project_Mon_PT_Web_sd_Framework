@@ -60,7 +60,35 @@ View:
 - [products/show.blade.php](../resources/views/products/show.blade.php)
 - [products/_form.blade.php](../resources/views/products/_form.blade.php)
 
-## 4. Orders, chatbot, payment
+## 4. Public shop
+
+Layout / view:
+
+- [layouts/shop.blade.php](../resources/views/layouts/shop.blade.php)
+- [shop/index.blade.php](../resources/views/shop/index.blade.php)
+- [shop/cart.blade.php](../resources/views/shop/cart.blade.php)
+- [shop/checkout.blade.php](../resources/views/shop/checkout.blade.php)
+- [shop/payment-result.blade.php](../resources/views/shop/payment-result.blade.php)
+
+Controller:
+
+- [ShopController.php](../app/Http/Controllers/ShopController.php)
+- [ShopCartController.php](../app/Http/Controllers/ShopCartController.php)
+- [ShopCheckoutController.php](../app/Http/Controllers/ShopCheckoutController.php)
+- [shop/show.blade.php](../resources/views/shop/show.blade.php)
+
+Chuc nang:
+
+- mat tien shop cong khai cho khach xem san pham
+- tim kiem san pham
+- loc theo danh muc
+- xem chi tiet san pham
+- them san pham vao gio hang
+- tang/giam/xoa san pham trong gio
+- checkout sang MoMo sandbox
+- hien ket qua thanh toan quay ve trang shop
+
+## 5. Orders, chatbot, payment
 
 View:
 
@@ -81,7 +109,7 @@ Chuc nang:
 - chatbot goi y cau hoi va doc ma don that
 - checkout demo cho online payment
 
-## 5. Blade Component Alert
+## 6. Blade Component Alert
 
 File class:
 
@@ -101,7 +129,7 @@ Dung de hien:
 - thong bao loi
 - danh sach nhieu loi
 
-## 6. Tai sao co `novalidate`
+## 7. Tai sao co `novalidate`
 
 Neu form co `required`, trinh duyet se chan submit truoc khi Laravel xu ly.
 
@@ -118,7 +146,7 @@ De:
 3. tra loi ve view
 4. alert tong hien ra
 
-## 7. Cach test nhanh alert
+## 8. Cach test nhanh alert
 
 Vi du:
 
@@ -127,7 +155,7 @@ Vi du:
 3. bam `Create User`
 4. alert do hien o dau form
 
-## 8. Ghi chu ve contrast UI
+## 9. Ghi chu ve contrast UI
 
 Project da duoc chinh lai contrast o cac component dung chung:
 

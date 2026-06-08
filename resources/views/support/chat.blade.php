@@ -1,129 +1,174 @@
 @extends('layouts.app')
 
 @section('content')
-    <x-common.page-breadcrumb pageTitle="Customer Support Chatbot" />
+    <div
+        x-data="chatApp({
+            initialMessages: @js($messages),
+            sendUrl: '{{ route('chat.send') }}'
+        })"
+        class="flex h-[calc(100vh-120px)] flex-col overflow-hidden"
+    >
+        <div class="rounded-t-xl border border-gray-200 bg-white px-6 py-4 dark:border-gray-800 dark:bg-gray-900">
+            <div class="flex items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-lg font-semibold text-gray-800 dark:text-white">
+                        Sales Coach AI
+                    </h2>
 
-    <div class="space-y-6">
-        @session('success')
-            <x-ui.alert variant="success">
-                {{ $value }}
-            </x-ui.alert>
-        @endsession
+                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                        AI tu van ban hang va ho tro khach hang
+                    </p>
+                </div>
 
-        @if ($errors->any())
-            <x-package-alert
-                type="danger"
-                message="Khong the gui cau hoi cho chatbot."
-                :messages="$errors->all()"
-            />
-        @endif
+                <div class="flex items-center gap-3">
+                    <form method="POST" action="{{ route('support-chat.clear') }}">
+                        @csrf
+                        <button
+                            type="submit"
+                            class="rounded-lg border border-gray-200 px-3 py-2 text-xs font-medium text-gray-600 transition hover:border-brand-300 hover:text-brand-600 dark:border-gray-700 dark:text-gray-300"
+                        >
+                            Clear
+                        </button>
+                    </form>
 
-        <section class="page-toolbar">
-            <div class="space-y-4">
-                <span class="toolbar-chip">Customer assistance</span>
-                <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-                    <div>
-                        <h2 class="text-3xl font-semibold tracking-tight text-gray-900 dark:text-white">A built-in support chatbot for quick customer answers.</h2>
-                        <p class="mt-2 max-w-2xl text-sm leading-7 text-gray-600 dark:text-gray-300">
-                            Bot này hỗ trợ tra cứu trạng thái đơn hàng, giải thích quy trình giao hàng, hủy đơn và mail thông báo ngay trong giao diện quản trị.
-                        </p>
-                    </div>
-                    <div class="flex flex-wrap gap-3">
-                        <a href="{{ route('orders.index') }}" class="action-button">Open Orders</a>
-                        <form method="POST" action="{{ route('support-chat.clear') }}">
-                            @csrf
-                            <button type="submit" class="action-button">Clear chat</button>
-                        </form>
+                    <div class="rounded-full bg-green-100 px-3 py-1 text-xs text-green-700">
+                        Online
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
 
-        <div class="grid grid-cols-1 gap-6 xl:grid-cols-3">
-            <section class="surface-panel p-6 xl:col-span-2" x-data x-init="$nextTick(() => { $refs.chatWindow.scrollTop = $refs.chatWindow.scrollHeight })">
-                <div class="flex items-center justify-between gap-4 border-b border-gray-200 pb-4 dark:border-gray-800">
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Conversation</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">Nhập câu hỏi ngắn gọn hoặc dùng prompt mẫu để bot trả lời nhanh.</p>
-                    </div>
-                    <span class="metric-pill">{{ count($messages) }} messages</span>
+        <div
+            id="messages"
+            x-ref="messages"
+            class="flex-1 space-y-6 overflow-y-auto border-x border-gray-200 bg-gray-50 p-6 dark:border-gray-800 dark:bg-gray-950"
+        >
+            <template x-for="message in allMessages" :key="message.id">
+                <div
+                    class="flex"
+                    :class="message.role === 'user' ? 'justify-end' : 'justify-start'"
+                >
+                    <div
+                        class="max-w-4xl whitespace-pre-wrap rounded-2xl px-5 py-4 text-sm leading-7 shadow-sm"
+                        :class="message.role === 'user'
+                            ? 'bg-brand-500 text-white'
+                            : 'bg-white text-gray-800 dark:bg-gray-800 dark:text-white'"
+                        x-text="message.content"
+                    ></div>
                 </div>
+            </template>
 
-                <div x-ref="chatWindow" class="mt-6 max-h-[620px] space-y-4 overflow-y-auto pr-2">
-                    @foreach ($messages as $message)
-                        <div class="flex {{ $message['role'] === 'user' ? 'justify-end' : 'justify-start' }}">
-                            <div class="{{ $message['role'] === 'user' ? 'max-w-xl rounded-2xl rounded-br-sm bg-brand-600 px-5 py-4 text-white' : 'max-w-2xl rounded-2xl rounded-bl-sm border border-gray-200 bg-gray-50 px-5 py-4 text-gray-800 dark:border-gray-800 dark:bg-white/[0.03] dark:text-gray-100' }}">
-                                <p class="text-sm leading-7">{{ $message['content'] }}</p>
-
-                                @if (! empty($message['suggestions']))
-                                    <div class="mt-4 flex flex-wrap gap-2">
-                                        @foreach ($message['suggestions'] as $suggestion)
-                                            <form method="POST" action="{{ route('support-chat.store') }}">
-                                                @csrf
-                                                <input type="hidden" name="message" value="{{ $suggestion }}">
-                                                <button
-                                                    type="submit"
-                                                    class="{{ $message['role'] === 'user' ? 'rounded-full border border-white/25 px-3 py-1 text-xs font-medium text-white/90 transition hover:bg-white/10' : 'rounded-full border border-gray-200 px-3 py-1 text-xs font-medium text-gray-600 transition hover:border-brand-200 hover:text-brand-600 dark:border-gray-700 dark:text-gray-300 dark:hover:text-brand-400' }}"
-                                                >
-                                                    {{ $suggestion }}
-                                                </button>
-                                            </form>
-                                        @endforeach
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-                    @endforeach
+            <div x-show="loading" class="flex justify-start">
+                <div class="rounded-2xl bg-white px-5 py-4 shadow-sm dark:bg-gray-800">
+                    <div class="flex gap-2">
+                        <span class="h-2 w-2 animate-bounce rounded-full bg-gray-400"></span>
+                        <span class="h-2 w-2 animate-bounce rounded-full bg-gray-400 [animation-delay:150ms]"></span>
+                        <span class="h-2 w-2 animate-bounce rounded-full bg-gray-400 [animation-delay:300ms]"></span>
+                    </div>
                 </div>
+            </div>
+        </div>
 
-                <form method="POST" action="{{ route('support-chat.store') }}" class="mt-6 space-y-4" novalidate>
-                    @csrf
-                    <div>
-                        <label for="message" class="mb-2.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Your question</label>
-                        <textarea
-                            id="message"
-                            name="message"
-                            rows="4"
-                            class="w-full rounded-2xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
-                            placeholder="Ví dụ: Kiểm tra đơn ORD-00023 hoặc Khách muốn hủy đơn thì xử lý sao?"
-                        >{{ old('message') }}</textarea>
-                    </div>
+        <div class="rounded-b-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900">
+            <form @submit.prevent="sendMessage" class="flex gap-3">
+                <textarea
+                    x-model="prompt"
+                    rows="2"
+                    placeholder="Nhap cau hoi..."
+                    class="flex-1 resize-none rounded-xl border border-gray-300 px-4 py-3 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-brand-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                ></textarea>
 
-                    <div class="flex flex-wrap gap-3">
-                        <button type="submit" class="action-button-primary">Send question</button>
-                        <span class="text-sm text-gray-500 dark:text-gray-400">Bot đọc dữ liệu đơn hàng thật khi bạn nhập đúng mã đơn.</span>
-                    </div>
-                </form>
-            </section>
-
-            <aside class="space-y-6">
-                <section class="surface-panel p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Quick prompts</h3>
-                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Dùng các câu hỏi mẫu để demo nhanh trên lớp.</p>
-
-                    <div class="mt-5 space-y-3">
-                        @foreach ($quickPrompts as $prompt)
-                            <form method="POST" action="{{ route('support-chat.store') }}">
-                                @csrf
-                                <input type="hidden" name="message" value="{{ $prompt }}">
-                                <button type="submit" class="w-full rounded-2xl border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700 transition hover:border-brand-200 hover:text-brand-600 dark:border-gray-800 dark:text-gray-300 dark:hover:text-brand-400">
-                                    {{ $prompt }}
-                                </button>
-                            </form>
-                        @endforeach
-                    </div>
-                </section>
-
-                <section class="surface-panel p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">What the chatbot can do</h3>
-                    <ul class="mt-4 space-y-3 text-sm leading-7 text-gray-600 dark:text-gray-300">
-                        <li>Tra cứu trạng thái đơn hàng theo mã thật trong database.</li>
-                        <li>Giải thích quy trình giao hàng, hủy đơn và cập nhật trạng thái.</li>
-                        <li>Hướng dẫn nhân viên mở đúng màn Orders, Products hoặc Categories.</li>
-                        <li>Giải thích việc gửi mail thông báo khi đổi trạng thái đơn hàng.</li>
-                    </ul>
-                </section>
-            </aside>
+                <button
+                    type="submit"
+                    :disabled="loading || !prompt.trim()"
+                    class="rounded-xl bg-brand-500 px-6 py-3 font-medium text-white transition hover:bg-brand-600 disabled:opacity-50"
+                >
+                    Gui
+                </button>
+            </form>
         </div>
     </div>
+
+    <script>
+        function chatApp({ initialMessages, sendUrl }) {
+            const fallbackMessages = [
+                {
+                    id: 1,
+                    role: 'assistant',
+                    content: 'Xin chao, toi la Sales Coach AI. Toi co the giup gi cho ban?'
+                }
+            ];
+
+            return {
+                prompt: '',
+                loading: false,
+                allMessages: (initialMessages && initialMessages.length ? initialMessages : fallbackMessages)
+                    .map((message, index) => ({
+                        id: message.id || index + 1,
+                        role: message.role === 'assistant' ? 'assistant' : message.role,
+                        content: message.content || ''
+                    })),
+
+                async sendMessage() {
+                    if (! this.prompt.trim()) {
+                        return;
+                    }
+
+                    const question = this.prompt;
+
+                    this.allMessages.push({
+                        id: Date.now(),
+                        role: 'user',
+                        content: question
+                    });
+
+                    this.prompt = '';
+                    this.loading = true;
+                    this.scrollBottom();
+
+                    try {
+                        const response = await fetch(sendUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': document
+                                    .querySelector('meta[name="csrf-token"]')
+                                    .content
+                            },
+                            body: JSON.stringify({
+                                message: question
+                            })
+                        });
+
+                        const data = await response.json();
+
+                        this.allMessages.push({
+                            id: Date.now() + 1,
+                            role: 'assistant',
+                            content: data.message || data.error || 'Chatbot chua tra ve noi dung.'
+                        });
+                    } catch (e) {
+                        this.allMessages.push({
+                            id: Date.now() + 2,
+                            role: 'assistant',
+                            content: e.message || 'Da co loi xay ra. Vui long thu lai.'
+                        });
+                    } finally {
+                        this.loading = false;
+
+                        this.$nextTick(() => {
+                            this.scrollBottom();
+                        });
+                    }
+                },
+
+                scrollBottom() {
+                    this.$nextTick(() => {
+                        this.$refs.messages.scrollTop = this.$refs.messages.scrollHeight;
+                    });
+                }
+            };
+        }
+    </script>
 @endsection

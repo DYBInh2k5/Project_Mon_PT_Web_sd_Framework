@@ -10,6 +10,11 @@
 ### Public
 
 - `/`
+- `/shop`
+- `/cart`
+- `/checkout`
+- `/checkout/momo/return`
+- `/checkout/momo/ipn`
 - `/check_fail`
 - `/check_age/{age?}`
 - `/articles`
@@ -51,6 +56,16 @@
 - `/articles/{article}`
 - `/articles/{article}/edit`
 
+### Public shop + cart + checkout
+
+- `/`
+- `/shop`
+- `/shop/products/{product}`
+- `/cart`
+- `/checkout`
+- `/checkout/momo/return`
+- `/checkout/momo/ipn`
+
 ### Orders
 
 - `/orders`
@@ -63,6 +78,7 @@
 
 - `/support-chat`
 - `POST /support-chat`
+- `POST /chat/send`
 - `POST /support-chat/clear`
 
 ### Role demo
@@ -107,6 +123,18 @@ Nghia la:
 - route `articles` dung `ArticleController`
 - `/articles` se chay `ArticleController@index`
 - controller lay article bang Eloquent va tra ve view `article.list`
+
+Vi du mat tien shop:
+
+```php
+Route::get('/', [ShopController::class, 'index'])->name('home');
+Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
+```
+
+Nghia la:
+
+- route `/` va `/shop` cung mo trang shop cong khai
+- nguoi dung co the xem danh muc, tim san pham va loc san pham ma khong can dang nhap
 
 ## 5. Luong xu ly route
 

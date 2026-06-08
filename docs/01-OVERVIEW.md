@@ -10,6 +10,8 @@ Day la project Laravel dung de hoc va demo cac noi dung:
 - quan ly danh muc san pham
 - quan ly san pham
 - quan ly don hang
+- mat tien shop cong khai cho khach xem san pham
+- gio hang va checkout MoMo sandbox
 - chatbot ho tro khach hang
 - thanh toan online dang demo
 - ho so nguoi dung (profile)
@@ -55,6 +57,7 @@ Day la project Laravel dung de hoc va demo cac noi dung:
 - `Order`
 - `OrderItem`
 - `OrderStatusHistory`
+- `ShopController`, `ShopCartController`, `ShopCheckoutController`
 
 ## 5. Chuc nang chinh hien co
 
@@ -70,6 +73,8 @@ Day la project Laravel dung de hoc va demo cac noi dung:
 - payment demo cho tung order
 - profile dung Eloquent qua quan he `User hasOne Profile`
 - admin xem va cap nhat profile cua user trong phan user management
+- trang chu `/` la mat tien shop cong khai, co tim kiem va loc theo danh muc
+- shop public co gio hang, checkout va callback MoMo
 - Alert component
 - migration cho `articles`, `tags`, `article_tag`
 - factory va seeding cho `Article`, `Tag`, `article_tag`
