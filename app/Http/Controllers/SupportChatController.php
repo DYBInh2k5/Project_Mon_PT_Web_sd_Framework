@@ -12,11 +12,13 @@ class SupportChatController extends Controller
 {
     public function index(Request $request): View
     {
+        // Tạo hoặc lấy conversation hiện tại của người dùng để hiển thị lịch sử chat.
         $conversation = AgentConversation::firstOrCreate([
             'user_id' => $request->user()->id,
             'title' => 'New Conversation',
         ]);
 
+        // Chuyển dữ liệu Eloquent sang mảng đơn giản để view render bằng Alpine.
         $messages = $conversation->messages()
             ->orderBy('created_at')
             ->get()
@@ -46,11 +48,12 @@ class SupportChatController extends Controller
 
     public function clear(Request $request): RedirectResponse
     {
+        // Xóa toàn bộ conversation của user hiện tại để bắt đầu một phiên chat mới.
         AgentConversation::where('user_id', $request->user()->id)->delete();
 
         return redirect()
             ->route('support-chat.index')
-            ->with('success', 'Da xoa lich su hoi thoai chatbot.');
+            ->with('success', 'Đã xóa lịch sử hội thoại chatbot.');
     }
 
     protected function defaultMessages(): array

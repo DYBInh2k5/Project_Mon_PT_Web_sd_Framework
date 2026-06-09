@@ -12,6 +12,7 @@ class MomoPaymentService
 {
     public function createPayment(Order $order, array $items, array $customer): array
     {
+        // Lấy cấu hình sandbox từ config/services.php thay vì hard-code trong code.
         $baseUrl = rtrim(config('services.momo.base_url', 'https://test-payment.momo.vn'), '/');
         $partnerCode = config('services.momo.partner_code');
         $accessKey = config('services.momo.access_key');
@@ -33,6 +34,7 @@ class MomoPaymentService
         ], JSON_UNESCAPED_UNICODE));
 
         $payload = [
+            // Đây là payload chuẩn MoMo yêu cầu để tạo payment link.
             'partnerCode' => $partnerCode,
             'requestId' => $requestId,
             'amount' => $amount,
@@ -62,6 +64,7 @@ class MomoPaymentService
         $rawSignature = $this->buildRequestSignature($payload, $accessKey);
         $payload['signature'] = hash_hmac('sha256', $rawSignature, $secretKey);
 
+        // Gửi request sang MoMo sandbox để nhận payUrl.
         $response = Http::timeout(30)
             ->acceptJson()
             ->post("{$baseUrl}/v2/gateway/api/create", $payload);
@@ -81,6 +84,7 @@ class MomoPaymentService
 
     public function verifyNotification(array $payload): bool
     {
+        // Cả returnUrl và IPN đều phải xác thực chữ ký để tránh giả mạo callback.
         $accessKey = config('services.momo.access_key');
         $secretKey = config('services.momo.secret_key');
 

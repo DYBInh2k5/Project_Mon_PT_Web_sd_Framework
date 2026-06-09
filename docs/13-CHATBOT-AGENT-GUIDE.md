@@ -1,20 +1,19 @@
-# Chatbot Agent Guide
+# Hướng dẫn chatbot agent
 
-Tep nay mo ta luong chatbot hien tai sau khi chuyen sang dung package
-`laravel/ai` va mo hinh `conversation + message + agent` theo huong dan bai giang.
+Tài liệu này mô tả luồng chatbot hiện tại sau khi chuyển sang dùng package `laravel/ai` và mô hình `conversation + message + agent` theo hướng dẫn của cô.
 
-## 1. Tong quan
+## 1. Tổng quan
 
-Chatbot khong con luu hoi thoai bang session nua. Thay vao do:
+Chatbot không còn lưu hội thoại bằng session nữa. Thay vào đó:
 
-- `SupportChatController` render trang chat va xoa hoi thoai
-- `ChatController` la controller `__invoke` nhan message va tra JSON
-- `AgentConversation` luu phien hoi thoai
-- `AgentConversationMessage` luu tung cau hoi/cau tra loi
-- `SupportBot` la agent public theo stub cua `php artisan make:agent`
-- `config/ai.php` dung default gateway la Gemini
+- `SupportChatController` render trang chat và xoá hội thoại
+- `ChatController` là controller `__invoke`, nhận message và trả JSON
+- `AgentConversation` lưu phiên hội thoại
+- `AgentConversationMessage` lưu từng câu hỏi/câu trả lời
+- `SupportBot` là agent public theo stub của `php artisan make:agent`
+- `config/ai.php` dùng default gateway là Gemini
 
-## 2. File chinh
+## 2. File chính
 
 - `app/Http/Controllers/SupportChatController.php`
 - `app/Http/Controllers/ChatController.php`
@@ -26,36 +25,36 @@ Chatbot khong con luu hoi thoai bang session nua. Thay vao do:
 - `stubs/agent.stub`
 - `stubs/structured-agent.stub`
 
-## 3. Cau hinh AI
+## 3. Cấu hình AI
 
-File `config/ai.php` gan voi bai giang:
+File `config/ai.php` bám sát bài giảng:
 
 - `AI_GATEWAY=gemini`
 - `AI_MODEL=gemini-1.5-flash`
 - `GEMINI_API_KEY=...`
 
-`SupportBot` se goi AI thong qua package `laravel/ai`.
+`SupportBot` sẽ gọi AI thông qua package `laravel/ai`.
 
-## 4. Luong chay
+## 4. Luồng chạy
 
-1. User mo `/support-chat`
-2. `SupportChatController@index` load conversation cua user
-3. User nhap cau hoi va bam Send
-4. UI goi `POST /chat/send` bang fetch
-5. `ChatController` luu message cua user
-6. `SupportBot` goi Gemini qua `laravel/ai`
-7. Assistant message duoc luu lai vao database
-8. Controller tra JSON cho UI
+1. User mở `/support-chat`
+2. `SupportChatController@index` tải conversation của user
+3. User nhập câu hỏi và bấm Send
+4. UI gọi `POST /chat/send` bằng `fetch`
+5. `ChatController` lưu message của user
+6. `SupportBot` gọi Gemini qua `laravel/ai`
+7. Assistant message được lưu lại vào database
+8. Controller trả JSON cho UI
 
-## 5. Cach doan cho van dap
+## 5. Cách nói khi vấn đáp
 
-Co the noi ngan gon:
+Có thể nói ngắn gọn:
 
-> Em da cai package `laravel/ai`, publish provider, cau hinh `config/ai.php` de default la Gemini, tao `SupportBot` theo mau agent, va dung `ChatController` dang `__invoke` de luu message user/assistant vao database. Cac cot attachments, tool_calls, tool_results, usage va meta da duoc de nullable theo huong dan.
+> Em đã cài package `laravel/ai`, publish provider, cấu hình `config/ai.php` để default là Gemini, tạo `SupportBot` theo mẫu agent, và dùng `ChatController` dạng `__invoke` để lưu message user/assistant vào database. Các cột `attachments`, `tool_calls`, `tool_results`, `usage` và `meta` đã được để `nullable` đúng theo hướng dẫn.
 
-## 6. Ghi nho
+## 6. Ghi nhớ
 
-- Nut chatbot nho co dinh o goc duoi ben phai van duoc giu lai
-- `clear chat` se xoa hoi thoai cua user trong database
-- `make:agent` da co trong Artisan command list
-- view chat gui message toi `POST /chat/send` va nhan JSON tra ve
+- Nút chatbot nhỏ cố định ở góc dưới bên phải vẫn được giữ lại
+- `clear chat` sẽ xoá hội thoại của user trong database
+- `make:agent` đã có trong Artisan command list
+- view chat gửi message tới `POST /chat/send` và nhận JSON trả về

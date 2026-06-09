@@ -14,8 +14,11 @@ class ProductController extends Controller
 {
     public function index(Request $request): View
     {
+        // Query gốc dùng cho các số liệu thống kê ở đầu trang.
         $baseQuery = Product::query();
 
+        // Danh sách sản phẩm public của khu quản trị.
+        // Có search, lọc category và lọc status để tiện cho editor thao tác.
         $products = Product::with('category')
             ->when($request->filled('search'), function ($query) use ($request) {
                 $search = $request->string('search')->toString();
@@ -52,6 +55,7 @@ class ProductController extends Controller
 
     public function create(): View
     {
+        // Form tạo sản phẩm cần danh sách danh mục để gán category.
         return view('products.create', [
             'title' => 'Create Product',
             'categories' => ProductCategory::orderBy('name')->get(),
@@ -60,9 +64,11 @@ class ProductController extends Controller
 
     public function store(ProductRequest $request): RedirectResponse
     {
+        // Dữ liệu đã được validate ở ProductRequest nên controller chỉ cần xử lý lưu.
         $data = $request->validated();
 
         if ($request->hasFile('image')) {
+            // Upload ảnh lên disk public và lưu path vào database.
             $data['image_path'] = $request->file('image')->store('products', 'public');
         }
 
@@ -78,6 +84,7 @@ class ProductController extends Controller
 
     public function edit(Product $product): View
     {
+        // Form sửa cần cả dữ liệu sản phẩm hiện tại lẫn danh mục để chọn lại category.
         return view('products.edit', [
             'title' => 'Edit Product',
             'product' => $product,
@@ -87,6 +94,7 @@ class ProductController extends Controller
 
     public function show(Product $product): View
     {
+        // Load thêm category và creator để trang chi tiết hiển thị đầy đủ thông tin.
         $product->load(['category', 'creator']);
 
         return view('products.show', [
@@ -97,9 +105,11 @@ class ProductController extends Controller
 
     public function update(ProductRequest $request, Product $product): RedirectResponse
     {
+        // Validate xong mới cập nhật, đảm bảo dữ liệu luôn đúng format.
         $data = $request->validated();
 
         if ($request->hasFile('image')) {
+            // Xoá ảnh cũ trước khi lưu ảnh mới để tránh rác trong storage.
             if ($product->image_path) {
                 Storage::disk('public')->delete($product->image_path);
             }
@@ -116,6 +126,7 @@ class ProductController extends Controller
 
     public function destroy(Product $product): RedirectResponse
     {
+        // Xoá ảnh đi kèm nếu có, sau đó xoá luôn bản ghi sản phẩm.
         if ($product->image_path) {
             Storage::disk('public')->delete($product->image_path);
         }

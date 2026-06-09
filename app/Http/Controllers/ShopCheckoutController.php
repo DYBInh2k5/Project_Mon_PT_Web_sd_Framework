@@ -21,10 +21,11 @@ class ShopCheckoutController extends Controller
 {
     public function create(ShoppingCartService $cart): RedirectResponse|View
     {
+        // Chỉ cho phép vào checkout khi giỏ hàng còn dữ liệu hợp lệ.
         $items = $this->resolveItems($cart);
 
         if ($items === []) {
-            return redirect()->route('shop.index')->withErrors(['cart' => 'Gio hang dang trong.']);
+            return redirect()->route('shop.index')->withErrors(['cart' => 'Giỏ hàng đang trống.']);
         }
 
         return view('shop.checkout', [
@@ -36,12 +37,14 @@ class ShopCheckoutController extends Controller
 
     public function store(Request $request, ShoppingCartService $cart, MomoPaymentService $momo, OrderService $orders): RedirectResponse
     {
+        // Lọc lại giỏ hàng ngay trước khi tạo đơn để tránh sản phẩm đã bị ẩn hoặc hết hàng.
         $items = $this->resolveItems($cart);
 
         if ($items === []) {
-            return redirect()->route('shop.index')->withErrors(['cart' => 'Gio hang dang trong.']);
+            return redirect()->route('shop.index')->withErrors(['cart' => 'Giỏ hàng đang trống.']);
         }
 
+        // Validate thông tin khách hàng trước khi sinh đơn và chuyển sang MoMo.
         $validated = $request->validate([
             'customer_name' => ['required', 'string', 'max:255'],
             'customer_email' => ['required', 'email', 'max:255'],
@@ -83,6 +86,7 @@ class ShopCheckoutController extends Controller
         });
 
         try {
+            // Tạo yêu cầu thanh toán MoMo từ dữ liệu đơn hàng vừa lưu.
             $response = $momo->createPayment($order, $items, [
                 'name' => $validated['customer_name'],
                 'email' => $validated['customer_email'],
@@ -95,7 +99,7 @@ class ShopCheckoutController extends Controller
 
             return back()
                 ->withInput()
-                ->withErrors(['payment' => 'Khong tao duoc giao dich MoMo. Hay kiem tra cau hinh sandbox.']);
+                ->withErrors(['payment' => 'Không tạo được giao dịch MoMo. Hãy kiểm tra cấu hình sandbox.']);
         }
 
         session()->put('shop.checkout.pending_order', $order->order_number);
@@ -105,6 +109,7 @@ class ShopCheckoutController extends Controller
 
     public function callback(Request $request, OrderService $orders): View
     {
+        // MoMo trả người dùng về redirect URL sau khi thanh toán xong.
         $payload = $request->all();
         $order = Order::where('order_number', $request->string('orderId')->toString())->first();
 
@@ -112,6 +117,7 @@ class ShopCheckoutController extends Controller
         $isSuccess = $verified && (int) $request->integer('resultCode') === 0 && $order;
 
         if ($isSuccess) {
+            // Nếu thanh toán thành công thì cập nhật trạng thái thanh toán của đơn.
             $order->update([
                 'payment_status' => 'paid',
                 'payment_method' => 'momo_wallet',
@@ -120,6 +126,7 @@ class ShopCheckoutController extends Controller
             ]);
 
             if ($order->status === 'pending') {
+                // Đơn còn pending sẽ được đẩy sang processing sau khi đã trả tiền.
                 $orders->updateStatus(
                     $order->refresh(),
                     'processing',
@@ -142,6 +149,7 @@ class ShopCheckoutController extends Controller
 
     public function ipn(Request $request, OrderService $orders): Response|JsonResponse
     {
+        // IPN là callback server-to-server từ MoMo để xác nhận giao dịch.
         $payload = $request->all();
         $order = Order::where('order_number', $request->string('orderId')->toString())->first();
 
@@ -150,6 +158,7 @@ class ShopCheckoutController extends Controller
         }
 
         if ((int) $request->integer('resultCode') === 0) {
+            // IPN thành công thì cập nhật dữ liệu giống callback redirect.
             $order->update([
                 'payment_status' => 'paid',
                 'payment_method' => 'momo_wallet',
@@ -172,6 +181,7 @@ class ShopCheckoutController extends Controller
 
     private function resolveItems(ShoppingCartService $cart): array
     {
+        // Chỉ giữ các sản phẩm còn active và còn tồn tại trong database.
         $items = [];
         $products = Product::query()
             ->with('category')

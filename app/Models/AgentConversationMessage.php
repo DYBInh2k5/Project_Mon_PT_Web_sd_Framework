@@ -11,8 +11,10 @@ class AgentConversationMessage extends Model
 {
     use HasFactory;
 
+    // Bảng messages lưu từng câu hỏi và từng câu trả lời của chatbot.
     protected $table = 'agent_conversation_messages';
 
+    // Message cũng dùng UUID để dễ truy vết và đồng bộ với conversation.
     public $incrementing = false;
 
     protected $keyType = 'string';
@@ -32,6 +34,7 @@ class AgentConversationMessage extends Model
     ];
 
     protected $casts = [
+        // Các cột này được lưu dạng mảng/JSON để có thể mở rộng khi dùng tool hoặc metadata.
         'attachments' => 'array',
         'tool_calls' => 'array',
         'tool_results' => 'array',
@@ -41,6 +44,7 @@ class AgentConversationMessage extends Model
 
     protected static function booted(): void
     {
+        // Tự sinh UUID khi tạo message mới.
         static::creating(function (self $model): void {
             if (! $model->id) {
                 $model->id = (string) Str::uuid();
@@ -50,11 +54,13 @@ class AgentConversationMessage extends Model
 
     public function conversation(): BelongsTo
     {
+        // Mỗi message thuộc về đúng một conversation.
         return $this->belongsTo(AgentConversation::class, 'conversation_id', 'id');
     }
 
     public function user(): BelongsTo
     {
+        // Ghi lại người đã gửi message.
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 }

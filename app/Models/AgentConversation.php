@@ -12,6 +12,7 @@ class AgentConversation extends Model
 {
     use HasFactory;
 
+    // Conversation dùng UUID để dễ đồng bộ với message và tránh đoán ID.
     public $incrementing = false;
 
     protected $keyType = 'string';
@@ -23,6 +24,7 @@ class AgentConversation extends Model
 
     protected static function booted(): void
     {
+        // Tự sinh UUID khi tạo conversation mới.
         static::creating(function (self $model): void {
             if (! $model->id) {
                 $model->id = (string) Str::uuid();
@@ -32,11 +34,13 @@ class AgentConversation extends Model
 
     public function messages(): HasMany
     {
+        // Một conversation có nhiều tin nhắn qua lại giữa user và assistant.
         return $this->hasMany(AgentConversationMessage::class, 'conversation_id', 'id');
     }
 
     public function user(): BelongsTo
     {
+        // Conversation thuộc về một user đã đăng nhập.
         return $this->belongsTo(User::class);
     }
 }

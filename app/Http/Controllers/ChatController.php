@@ -13,16 +13,19 @@ class ChatController extends Controller
 {
     public function __invoke(Request $request): JsonResponse
     {
+        // Luôn validate message trước khi xử lý để tránh lưu dữ liệu rỗng vào database.
         $request->validate([
             'message' => 'required',
         ]);
 
         try {
+            // Mỗi người dùng có một conversation riêng để lưu toàn bộ lịch sử chat.
             $conversation = AgentConversation::firstOrCreate([
                 'user_id' => auth()->id(),
                 'title' => 'New Conversation',
             ]);
 
+            // Lưu tin nhắn của user trước, sau đó mới gọi agent để sinh phản hồi.
             AgentConversationMessage::create([
                 'conversation_id' => $conversation->id,
                 'role' => 'user',
@@ -34,6 +37,7 @@ class ChatController extends Controller
             $agent = app(SupportBot::class);
             $response = $agent->prompt($request->message);
 
+            // Lưu lại câu trả lời của assistant để có thể xem lại lịch sử hội thoại sau này.
             AgentConversationMessage::create([
                 'conversation_id' => $conversation->id,
                 'role' => 'assistant',
@@ -50,6 +54,7 @@ class ChatController extends Controller
                 'message' => $response->text,
             ]);
         } catch (Throwable $e) {
+            // Trả lỗi dạng JSON để giao diện chat hiển thị được thông báo rõ ràng.
             return response()->json([
                 'error' => $e->getMessage(),
                 'file' => $e->getFile(),

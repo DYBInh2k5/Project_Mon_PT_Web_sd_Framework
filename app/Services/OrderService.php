@@ -14,13 +14,13 @@ class OrderService
     {
         $previousStatus = $order->status;
 
-        // Neu status khong doi thi khong ghi history va khong gui mail.
+        // Nếu trạng thái không đổi thì không ghi lịch sử và không phát event.
         if ($previousStatus === $newStatus) {
             return null;
         }
 
-        // Transaction dam bao update bang orders va ghi history di cung nhau.
-        // Neu mot buoc loi, database se rollback de khong bi lech du lieu.
+        // Transaction đảm bảo cập nhật bảng orders và ghi lịch sử đi cùng nhau.
+        // Nếu một bước lỗi, database sẽ rollback để không bị lệch dữ liệu.
         $history = DB::transaction(function () use ($order, $newStatus, $changedBy, $note, $previousStatus): OrderStatusHistory {
             $order->update([
                 'status' => $newStatus,
@@ -34,8 +34,8 @@ class OrderService
             ]);
         });
 
-        // Sau khi database da cap nhat xong moi phat event.
-        // Listener se nhan event nay de gui mail thong bao cho khach hang.
+        // Sau khi database đã cập nhật xong mới phát event.
+        // Listener sẽ nhận event này để gửi mail thông báo cho khách hàng.
         event(new OrderStatusUpdated($order->refresh(), $previousStatus, $history));
 
         return $history;

@@ -16,7 +16,7 @@ class SupportBot implements Agent, Conversational, HasTools
 
     public function instructions(): Stringable|string
     {
-        return 'Ban la chatbot ho tro khach hang cho he thong quan tri website ban hang Laravel. Tra loi bang tieng Viet, ngan gon, ro rang. Neu nguoi dung hoi ve don hang, san pham, thanh toan, profile, role hoac chatbot thi giai thich bam sat project.';
+        return 'Bạn là chatbot hỗ trợ khách hàng cho hệ thống quản trị website bán hàng Laravel. Trả lời bằng tiếng Việt, ngắn gọn, rõ ràng. Nếu người dùng hỏi về đơn hàng, sản phẩm, thanh toán, profile, role hoặc chatbot thì giải thích bám sát project.';
     }
 
     /**
