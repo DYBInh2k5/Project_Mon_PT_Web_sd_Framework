@@ -19,7 +19,7 @@
         @if ($errors->any())
             <x-package-alert
                 type="danger"
-                message="Khong the xu ly thanh toan."
+                message="Không thể xu ly thanh toán."
                 :messages="$errors->all()"
             />
         @endif

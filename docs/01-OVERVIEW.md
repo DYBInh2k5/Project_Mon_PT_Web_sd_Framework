@@ -2,24 +2,24 @@
 
 ## 1. Muc tieu project
 
-Day la project Laravel dung de hoc va demo cac noi dung:
+Đây là project Laravel dung de hoc va demo cac noi dung:
 
-- dang nhap, dang ky, quen mat khau
+- đăng nhập, đăng ký, quen mật khẩu
 - quan ly user
-- phan quyen theo role
-- quan ly danh muc san pham
-- quan ly san pham
-- quan ly don hang
-- mat tien shop cong khai cho khach xem san pham
-- gio hang va checkout MoMo sandbox
-- chatbot ho tro khach hang
-- thanh toan online dang demo
-- ho so nguoi dung (profile)
+- phan quyền theo role
+- quan ly danh mục sản phẩm
+- quan ly sản phẩm
+- quan ly đơn hàng
+- mặt tiền shop công khai cho khach xem sản phẩm
+- giỏ hàng va checkout VNPay
+- chatbot hỗ trợ khách hàng
+- thanh toán online dang demo
+- ho so người dùng (profile)
 - Blade Component
 - migration va model cho demo quan he nhieu-nhieu
-- trang hien thi danh sach articles va tags tuong ung bang Eloquent
+- trang hiện thi danh sach articles va tags tuong ung bang Eloquent
 
-## 2. Cong nghe dang dung
+## 2. Cong nghe đang dùng
 
 - Laravel 12
 - Blade
@@ -32,21 +32,21 @@ Day la project Laravel dung de hoc va demo cac noi dung:
 - `app/Http/Controllers`
   - xu ly request
 - `app/Models`
-  - model du lieu
+  - model dữ liệu
 - `app/Http/Middleware`
   - middleware nhu kiem tra role, check age
 - `resources/views`
-  - giao dien Blade
+  - giao diện Blade
 - `routes`
   - dinh nghia route
 - `database/migrations`
   - tao bang
 - `database/seeders`
-  - du lieu mau
+  - dữ liệu mau
 - `storage`
   - log, view cache, file tam
 
-## 4. Model hien co
+## 4. Model hiện co
 
 - `User`
 - `Profile`
@@ -59,7 +59,7 @@ Day la project Laravel dung de hoc va demo cac noi dung:
 - `OrderStatusHistory`
 - `ShopController`, `ShopCartController`, `ShopCheckoutController`
 
-## 5. Chuc nang chinh hien co
+## 5. Chuc nang chinh hiện co
 
 - auth day du
 - user management
@@ -67,18 +67,18 @@ Day la project Laravel dung de hoc va demo cac noi dung:
 - product/category CRUD
 - order management
 - update order status bang `OrderService`
-- luu lich su doi trang thai don hang
-- gui mail bang Event/Listener
+- lưu lịch sử đổi trạng thái đơn hàng
+- gửi mail bang Event/Listener
 - customer support chatbot
 - payment demo cho tung order
 - profile dung Eloquent qua quan he `User hasOne Profile`
-- admin xem va cap nhat profile cua user trong phan user management
-- trang chu `/` la mat tien shop cong khai, co tim kiem va loc theo danh muc
-- shop public co gio hang, checkout va callback MoMo
+- admin xem va cập nhật profile cua user trong phan user management
+- trang chu `/` la mặt tiền shop công khai, co tim kiem va loc theo danh mục
+- shop public co giỏ hàng, checkout va VNPay return page
 - Alert component
 - migration cho `articles`, `tags`, `article_tag`
 - factory va seeding cho `Article`, `Tag`, `article_tag`
-- trang `/articles` hien thi danh sach article, user va tag bang Eloquent relationship
+- trang `/articles` hiện thi danh sach article, user va tag bang Eloquent relationship
 
 ## 6. Cac file can nho
 

@@ -25,17 +25,17 @@ View:
 
 Chuc nang:
 
-- xem danh sach don hang
-- loc theo trang thai
+- xem danh sach đơn hàng
+- loc theo trạng thái
 - tim theo ma don, ten khach, email, so dien thoai
 - tim theo ngay `from - to`
 - sap xep moi den cu
-- xem chi tiet don hang
-- xem thong tin khach hang
-- cap nhat trang thai don hang
-- luu lich su doi trang thai don hang
+- xem chi tiết đơn hàng
+- xem thông tin khách hàng
+- cập nhật trạng thái đơn hàng
+- lưu lịch sử đổi trạng thái đơn hàng
 
-## 2. Mail khi doi trang thai
+## 2. Mail khi đổi trạng thái
 
 File:
 
@@ -46,15 +46,15 @@ Luong:
 
 1. nhan vien doi status trong `orders.show`
 2. `OrderController@updateStatus` goi `OrderService`
-3. `OrderService` cap nhat du lieu va ghi `order_status_histories`
+3. `OrderService` cập nhật dữ liệu va ghi `order_status_histories`
 4. `OrderService` phat event `OrderStatusUpdated`
-5. listener `SendOrderStatusUpdatedMail` gui mail thong bao cho `customer_email`
+5. listener `SendOrderStatusUpdatedMail` gửi mail thong bao cho `customer_email`
 
 Luu y:
 
-- trong moi truong hien tai, `MAIL_MAILER=log`
+- trong môi trường hiện tai, `MAIL_MAILER=log`
 - `QUEUE_CONNECTION=sync` nen listener queue chay ngay trong luc demo
-- nghia la mail duoc ghi vao log de demo, khong gui ra hop thu that
+- nghia la mail duoc ghi vao log de demo, không gui ra hop thu that
 
 ## 3. Customer support chatbot
 
@@ -67,20 +67,20 @@ File:
 
 Chuc nang:
 
-- tra loi moi cau hoi bang Gemini API voi context cua project
-- neu cau hoi co ma don thi tra cuu don hang that trong SQLite truoc
+- tra loi moi cau hoi bang Gemini API với context cua project
+- neu cau hoi co ma don thi tra cuu đơn hàng that trong SQLite truoc
 - tra ve cau tra loi duoi dang JSON de UI render on dinh
-- luu lich su chat trong session
+- lưu lịch sử chat trong session
 - doc ma don that nhu `ORD-00023`
 
 Neu gap ma don:
 
 - bot se truy van bang `orders`
-- tra ve trang thai, tong tien, thoi gian dat hang
+- tra ve trạng thái, tong tien, thoi gian dat hang
 
 Ghi chu:
 
-- `laravel/boost` da duoc cai lam dev dependency de ho tro workflow AI cua du an
+- `laravel/boost` da duoc cai lam dev dependency de hỗ trợ workflow AI cua du an
 - chatbot runtime van goi Gemini API bang `GEMINI_API_KEY` trong `.env`
 - prompt duoc bo sung ngung canh tu `.ai/guidelines/project-chatbot.md` va `docs/11-FULL-PROJECT-GUIDE.md`
 - neu Gemini het quota hoac bi loi, chatbot van tra loi bang local knowledge fallback cua project
@@ -107,15 +107,15 @@ Field moi trong `orders`:
 
 Luong demo:
 
-1. mo chi tiet don hang
+1. mở chi tiết đơn hàng
 2. bam `Open checkout`
-3. nhap thong tin thanh toan
+3. nhap thông tin thanh toán
 4. submit
-5. he thong cap nhat `payment_status = paid`
+5. he thong cập nhật `payment_status = paid`
 6. sinh `transaction_code`
 7. neu status cu la `pending` thi goi `OrderService` doi sang `processing`
 
-## 5. Public shop + cart + MoMo checkout
+## 5. Public shop + cart + VNPay checkout
 
 File:
 
@@ -123,7 +123,7 @@ File:
 - [ShopCartController.php](../app/Http/Controllers/ShopCartController.php)
 - [ShopCheckoutController.php](../app/Http/Controllers/ShopCheckoutController.php)
 - [ShoppingCartService.php](../app/Services/ShoppingCartService.php)
-- [MomoPaymentService.php](../app/Services/MomoPaymentService.php)
+- [VnpayPaymentService.php](../app/Services/VnpayPaymentService.php)
 - [shop/index.blade.php](../resources/views/shop/index.blade.php)
 - [shop/cart.blade.php](../resources/views/shop/cart.blade.php)
 - [shop/checkout.blade.php](../resources/views/shop/checkout.blade.php)
@@ -135,25 +135,24 @@ Route:
 - `/shop`
 - `/cart`
 - `/checkout`
-- `/checkout/momo/return`
-- `/checkout/momo/ipn`
+- `/checkout/vnpay/return`
+- `/checkout/vnpay/ipn`
 
 Chuc nang:
 
-- hien mat tien shop cong khai cho khach xem san pham
-- tim san pham va loc theo danh muc
-- them san pham vao gio hang
-- cap nhat so luong va xoa san pham trong gio
-- tao don hang tu gio hang
-- gui request sang MoMo sandbox de lay `payUrl`
-- nhan ket qua quay ve qua `redirectUrl`
-- nhan thong bao server-to-server qua `ipnUrl`
-- cap nhat `payment_status`, `payment_method`, `transaction_code`, `paid_at` khi giao dich thanh cong
+- hiện mặt tiền shop công khai cho khach xem sản phẩm
+- tim sản phẩm va loc theo danh mục
+- them sản phẩm vao giỏ hàng
+- cập nhật so luồng va xoa sản phẩm trong gio
+- tao đơn hàng tu giỏ hàng
+- tao URL thanh toán VNPay theo đơn hàng
+- VNPay hiện thi QR/checkout page cho khach
+- returnUrl va IPN se cập nhật `payment_status`, `payment_method`, `transaction_code`, `paid_at`
 
 Luu y:
 
-- vi MoMo thanh toan bang VND, shop public hien thi gia theo VND khi checkout
-- neu chua cau hinh du `MOMO_PARTNER_CODE`, `MOMO_ACCESS_KEY`, `MOMO_SECRET_KEY` thi thanh toan se bao loi ro rang
+- vi day la luồng VNPay checkout, shop public van hiện thi gia theo VND khi checkout
+- neu chưa cấu hình du `VNPAY_TMN_CODE` va `VNPAY_HASH_SECRET` thi thanh toán se bao loi ro rang
 
 ## 6. Seeder lien quan
 
@@ -171,15 +170,15 @@ Vi du ma don co the demo:
 - `ORD-00023`
 - `ORD-00025`
 
-## 7. Cach demo nhanh tren lop
+## 7. Cach demo nhanh trên lop
 
 1. vao `/orders`
 2. loc theo `pending` hoac `processing`
-3. mo chi tiet 1 don hang
-4. doi status don hang de demo lich su trang thai va gui mail
+3. mở chi tiết 1 đơn hàng
+4. doi status đơn hàng de demo lich su trạng thái va gửi mail
 5. bam `Open checkout` de demo payment
 6. vao `/support-chat` va nhap `Kiem tra don ORD-00023`
 
-## 8. Cau tra loi ngan de van dap
+## 8. Cau tra loi ngan de vấn đáp
 
-“Em da bo sung module don hang gom danh sach, chi tiet, loc theo ngay va trang thai. Khi doi trang thai don hang, controller goi `OrderService`, service ghi lich su vao `order_status_histories`, phat event va listener gui mail thong bao cho khach. Em cung tao chatbot ho tro khach hang co the doc ma don that trong SQLite. Ngoai ra em lam man thanh toan online dang demo cho tung don hang, cap nhat `payment_status`, `payment_method`, `transaction_code` va `paid_at`.”
+“Em da bo sung module đơn hàng gom danh sach, chi tiết, loc theo ngay va trạng thái. Khi đổi trạng thái đơn hàng, controller goi `OrderService`, service ghi lich su vao `order_status_histories`, phat event va listener gửi mail thong bao cho khach. Em cùng tao chatbot hỗ trợ khách hàng co the doc ma don that trong SQLite. Ngoai ra em lam man thanh toán online dang demo cho tung đơn hàng, cập nhật `payment_status`, `payment_method`, `transaction_code` va `paid_at`.”

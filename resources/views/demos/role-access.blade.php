@@ -34,9 +34,9 @@
         </section>
 
         <section class="surface-panel p-6">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Ket qua demo</h3>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Kết quả demo</h3>
             <p class="mt-3 text-sm text-gray-500 dark:text-gray-400">
-                Neu tai khoan khong dung role, middleware se chan va chuyen sang trang loi <code>403</code>.
+                Neu tai khoan không dung role, middleware se chan va chuyen sang trang loi <code>403</code>.
                 Neu vao duoc den day thi co nghia la middleware da hoat dong dung.
             </p>
         </section>

@@ -41,11 +41,15 @@ return [
         'base_url' => env('GEMINI_BASE_URL', 'https://generativelanguage.googleapis.com'),
     ],
 
-    'momo' => [
-        'partner_code' => env('MOMO_PARTNER_CODE'),
-        'access_key' => env('MOMO_ACCESS_KEY'),
-        'secret_key' => env('MOMO_SECRET_KEY'),
-        'base_url' => env('MOMO_BASE_URL', 'https://test-payment.momo.vn'),
+    'vnpay' => [
+        'tmn_code' => env('VNPAY_TMN_CODE'),
+        'hash_secret' => env('VNPAY_HASH_SECRET'),
+        'url' => env('VNPAY_URL', 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html'),
+        'version' => env('VNPAY_VERSION', '2.1.0'),
+        'locale' => env('VNPAY_LOCALE', 'vn'),
+        'order_type' => env('VNPAY_ORDER_TYPE', 'other'),
+        'bank_code' => env('VNPAY_BANK_CODE', 'VNPAYQR'),
+        'expire_minutes' => env('VNPAY_EXPIRE_MINUTES', 15),
     ],
 
 ];

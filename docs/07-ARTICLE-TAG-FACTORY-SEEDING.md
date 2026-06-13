@@ -139,7 +139,7 @@ Sinh:
 Sinh:
 
 - `user_id`
-  - lay ngau nhien 1 `id` tu bang `users`
+  - lay ngau nhiện 1 `id` tu bang `users`
 - `title`
 - `body`
 
@@ -158,7 +158,7 @@ Trong [DatabaseSeeder.php](../database/seeders/DatabaseSeeder.php), project dang
    - `support@example.com`
 2. neu user chua du thi tao them bang `UserFactory`
 3. tao `Profile` cho tung user
-4. tao du lieu cho category va product
+4. tao dữ liệu cho category va product
 5. tao them `Tag`
 6. tao them `Article`
 7. gan nhieu `Tag` cho tung `Article`
@@ -166,22 +166,22 @@ Trong [DatabaseSeeder.php](../database/seeders/DatabaseSeeder.php), project dang
 Doan logic gan tag:
 
 - lay danh sach `tag id`
-- tron ngau nhien
+- tron ngau nhiện
 - cat ra toi da 10 tag
 - gan vao article qua `article_tag`
 
-## 8. So luong du lieu hien tai
+## 8. So luồng dữ liệu hiện tai
 
-Sau khi seed, so luong du lieu da kiem tra:
+Sau khi seed, so luồng dữ liệu da kiem tra:
 
 - `users = 16`
 - `articles = 50`
 - `tags = 20`
 - `article_tag = 500`
 
-## 9. Trang hien thi danh sach Articles
+## 9. Trang hiện thi danh sach Articles
 
-De khop bai tren lop, project co them:
+De khop bai trên lop, project co them:
 
 ```php
 Route::resource('articles', ArticleController::class);
@@ -195,7 +195,7 @@ $articles = Article::with(['user', 'tags'])->get();
 return view('article.list', ['articles' => $articles]);
 ```
 
-View `article.list` hien thi:
+View `article.list` hiện thi:
 
 - title cua article
 - user tao article qua `$article->user->name`
@@ -203,11 +203,11 @@ View `article.list` hien thi:
 - created_at
 - danh sach tag qua `$article->tags`
 
-## 10. Cach giai thich khi van dap
+## 10. Cach giai thich khi vấn đáp
 
 Ban co the noi:
 
-“Em tao `Article` va `Tag` de demo quan he nhieu-nhieu. `Article` thuoc ve `User` va co nhieu `Tag`. `Tag` cung co the thuoc nhieu `Article`, nen em dung `belongsToMany` o ca hai model. Bang trung gian `article_tag` dung de luu cap `article_id` va `tag_id`. Sau do em tao factory de sinh du lieu gia va dung `DatabaseSeeder` de do du lieu vao SQLite. Em tao them `ArticleController@index` dung `Article::with(['user', 'tags'])->get()` va view `article.list` de hien danh sach article kem user va tags bang Eloquent, dong thoi tranh N+1 query.”
+“Em tao `Article` va `Tag` de demo quan he nhieu-nhieu. `Article` thuoc ve `User` va co nhieu `Tag`. `Tag` cùng co the thuoc nhieu `Article`, nen em dung `belongsToMany` o ca hai model. Bang trung gian `article_tag` dung de luu cap `article_id` va `tag_id`. Sau do em tao factory de sinh dữ liệu gia va dung `DatabaseSeeder` de do dữ liệu vao SQLite. Em tao them `ArticleController@index` dung `Article::with(['user', 'tags'])->get()` va view `article.list` de hiện danh sach article kem user va tags bang Eloquent, dong thoi tranh N+1 query.”
 
 ## 11. Lenh hay dung
 

@@ -6,7 +6,7 @@ Controller auth nam trong:
 
 - `app/Http/Controllers/Auth`
 
-Controller dang dung thuc te:
+Controller đang dùng thuc te:
 
 - [LoginController.php](../app/Http/Controllers/Auth/LoginController.php)
 - [RegistrationController.php](../app/Http/Controllers/Auth/RegistrationController.php)
@@ -35,7 +35,7 @@ Middleware:
 
 Nhiem vu:
 
-1. lay user hien tai
+1. lay user hiện tai
 2. doc role can co tu route
 3. neu dung role thi cho qua
 4. neu sai role thi `403`
@@ -64,7 +64,7 @@ Controller chinh:
 - [Settings/ProfileController.php](../app/Http/Controllers/Settings/ProfileController.php)
 - [UserController.php](../app/Http/Controllers/UserController.php)
 
-Controller nay dung Eloquent va quan he `User hasOne Profile` de lay va cap nhat `profiles`.
+Controller nay dung Eloquent va quan he `User hasOne Profile` de lay va cập nhật `profiles`.
 Khi user thay doi email, `email_verified_at` se duoc reset ve `null` de Laravel yeu cau xac minh lai.
 
 Vi du:
@@ -82,17 +82,17 @@ Trong model:
 
 Trong user management:
 
-- admin vao `/users/{user}` de xem thong tin account va profile cua user
-- admin vao `/users/{user}/edit` de cap nhat `name`, `email`, `role`, `is_active`
-- cung form edit nay cap nhat them `full_name`, `address`, `avatar`, `birthday`, `gender`, `phone`
+- admin vao `/users/{user}` de xem thông tin account va profile cua user
+- admin vao `/users/{user}/edit` de cập nhật `name`, `email`, `role`, `is_active`
+- cùng form edit nay cập nhật them `full_name`, `address`, `avatar`, `birthday`, `gender`, `phone`
 
-Avatar sau khi upload se hien o:
+Avatar sau khi upload se hiện o:
 
 - man `Profile Settings`
 - man `User Profile`
-- dropdown user o goc tren ben phai cua header
+- dropdown user o goc trên ben phai cua header
 
-## 7. View auth/profile dang dung
+## 7. View auth/profile đang dùng
 
 - [pages/auth/signin.blade.php](../resources/views/pages/auth/signin.blade.php)
 - [pages/auth/signup.blade.php](../resources/views/pages/auth/signup.blade.php)

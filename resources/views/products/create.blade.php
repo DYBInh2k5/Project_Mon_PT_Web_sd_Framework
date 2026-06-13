@@ -24,7 +24,7 @@
                 <div class="mb-6">
                     <x-package-alert
                         type="danger"
-                        message="Khong the tao san pham. Vui long kiem tra lai du lieu."
+                        message="Không thể tao sản phẩm. Vui long kiem tra lai du lieu."
                         :messages="$errors->all()"
                     />
                 </div>

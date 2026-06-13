@@ -14,7 +14,7 @@ Hệ thống có 2 mặt chính:
    - xem chi tiết sản phẩm
    - thêm vào giỏ hàng
    - checkout
-   - thanh toán MoMo sandbox
+   - thanh toán VNPay checkout
 
 2. **Khu quản trị**
    - admin quản lý user, profile
@@ -86,7 +86,7 @@ Service quan trọng:
 
 - `OrderService`
 - `ShoppingCartService`
-- `MomoPaymentService`
+- `VnpayPaymentService`
 
 Nhiệm vụ:
 
@@ -213,7 +213,7 @@ Tính năng:
 
 ```text
 Route -> ShopCartController -> ShoppingCartService -> Session
-Route -> ShopCheckoutController -> Order/OrderItem -> MomoPaymentService -> MoMo sandbox
+Route -> ShopCheckoutController -> Order/OrderItem -> VnpayPaymentService -> VNPay payment URL
 ```
 
 Tính năng:
@@ -222,7 +222,7 @@ Tính năng:
 - cập nhật số lượng
 - xoá item
 - checkout
-- redirect sang MoMo
+- redirect sang VNPay
 - callback thanh toán
 
 ### 3.7. Chatbot
@@ -286,7 +286,7 @@ Tính năng:
 - `app/Http/Controllers/ShopCartController.php`
 - `app/Http/Controllers/ShopCheckoutController.php`
 - `app/Services/ShoppingCartService.php`
-- `app/Services/MomoPaymentService.php`
+- `app/Services/VnpayPaymentService.php`
 
 ### Chatbot
 
@@ -296,7 +296,7 @@ Tính năng:
 
 ## 5. Cách giải thích project trong 30 giây
 
-> Project của em là hệ thống quản trị website bán hàng bằng Laravel. Em chia thành phần quản trị và phần shop công khai. Khu quản trị có user, profile, category, product, order và chatbot. Phần shop có danh sách sản phẩm, chi tiết sản phẩm, giỏ hàng và checkout MoMo sandbox. Em dùng middleware để phân quyền, Form Request để validate, Eloquent relationship để lấy dữ liệu liên quan, và service/event/listener để tách nghiệp vụ đơn hàng cho dễ bảo trì.
+> Project của em là hệ thống quản trị website bán hàng bằng Laravel. Em chia thành phần quản trị và phần shop công khai. Khu quản trị có user, profile, category, product, order và chatbot. Phần shop có danh sách sản phẩm, chi tiết sản phẩm, giỏ hàng và checkout VNPay. Em dùng middleware để phân quyền, Form Request để validate, Eloquent relationship để lấy dữ liệu liên quan, và service/event/listener để tách nghiệp vụ đơn hàng cho dễ bảo trì.
 
 ## 6. Cách hiểu nhanh code theo kiến trúc
 
@@ -331,4 +331,3 @@ routes/web.php
 - Demo chatbot bằng câu hỏi có mã đơn
 - Demo shop bằng thêm vào giỏ và checkout
 - Demo article bằng quan hệ `Article - User - Tag`
-

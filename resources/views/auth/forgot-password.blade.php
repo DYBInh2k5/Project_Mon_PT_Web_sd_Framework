@@ -10,7 +10,7 @@
         <x-package-alert
             class="mb-4"
             type="danger"
-            message="Khong the gui email dat lai mat khau. Vui long kiem tra lai."
+            message="Không thể gui email dat lai mật khẩu. Vui long kiem tra lai."
             :messages="$errors->all()"
         />
     @endif

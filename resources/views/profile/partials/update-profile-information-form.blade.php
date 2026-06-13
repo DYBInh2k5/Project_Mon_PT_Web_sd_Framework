@@ -20,7 +20,7 @@
         @if ($errors->any())
             <x-package-alert
                 type="danger"
-                message="Khong the cap nhat profile. Vui long kiem tra lai."
+                message="Không thể cập nhật profile. Vui long kiem tra lai."
                 :messages="$errors->all()"
             />
         @endif

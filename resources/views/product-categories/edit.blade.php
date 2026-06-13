@@ -25,7 +25,7 @@
                 <div class="mb-6">
                     <x-package-alert
                         type="danger"
-                        message="Khong the cap nhat danh muc. Vui long kiem tra lai du lieu."
+                        message="Không thể cập nhật danh mục. Vui long kiem tra lai du lieu."
                         :messages="$errors->all()"
                     />
                 </div>

@@ -17,7 +17,7 @@
             <div class="mb-6">
                 <x-package-alert
                     type="danger"
-                    message="Sai Mat khau roi em oi. dung khoc"
+                    message="Sai Mật khẩu roi em oi. dung khoc"
                     :messages="$errors->all()"
                 />
             </div>

@@ -1,6 +1,6 @@
 # Project Docs
 
-Bo tai lieu nay duoc viet de giup doc va hieu toan bo project Laravel hien tai.
+Bo tài liệu nay duoc viet de giup doc va hieu toan bo project Laravel hiện tai.
 
 Thu tu nen doc:
 
@@ -31,6 +31,6 @@ Luong chung:
 
 `Route -> Middleware -> Controller -> Model/Query -> View`
 
-Luong da toi uu cho don hang:
+Luong da toi uu cho đơn hàng:
 
 `Route -> Controller -> OrderService -> Event -> Listener -> Mail`

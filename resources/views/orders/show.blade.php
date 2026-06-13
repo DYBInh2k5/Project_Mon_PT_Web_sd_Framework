@@ -22,7 +22,7 @@
         @if ($errors->any())
             <x-package-alert
                 type="danger"
-                message="Khong the xu ly yeu cau tren don hang."
+                message="Không thể xu ly yeu cau tren đơn hàng."
                 :messages="$errors->all()"
             />
         @endif
@@ -201,7 +201,7 @@
                                 @endif
                             </div>
                         @empty
-                            <p class="text-sm text-gray-500 dark:text-gray-400">Chua co lich su doi trang thai cho don hang nay.</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Chưa có lich su đổi trạng thái cho đơn hàng nay.</p>
                         @endforelse
                     </div>
                 </section>

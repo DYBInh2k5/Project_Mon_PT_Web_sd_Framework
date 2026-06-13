@@ -1,13 +1,13 @@
 <x-guest-layout>
     <div class="mb-4 text-sm text-gray-600">
-        {{ __('This is a secure area of the application. Please confirm your password before continuing.') }}
+        {{ __('Đây là khu vực bảo mật của ứng dụng. Vui lòng xác nhận mật khẩu trước khi tiếp tục.') }}
     </div>
 
     @if ($errors->any())
         <x-package-alert
             class="mb-4"
             type="danger"
-            message="Xac nhan mat khau khong thanh cong. Vui long thu lai."
+            message="Xác nhận mật khẩu không thành công. Vui lòng thử lại."
             :messages="$errors->all()"
         />
     @endif
@@ -17,7 +17,7 @@
 
         <!-- Password -->
         <div>
-            <x-input-label for="password" :value="__('Password')" />
+            <x-input-label for="password" :value="__('Mật khẩu')" />
 
             <x-text-input id="password" class="block mt-1 w-full"
                             type="password"
@@ -29,7 +29,7 @@
 
         <div class="flex justify-end mt-4">
             <x-primary-button>
-                {{ __('Confirm') }}
+                {{ __('Xác nhận') }}
             </x-primary-button>
         </div>
     </form>

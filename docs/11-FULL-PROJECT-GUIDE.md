@@ -6,20 +6,20 @@ Xay dung ung dung phan quan tri cua website ban hang bang Laravel.
 
 Project nay tap trung vao cac chuc nang:
 
-- dang nhap va dang ky
+- đăng nhập va đăng ký
 - middleware auth
-- phan quyen theo role
+- phan quyền theo role
 - quan ly user
-- xem va cap nhat profile user
-- quan ly danh muc san pham
-- quan ly san pham co hinh anh
-- quan ly don hang
-- mat tien shop cong khai de khach xem san pham
-- gio hang va checkout MoMo sandbox
-- cap nhat trang thai don hang
-- gui mail khi doi trang thai don hang
-- chatbot ho tro khach hang
-- thanh toan online dang demo
+- xem va cập nhật profile user
+- quan ly danh mục sản phẩm
+- quan ly sản phẩm co hinh anh
+- quan ly đơn hàng
+- mặt tiền shop công khai de khach xem sản phẩm
+- giỏ hàng va checkout VNPay
+- cập nhật trạng thái đơn hàng
+- gửi mail khi đổi trạng thái đơn hàng
+- chatbot hỗ trợ khách hàng
+- thanh toán online dang demo
 - demo Article - Tag bang Eloquent many-to-many
 - toi uu Laravel bang Service, Event, Listener, Queue, Local Scope
 - cai dat `laravel/boost` de bo tro workflow AI trong project
@@ -33,7 +33,7 @@ Project nay tap trung vao cac chuc nang:
 - Alpine.js
 - SQLite
 - Laravel Mail
-- Laravel Queue voi `QUEUE_CONNECTION=sync`
+- Laravel Queue với `QUEUE_CONNECTION=sync`
 - Eloquent ORM
 - Query Builder
 - Form Request Validation
@@ -41,9 +41,9 @@ Project nay tap trung vao cac chuc nang:
 
 ## 3. Cach chay project
 
-### Buoc 1: Mo terminal tai thu muc project
+### Buoc 1: Mo terminal tai thư mục project
 
-Thu muc hien tai:
+Thu muc hiện tai:
 
 ```powershell
 D:\HSU\2533Semester 3(2025-2026)\Phat trien Web sd Framework\Project
@@ -51,22 +51,22 @@ D:\HSU\2533Semester 3(2025-2026)\Phat trien Web sd Framework\Project
 
 Luu y:
 
-- `DB_DATABASE` dang tro sang ban SQLite trong thu muc temp cua Windows
-- day la cach de tranh loi `disk I/O error` khi update profile/avatar tren may nay
+- `DB_DATABASE` dang tro sang ban SQLite trong thư mục temp cua Windows
+- day la cach de tranh loi `disk I/O error` khi update profile/avatar trên may nay
 
-### Buoc 2: Cai dependency PHP neu may chua co vendor
+### Buoc 2: Cai dependency PHP neu may chưa có vendor
 
 ```powershell
 composer install
 ```
 
-### Buoc 3: Cai dependency frontend neu chua co node_modules
+### Buoc 3: Cai dependency frontend neu chưa có node_modules
 
 ```powershell
 npm install
 ```
 
-### Buoc 4: Tao file `.env` neu chua co
+### Buoc 4: Tao file `.env` neu chưa có
 
 ```powershell
 copy .env.example .env
@@ -84,7 +84,7 @@ php artisan key:generate
 php artisan migrate
 ```
 
-### Buoc 7: Do du lieu mau
+### Buoc 7: Do dữ liệu mau
 
 ```powershell
 php artisan db:seed
@@ -146,7 +146,7 @@ Trong `users` table co cot:
 - `role`
 - `is_active`
 
-Phan quyen dung middleware:
+Phan quyền dung middleware:
 
 ```php
 ->middleware('role:admin')
@@ -160,9 +160,9 @@ File middleware:
 
 Luong middleware:
 
-1. Lay user dang dang nhap
+1. Lay user dang đăng nhập
 2. Lay role route yeu cau
-3. Neu user co role phu hop thi cho vao controller
+3. Neu user co role phù hợp thi cho vao controller
 4. Neu sai role thi `abort(403)`
 
 ## 6. Route quan trong
@@ -192,19 +192,19 @@ File route:
 - `/shop/products/{product}`
 - `/cart`
 - `/checkout`
-- `/checkout/momo/return`
-- `/checkout/momo/ipn`
+- `/checkout/vnpay/return`
+- `/checkout/vnpay/ipn`
 
-Day la mat tien cong khai cua website:
+Đây là mặt tiền công khai cua website:
 
-- khach co the xem danh muc
-- tim san pham
-- loc san pham theo danh muc
-- xem chi tiet san pham
-- them san pham vao gio
-- cap nhat so luong / xoa san pham trong gio
-- tao don hang va chuyen sang MoMo sandbox
-- xem gia va trang thai ton kho
+- khach co the xem danh mục
+- tim sản phẩm
+- loc sản phẩm theo danh mục
+- xem chi tiết sản phẩm
+- them sản phẩm vao gio
+- cập nhật so luồng / xoa sản phẩm trong gio
+- tao đơn hàng va chuyen sang VNPay checkout
+- xem gia va trạng thái ton kho
 
 ### User management
 
@@ -258,7 +258,7 @@ Role:
 - `POST /support-chat`
 - `POST /chat/send`
 - `POST /support-chat/clear`
-- bot dung Gemini de tra loi broad question ve project, khong chi keyword
+- bot dung Gemini de tra loi broad question ve project, không chi keyword
 - neu co ma don, bot se tra cuu order that truoc khi tong hop tra loi
 - prompt co them context tu Boost guideline va guide cua project
 - neu Gemini bi 429/quota, bot co local fallback de van tra loi duoc cac cau hoi co ban va theo module
@@ -277,7 +277,7 @@ Dung de demo:
 - Article co nhieu Tag
 - Tag co nhieu Article
 
-## 7. Cau truc thu muc nen nho
+## 7. Cau truc thư mục nen nho
 
 ```text
 app/
@@ -305,7 +305,7 @@ docs/
 
 ## 8. Database chinh
 
-Database dang dung:
+Database đang dùng:
 
 ```text
 database/database.sqlite
@@ -335,8 +335,8 @@ Profile belongsTo User
 
 Dung cho:
 
-- profile cua user dang dang nhap
-- admin xem/cap nhat profile user trong user management
+- profile cua user dang đăng nhập
+- admin xem/cập nhật profile user trong user management
 
 ### ProductCategory - Product
 
@@ -348,7 +348,7 @@ Product belongsTo ProductCategory
 Dung cho:
 
 - loc product theo category
-- xem chi tiet category kem danh sach product
+- xem chi tiết category kem danh sach product
 
 ### Product - OrderItem
 
@@ -359,7 +359,7 @@ OrderItem belongsTo Product
 
 Dung cho:
 
-- xem san pham trong chi tiet don hang
+- xem sản phẩm trong chi tiết đơn hàng
 
 ### Order - OrderItem
 
@@ -370,8 +370,8 @@ OrderItem belongsTo Order
 
 Dung cho:
 
-- chi tiet don hang
-- tinh so luong item trong don
+- chi tiết đơn hàng
+- tinh so luồng item trong don
 
 ### Order - OrderStatusHistory
 
@@ -382,7 +382,7 @@ OrderStatusHistory belongsTo Order
 
 Dung cho:
 
-- xem lich su doi trang thai don hang
+- xem lich su đổi trạng thái đơn hàng
 
 ### Article - Tag
 
@@ -424,9 +424,9 @@ Chuc nang:
 - loc theo role
 - loc theo status
 - tao user
-- xem chi tiet user
-- xem thong tin profile
-- cap nhat account va profile
+- xem chi tiết user
+- xem thông tin profile
+- cập nhật account va profile
 - neu email thay doi thi `email_verified_at` se reset ve `null`
 - doi `is_active`
 - xoa user
@@ -460,7 +460,7 @@ Chuc nang:
 - tao category
 - sua category
 - xoa category
-- xem chi tiet category
+- xem chi tiết category
 - dem so product trong category bang `withCount`
 
 ## 12. Product
@@ -514,17 +514,17 @@ Views:
 
 Chuc nang:
 
-- xem danh sach don hang
+- xem danh sach đơn hàng
 - tim theo order number, customer name, email, phone
 - loc theo status
 - loc theo date from/date to
 - sap xep moi den cu
-- xem chi tiet don hang
-- xem thong tin khach hang
-- xem san pham trong don
-- cap nhat status
+- xem chi tiết đơn hàng
+- xem thông tin khách hàng
+- xem sản phẩm trong don
+- cập nhật status
 - luu history doi status
-- gui mail khi doi status
+- gửi mail khi doi status
 
 ## 14. Toi uu Order bang Laravel
 
@@ -543,12 +543,12 @@ OrderController
 Y nghia:
 
 - controller gon hon
-- service chua logic nghiep vu
-- event/listener tach gui mail khoi controller
+- service chua logic nghiệp vụ
+- event/listener tach gửi mail khoi controller
 - history giup xem lai qua trinh doi status
 - local scope giup query gon va tai su dung duoc
 
-## 15. Luong cap nhat status don hang
+## 15. Luong cập nhật status đơn hàng
 
 1. Editor/Admin vao `/orders/{order}`
 2. Chon status moi
@@ -558,8 +558,8 @@ Y nghia:
 6. `OrderService` update `orders.status`
 7. `OrderService` tao dong moi trong `order_status_histories`
 8. `OrderService` phat event `OrderStatusUpdated`
-9. Listener `SendOrderStatusUpdatedMail` gui mail
-10. Redirect ve trang chi tiet don hang
+9. Listener `SendOrderStatusUpdatedMail` gửi mail
+10. Redirect ve trang chi tiết đơn hàng
 
 ## 16. Payment demo
 
@@ -577,11 +577,11 @@ View:
 
 Luong:
 
-1. Mo chi tiet don hang
+1. Mở chi tiết đơn hàng
 2. Bam `Open checkout`
-3. Nhap thong tin payment demo
+3. Nhap thông tin payment demo
 4. Submit form
-5. Cap nhat:
+5. Cập nhật:
    - `payment_status = paid`
    - `payment_method`
    - `transaction_code`
@@ -598,7 +598,7 @@ View:
 
 - [status-updated.blade.php](../resources/views/emails/orders/status-updated.blade.php)
 
-Config hien tai:
+Config hiện tai:
 
 ```env
 MAIL_MAILER=log
@@ -607,7 +607,7 @@ QUEUE_CONNECTION=sync
 
 Y nghia:
 
-- mail khong gui ra Gmail that
+- mail không gui ra Gmail that
 - mail ghi vao log de demo
 - listener queue chay ngay vi queue la `sync`
 
@@ -628,9 +628,9 @@ View:
 Chuc nang:
 
 - tra loi theo keyword
-- neu khong co rule phu hop thi goi Gemini API
+- neu không co rule phù hợp thi goi Gemini API
 - tra ve JSON de UI render on dinh
-- luu lich su chat trong session
+- lưu lịch sử chat trong session
 - doc ma don that nhu `ORD-00023`
 - neu gap ma don, bot query bang `orders`
 
@@ -667,7 +667,7 @@ Y nghia:
 - lay danh sach article
 - eager load user va tags
 - tranh N+1 query
-- view hien `$article->user->name`
+- view hiện `$article->user->name`
 - view lap `$article->tags`
 
 ## 20. Form Request Validation
@@ -740,7 +740,7 @@ php artisan cache:clear
 php artisan config:clear
 ```
 
-Tren may nay, Laravel con dung them thu muc `cache/` o root de luu compiled view va package cache tam thoi.
+Tren may nay, Laravel con dung them thư mục `cache/` o root de luu compiled view va package cache tam thoi.
 Thu muc nay la runtime-only va da duoc them vao `.gitignore`.
 
 ### Test
@@ -768,7 +768,7 @@ Nen doc theo thu tu:
 7. migration de biet bang/cot
 8. view blade
 
-Vi du voi order:
+Vi du với order:
 
 ```text
 routes/web.php
@@ -782,20 +782,20 @@ routes/web.php
 -> orders/show.blade.php
 ```
 
-## 24. Demo nhanh tren lop
+## 24. Demo nhanh trên lop
 
 ### Demo role
 
-1. Dang nhap admin
+1. Đăng nhập admin
 2. Vao `/users`
 3. Tao/sua user
 4. Doi status user
-5. Dang nhap editor
+5. Đăng nhập editor
 6. Thu vao `/users` de thay bi chan
 
 ### Demo product/category
 
-1. Dang nhap editor
+1. Đăng nhập editor
 2. Vao `/product-categories`
 3. Tao category
 4. Vao `/products`
@@ -808,7 +808,7 @@ routes/web.php
 2. Tim theo phone/email/order number
 3. Loc theo status
 4. Loc theo date from/date to
-5. Mo chi tiet order
+5. Mở chi tiết order
 6. Doi status
 7. Xem status history
 8. Kiem tra mail log
@@ -826,9 +826,9 @@ routes/web.php
 
 1. Vao `/support-chat`
 2. Nhap `Kiem tra don ORD-00023`
-3. Bot doc du lieu that tu SQLite
+3. Bot doc dữ liệu that tu SQLite
 4. Nhap cau hoi khac nhu `Laravel middleware role nay dung nhu the nao?`
-5. Bot se tra loi bang Gemini dua tren context cua project va Boost
+5. Bot se tra loi bang Gemini dua trên context cua project va Boost
 
 ### Demo articles
 
@@ -836,29 +836,29 @@ routes/web.php
 2. Xem title, user, body, created_at, tags
 3. Giai thich Eloquent relationship
 
-## 25. Cau tra loi van dap ngan
+## 25. Cau tra loi vấn đáp ngan
 
-“Project cua em la phan quan tri website ban hang bang Laravel. Em co auth, middleware role, user management, profile, product/category CRUD, order management, chatbot, mail va payment demo. Em dung Eloquent relationship cho cac model, Form Request de validate, Blade Component de hien alert. Rieng module don hang em toi uu bang `OrderService`, event `OrderStatusUpdated`, listener gui mail va bang `order_status_histories` de luu lich su doi trang thai.”
+“Project cua em la phan quan tri website ban hang bang Laravel. Em co auth, middleware role, user management, profile, product/category CRUD, order management, chatbot, mail va payment demo. Em dung Eloquent relationship cho cac model, Form Request de validate, Blade Component de hiện alert. Rieng module đơn hàng em toi uu bang `OrderService`, event `OrderStatusUpdated`, listener gửi mail va bang `order_status_histories` de lưu lịch sử đổi trạng thái.”
 
 ## 26. Cau tra loi khi bi hoi vi sao tach Service
 
-“Neu de controller vua validate, vua update database, vua gui mail thi controller se bi dai va kho bao tri. Em tach nghiep vu doi trang thai don hang sang `OrderService`, controller chi nhan request va goi service. Cach nay dung voi Laravel hon va de mo rong sau nay.”
+“Neu de controller vua validate, vua update database, vua gửi mail thi controller se bi dai va kho bao tri. Em tach nghiệp vụ đổi trạng thái đơn hàng sang `OrderService`, controller chi nhan request va goi service. Cach nay dung với Laravel hon va de mo rong sau nay.”
 
 ## 27. Cau tra loi khi bi hoi Event/Listener de lam gi
 
-“Event/Listener giup tach viec gui mail khoi logic cap nhat don hang. Khi status thay doi, service phat event `OrderStatusUpdated`. Listener `SendOrderStatusUpdatedMail` nhan event va gui mail. Sau nay neu muon them notification hay log khac, em chi can them listener moi.”
+“Event/Listener giup tach viec gửi mail khoi logic cập nhật đơn hàng. Khi status thay doi, service phat event `OrderStatusUpdated`. Listener `SendOrderStatusUpdatedMail` nhan event va gửi mail. Sau nay neu muon them notification hay log khac, em chi can them listener moi.”
 
 ## 28. Cau tra loi khi bi hoi local scope la gi
 
-“Local scope la ham trong model de tai su dung query. Trong `Order`, em tao `scopeSearch`, `scopeStatus`, `scopePlacedFrom`, `scopePlacedUntil`. Nhờ vậy controller khong can viet nhieu `when`, query gon hon va co the dung lai o noi khac.”
+“Local scope la ham trong model de tai su dung query. Trong `Order`, em tao `scopeSearch`, `scopeStatus`, `scopePlacedFrom`, `scopePlacedUntil`. Nhờ vậy controller không can viet nhieu `when`, query gon hon va co the dung lai o noi khac.”
 
 ## 29. Cau tra loi khi bi hoi eager loading la gi
 
-“Eager loading la lay san du lieu quan he de tranh N+1 query. Vi du trang articles can user va tags, em dung `Article::with(['user', 'tags'])->get()`. Trang order detail can san pham va lich su status, em dung `$order->load(['items.product', 'statusHistories.changer'])`.”
+“Eager loading la lay san dữ liệu quan he de tranh N+1 query. Vi du trang articles can user va tags, em dung `Article::with(['user', 'tags'])->get()`. Trang order detail can sản phẩm va lich su status, em dung `$order->load(['items.product', 'statusHistories.changer'])`.”
 
 ## 30. Loi thuong gap
 
-### Loi mail khong vao Gmail
+### Loi mail không vao Gmail
 
 Do `.env` dang:
 
@@ -891,7 +891,7 @@ php artisan migrate
 
 Neu van loi, backup database truoc khi xoa file journal.
 
-### Loi route khong thay
+### Loi route không thay
 
 Chay:
 
@@ -909,10 +909,10 @@ php artisan view:clear
 
 ## 31. Ghi nho cuoi
 
-Project nen duoc giai thich theo luong:
+Project nen duoc giai thich theo luồng:
 
 ```text
 Route -> Middleware -> Request Validation -> Controller -> Service -> Model -> Event/Listener -> View
 ```
 
-Khong phai module nao cung co service/event. Module don hang co service/event vi no la module quan trong nhat va co nhieu nghiep vu nhat.
+Không phải module nao cùng co service/event. Module đơn hàng co service/event vi no la module quan trong nhat va co nhieu nghiệp vụ nhat.

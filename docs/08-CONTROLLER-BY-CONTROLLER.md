@@ -7,11 +7,11 @@ File nay dung de map tung controller quan trong trong project:
 - controller nam o dau
 - controller xu ly chuc nang gi
 - method nao dung de lam gi
-- method do tra ve view nao hoac xu ly du lieu nao
+- method do tra ve view nao hoac xu ly dữ liệu nao
 
-Neu bi hoi “file nao xu ly chuc nang nay”, ban co the tra loi dua tren file nay.
+Neu bi hoi “file nao xu ly chuc nang nay”, ban co the tra loi dua trên file nay.
 
-## 2. Controller tong quan
+## 2. Controller tổng quan
 
 Thu muc:
 
@@ -28,13 +28,13 @@ File:
 Vai tro:
 
 - xu ly route `/dashboard`
-- tong hop du lieu de dua len dashboard
+- tong hop dữ liệu de dua len dashboard
 
 Thuong dung de:
 
-- dem so luong
-- hien thong ke nhanh
-- hien danh sach gan day
+- dem so luồng
+- hiện thong ke nhanh
+- hiện danh sach gan day
 
 ## 4. UserController
 
@@ -74,8 +74,8 @@ Vai tro:
 
 #### `show(User $user)`
 
-- hien chi tiet 1 user
-- load va hien thong tin profile cua user
+- hiện chi tiết 1 user
+- load va hiện thông tin profile cua user
 - tra ve view:
   - `users.show`
 
@@ -87,19 +87,19 @@ Vai tro:
 
 #### `update(UpdateUserRequest $request, User $user)`
 
-- cap nhat `name`, `email`, `role`, `is_active`
-- cap nhat them `full_name`, `address`, `avatar`, `birthday`, `gender`, `phone` trong `profiles`
+- cập nhật `name`, `email`, `role`, `is_active`
+- cập nhật them `full_name`, `address`, `avatar`, `birthday`, `gender`, `phone` trong `profiles`
 - redirect ve danh sach user
 
 #### `toggleStatus(User $user, Request $request)`
 
 - dao nguoc `is_active`
-- co chan khong cho user tu tat chinh tai khoan dang dang nhap
+- co chan không cho user tu tat chinh tai khoan dang đăng nhập
 
 #### `destroy(User $user, Request $request)`
 
 - xoa user
-- co chan khong cho user tu xoa chinh tai khoan dang dang nhap
+- co chan không cho user tu xoa chinh tai khoan dang đăng nhập
 
 ## 5. ProductController
 
@@ -109,10 +109,10 @@ File:
 
 Vai tro:
 
-- CRUD san pham
+- CRUD sản phẩm
 - upload anh
-- loc san pham
-- xem chi tiet san pham
+- loc sản phẩm
+- xem chi tiết sản phẩm
 
 ### Cac method chinh
 
@@ -128,7 +128,7 @@ Vai tro:
 
 #### `create()`
 
-- mo form tao san pham
+- mo form tao sản phẩm
 - lay danh sach category
 - tra ve view:
   - `products.create`
@@ -142,25 +142,25 @@ Vai tro:
 #### `show(Product $product)`
 
 - load `category`, `creator`
-- hien chi tiet san pham
+- hiện chi tiết sản phẩm
 - tra ve view:
   - `products.show`
 
 #### `edit(Product $product)`
 
-- mo form sua san pham
+- mo form sua sản phẩm
 - lay danh sach category
 - tra ve view:
   - `products.edit`
 
 #### `update(ProductRequest $request, Product $product)`
 
-- cap nhat san pham
+- cập nhật sản phẩm
 - neu upload anh moi thi xoa anh cu
 
 #### `destroy(Product $product)`
 
-- xoa san pham
+- xoa sản phẩm
 - neu co anh thi xoa anh trong storage
 
 ## 6. ProductCategoryController
@@ -171,9 +171,9 @@ File:
 
 Vai tro:
 
-- CRUD danh muc san pham
-- loc danh muc
-- xem chi tiet danh muc
+- CRUD danh mục sản phẩm
+- loc danh mục
+- xem chi tiết danh mục
 
 ### Cac method chinh
 
@@ -187,13 +187,13 @@ Vai tro:
 
 #### `create()`
 
-- mo form tao danh muc
+- mo form tao danh mục
 - tra ve view:
   - `product-categories.create`
 
 #### `store(ProductCategoryRequest $request)`
 
-- tao danh muc moi
+- tao danh mục moi
 - gan `created_by`
 
 #### `show(ProductCategory $productCategory)`
@@ -210,11 +210,11 @@ Vai tro:
 
 #### `update(ProductCategoryRequest $request, ProductCategory $productCategory)`
 
-- cap nhat danh muc
+- cập nhật danh mục
 
 #### `destroy(ProductCategory $productCategory)`
 
-- xoa danh muc
+- xoa danh mục
 
 ## 7. Settings\\ProfileController
 
@@ -224,16 +224,16 @@ File:
 
 Vai tro:
 
-- xu ly profile cua user dang dang nhap
+- xu ly profile cua user dang đăng nhập
 - phan nay dung Eloquent va quan he `User hasOne Profile`
 
 ### Cac method chinh
 
 #### `show(Request $request)`
 
-- lay user hien tai
+- lay user hiện tai
 - dam bao profile ton tai
-- lay du lieu profile bang Eloquent tu model `Profile`
+- lay dữ liệu profile bang Eloquent tu model `Profile`
 - tra ve view:
   - `pages.profile`
 
@@ -245,10 +245,10 @@ Vai tro:
 
 #### `update(Request $request)`
 
-- validate du lieu
+- validate dữ liệu
 - upload avatar neu co
-- cap nhat profile bang Eloquent
-- neu doi `name` hoac `email` thi cap nhat them bang `users` bang Eloquent
+- cập nhật profile bang Eloquent
+- neu doi `name` hoac `email` thi cập nhật them bang `users` bang Eloquent
 
 #### `destroy(Request $request)`
 
@@ -259,7 +259,7 @@ Vai tro:
 #### `ensureProfileExists(...)`
 
 - ham private
-- neu user chua co profile thi tao profile mac dinh bang `firstOrCreate()` qua quan he `profile()`
+- neu user chưa có profile thi tao profile mac dinh bang `firstOrCreate()` qua quan he `profile()`
 
 ## 8. ArticleController
 
@@ -271,7 +271,7 @@ Vai tro:
 
 - xu ly route resource `/articles`
 - demo Eloquent relationship giua `Article`, `User`, `Tag`
-- hien danh sach articles va tags tuong ung
+- hiện danh sach articles va tags tuong ung
 
 ### Cac method chinh
 
@@ -291,7 +291,7 @@ File:
 
 Vai tro:
 
-- xu ly doi mat khau trong khu `settings/password`
+- xu ly doi mật khẩu trong khu `settings/password`
 
 Thuong co:
 
@@ -307,13 +307,13 @@ File:
 Vai tro:
 
 - demo middleware role
-- de giao vien test nhanh quyen truy cap theo vai tro
+- de giao vien test nhanh quyền truy cap theo vai tro
 
 ### Cac method chinh
 
 #### `index(Request $request)`
 
-- hien trang tong hop cac route demo role
+- hiện trang tong hop cac route demo role
 
 #### `admin(Request $request)`
 
@@ -342,9 +342,9 @@ File:
 
 Chuc nang:
 
-- `create()`: mo trang dang nhap `pages.auth.signin`
-- `store()`: xu ly dang nhap
-- `destroy()`: dang xuat
+- `create()`: mo trang đăng nhập `pages.auth.signin`
+- `store()`: xu ly đăng nhập
+- `destroy()`: đăng xuất
 
 ### RegistrationController
 
@@ -354,7 +354,7 @@ File:
 
 Chuc nang:
 
-- mo trang dang ky
+- mo trang đăng ký
 - tao tai khoan moi
 
 ### PasswordResetLinkController
@@ -365,8 +365,8 @@ File:
 
 Chuc nang:
 
-- mo trang quen mat khau
-- gui mail reset password
+- mo trang quen mật khẩu
+- gửi mail reset password
 
 ### NewPasswordController
 
@@ -377,7 +377,7 @@ File:
 Chuc nang:
 
 - mo form reset password
-- cap nhat mat khau moi
+- cập nhật mật khẩu moi
 
 ### ConfirmationController
 
@@ -388,7 +388,7 @@ File:
 Chuc nang:
 
 - mo form confirm password
-- xac nhan lai mat khau de vao khu vuc bao mat
+- xac nhan lai mật khẩu de vao khu vuc bao mat
 
 ### VerificationController
 
@@ -410,10 +410,10 @@ File:
 
 Vai tro:
 
-- quan ly danh sach don hang
-- loc theo ngay, trang thai, tu khoa
-- xem chi tiet don hang
-- doi trang thai don hang thong qua `OrderService`
+- quan ly danh sach đơn hàng
+- loc theo ngay, trạng thái, tu khoa
+- xem chi tiết đơn hàng
+- đổi trạng thái đơn hàng thong qua `OrderService`
 
 ### Cac method chinh
 
@@ -431,8 +431,8 @@ Vai tro:
 
 - load `items.product`
 - load `statusHistories.changer`
-- hien chi tiet don hang
-- hien lich su doi trang thai don hang
+- hiện chi tiết đơn hàng
+- hiện lich su đổi trạng thái đơn hàng
 - tra ve view:
   - `orders.show`
 
@@ -440,9 +440,9 @@ Vai tro:
 
 - validate status
 - goi `OrderService@updateStatus`
-- service cap nhat trang thai, ghi lich su, phat event
-- listener gui mail qua `OrderStatusUpdatedMail`
-- redirect lai trang chi tiet
+- service cập nhật trạng thái, ghi lich su, phat event
+- listener gửi mail qua `OrderStatusUpdatedMail`
+- redirect lai trang chi tiết
 
 ## 13. OrderService, Event, Listener
 
@@ -454,9 +454,9 @@ File:
 
 Vai tro:
 
-- tach logic nghiep vu khoi controller
+- tach logic nghiệp vụ khoi controller
 - ghi lich su status vao `order_status_histories`
-- gui mail bang Event/Listener cua Laravel
+- gửi mail bang Event/Listener cua Laravel
 
 Luong:
 
@@ -477,14 +477,14 @@ Vai tro:
 
 #### `create(Order $order)`
 
-- mo trang payment cho mot don hang
+- mo trang payment cho mot đơn hàng
 - tra ve view:
   - `orders.payment`
 
 #### `store(ProcessOrderPaymentRequest $request, Order $order)`
 
-- validate thong tin thanh toan
-- cap nhat `payment_status`, `payment_method`, `transaction_code`, `paid_at`
+- validate thông tin thanh toán
+- cập nhật `payment_status`, `payment_method`, `transaction_code`, `paid_at`
 - neu don dang `pending` thi goi `OrderService` doi sang `processing`
 
 ## 15. SupportChatController
@@ -495,9 +495,9 @@ File:
 
 Vai tro:
 
-- hien man chatbot
+- hiện man chatbot
 - nhan cau hoi
-- luu lich su chat trong session
+- lưu lịch sử chat trong session
 
 ### Cac method chinh
 
@@ -512,7 +512,7 @@ Vai tro:
 - validate cau hoi
 - them tin nhan user vao session
 - goi `CustomerSupportChatbot` de lay cau tra loi
-- neu khong co rule phu hop, `CustomerSupportChatbot` se goi `GeminiChatService`
+- neu không co rule phù hợp, `CustomerSupportChatbot` se goi `GeminiChatService`
 - them tra loi cua bot vao session
 
 #### `clear(Request $request)`
@@ -521,7 +521,7 @@ Vai tro:
 
 ## 16. Controller nao nen nho ky nhat
 
-Neu van dap, nen nho ky:
+Neu vấn đáp, nen nho ky:
 
 - [UserController.php](../app/Http/Controllers/UserController.php)
 - [ProductController.php](../app/Http/Controllers/ProductController.php)
@@ -535,7 +535,7 @@ Neu van dap, nen nho ky:
 - [RoleDemoController.php](../app/Http/Controllers/RoleDemoController.php)
 - [Auth/LoginController.php](../app/Http/Controllers/Auth/LoginController.php)
 
-## 17. Cach tra loi khi bi hoi “luong chay di dau”
+## 17. Cach tra loi khi bi hoi “luồng chay di dau”
 
 Ban co the noi:
 

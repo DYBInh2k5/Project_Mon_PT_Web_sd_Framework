@@ -3,7 +3,7 @@
         <x-package-alert
             class="mb-4"
             type="danger"
-            message="Khong the dat lai mat khau. Vui long kiem tra lai."
+            message="Không thể dat lai mật khẩu. Vui long kiem tra lai."
             :messages="$errors->all()"
         />
     @endif

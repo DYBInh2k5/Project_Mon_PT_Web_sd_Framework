@@ -16,7 +16,7 @@
         @if ($errors->updatePassword->any())
             <x-package-alert
                 type="danger"
-                message="Khong the cap nhat mat khau. Vui long kiem tra lai."
+                message="Không thể cập nhật mật khẩu. Vui long kiem tra lai."
                 :messages="$errors->updatePassword->all()"
             />
         @endif

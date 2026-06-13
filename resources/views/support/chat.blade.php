@@ -16,7 +16,7 @@
                     </h2>
 
                     <p class="text-sm text-gray-500 dark:text-gray-400">
-                        AI tu van ban hang va ho tro khach hang
+                        AI tu van ban hang va hỗ trợ khách hàng
                     </p>
                 </div>
 

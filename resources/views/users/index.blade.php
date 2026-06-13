@@ -145,8 +145,8 @@
                                     </td>
                                     <td class="px-5 py-4 sm:px-6">
                                         {{-- Badge status duoc dat trong form PATCH.
-                                             Khi bam vao, route users.toggle-status se cap nhat field is_active
-                                             trong bang users de giao dien va database dong bo voi nhau. --}}
+                                             Khi bam vao, route users.toggle-status se cập nhật field is_active
+                                             trong bang users de giao diện va database dong bo voi nhau. --}}
                                         <form action="{{ route('users.toggle-status', $user) }}" method="POST" class="inline-flex">
                                             @csrf
                                             @method('PATCH')

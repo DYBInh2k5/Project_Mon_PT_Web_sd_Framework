@@ -54,7 +54,7 @@
 
     <footer class="border-t border-stone-200 bg-white dark:border-gray-800 dark:bg-gray-950">
         <div class="mx-auto max-w-7xl px-4 py-6 text-sm text-gray-500 sm:px-6 lg:px-8 dark:text-gray-400">
-            MonPT Shop - giao dien cong khai cho khach xem san pham.
+            MonPT Shop - giao diện công khai cho khach xem sản phẩm.
         </div>
     </footer>
 </body>

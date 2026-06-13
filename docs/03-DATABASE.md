@@ -1,18 +1,18 @@
 # 03. Database
 
-## 1. Database dang dung
+## 1. Database đang dùng
 
-Project hien dang dung SQLite:
+Project hiện đang dùng SQLite:
 
 - [database/database.sqlite](../database/database.sqlite)
 
-Luu y tren may nay:
+Luu y trên may nay:
 
-- file SQLite trong thu muc `database/` co the gap `disk I/O error` khi ghi
-- de demo on dinh, `.env` dang tro sang ban SQLite trong thu muc temp cua Windows
-- day la workaround cho moi truong hien tai, khong doi logic nghiep vu
+- file SQLite trong thư mục `database/` co the gap `disk I/O error` khi ghi
+- de demo on dinh, `.env` dang tro sang ban SQLite trong thư mục temp cua Windows
+- day la workaround cho môi trường hiện tai, không doi logic nghiệp vụ
 
-## 2. Cac migration hien co
+## 2. Cac migration hiện co
 
 - `create_users_table`
 - `create_cache_table`
@@ -34,7 +34,7 @@ Luu y tren may nay:
 
 ## 3. Bang users
 
-Thong tin chinh:
+Thông tin chinh:
 
 - `name`
 - `email`
@@ -42,7 +42,7 @@ Thong tin chinh:
 - `role`
 - `is_active`
 
-`role` dung de phan quyen:
+`role` dung de phan quyền:
 
 - `admin`
 - `editor`
@@ -50,9 +50,9 @@ Thong tin chinh:
 
 ## 4. Bang profiles
 
-Quan he 1-1 voi `users`.
+Quan he 1-1 với `users`.
 
-Thong tin:
+Thông tin:
 
 - `user_id`
 - `full_name`
@@ -64,7 +64,7 @@ Thong tin:
 
 ## 5. Bang product_categories
 
-Thong tin chinh:
+Thông tin chinh:
 
 - `name`
 - `slug`
@@ -74,7 +74,7 @@ Thong tin chinh:
 
 ## 6. Bang products
 
-Thong tin chinh:
+Thông tin chinh:
 
 - `product_category_id`
 - `name`
@@ -112,7 +112,7 @@ Thong tin chinh:
 
 ## 8. Bang orders
 
-Thong tin chinh:
+Thông tin chinh:
 
 - `order_number`
 - `customer_name`
@@ -130,7 +130,7 @@ Thong tin chinh:
 
 ## 9. Bang order_items
 
-Thong tin chinh:
+Thông tin chinh:
 
 - `order_id`
 - `product_id`
@@ -141,7 +141,7 @@ Thong tin chinh:
 
 ## 10. Bang order_status_histories
 
-Thong tin chinh:
+Thông tin chinh:
 
 - `order_id`
 - `changed_by`
@@ -152,9 +152,9 @@ Thong tin chinh:
 
 Y nghia:
 
-- luu lich su moi lan doi trang thai don hang
-- biet ai doi trang thai
-- ho tro demo toi uu Laravel bang Service, Event, Listener
+- lưu lịch sử moi lan đổi trạng thái đơn hàng
+- biet ai đổi trạng thái
+- hỗ trợ demo toi uu Laravel bang Service, Event, Listener
 
 ## 11. Index toi uu cho orders
 
@@ -171,9 +171,9 @@ Y nghia:
 - loc theo ngay nhanh hon
 - tim theo phone/email tot hon
 
-## 12. Du lieu gia dang co trong SQLite
+## 12. Du lieu gia đang có trong SQLite
 
-Sau khi seed, du lieu hien tai da co:
+Sau khi seed, dữ liệu hiện tai da co:
 
 - `users = 16`
 - `articles = 50`
@@ -187,10 +187,10 @@ Y nghia:
 - co user de gan cho article
 - co article de demo quan he
 - co tag de demo nhieu-nhieu
-- bang `article_tag` da co du lieu lien ket that
-- co don hang de demo danh sach, chi tiet, doi trang thai
-- co order item de demo san pham trong tung don
-- co field thanh toan de demo online payment
+- bang `article_tag` da co dữ liệu lien ket that
+- co đơn hàng de demo danh sach, chi tiết, đổi trạng thái
+- co order item de demo sản phẩm trong tung don
+- co field thanh toán de demo online payment
 
 ## 13. AppServiceProvider va bug MySQL
 

@@ -11,7 +11,7 @@
                         <svg class="stroke-current" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
                             <path d="M12.7083 5L7.5 10.2083L12.7083 15.4167" stroke="" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
-                        Back to dashboard
+                        Quay lại dashboard
                     </a>
                 </div>
                 <div class="mx-auto flex w-full max-w-md flex-1 flex-col justify-center">
@@ -23,10 +23,10 @@
                                 </svg>
                             </div>
                             <h1 class="text-title-sm sm:text-title-md mb-2 font-semibold text-gray-800 dark:text-white/90">
-                                Confirm Password
+                                Xác nhận mật khẩu
                             </h1>
                             <p class="text-sm text-gray-500 dark:text-gray-400">
-                                This is a secure area of the application. Please confirm your password before continuing.
+                                Đây là khu vực bảo mật của ứng dụng. Vui lòng xác nhận mật khẩu trước khi tiếp tục.
                             </p>
                         </div>
                         <div>
@@ -34,7 +34,7 @@
                                 <div class="mb-5">
                                     <x-package-alert
                                         type="danger"
-                                        message="Xac nhan mat khau khong thanh cong. Vui long thu lai."
+                                        message="Xác nhận mật khẩu không thành công. Vui lòng thử lại."
                                         :messages="$errors->all()"
                                     />
                                 </div>
@@ -46,11 +46,11 @@
                                     <!-- Password -->
                                     <div>
                                         <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-                                            Password<span class="text-error-500">*</span>
+                                            Mật khẩu<span class="text-error-500">*</span>
                                         </label>
                                         <div x-data="{ showPassword: false }" class="relative">
                                             <input :type="showPassword ? 'text' : 'password'" name="password"
-                                                placeholder="Enter your password" autofocus
+                                                placeholder="Nhập mật khẩu của bạn" autofocus
                                                 class="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent py-2.5 pr-11 pl-4 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 @error('password') border-error-500 @enderror" />
                                             <span @click="showPassword = !showPassword"
                                                 class="absolute top-1/2 right-4 z-30 -translate-y-1/2 cursor-pointer text-gray-500 dark:text-gray-400">
@@ -72,7 +72,7 @@
                                     <div>
                                         <button type="submit"
                                             class="bg-brand-500 shadow-theme-xs hover:bg-brand-600 flex w-full items-center justify-center rounded-lg px-4 py-3 text-sm font-medium text-white transition">
-                                            Confirm
+                                            Xác nhận
                                         </button>
                                     </div>
                                 </div>

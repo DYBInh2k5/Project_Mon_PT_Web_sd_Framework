@@ -7,10 +7,10 @@ File nay ghi lai cac phan toi uu Laravel da bat dau ap dung vao project.
 Muc tieu:
 
 - controller gon hon
-- logic nghiep vu tach rieng
+- logic nghiệp vụ tach rieng
 - truy van de bao tri hon
-- co lich su thay doi don hang
-- gui mail theo luong Event/Listener cua Laravel
+- co lich su thay doi đơn hàng
+- gửi mail theo luồng Event/Listener cua Laravel
 
 ## 2. List toi uu da lam
 
@@ -22,8 +22,8 @@ File:
 
 Vai tro:
 
-- xu ly nghiep vu cap nhat trang thai don hang
-- ghi lich su doi trang thai
+- xu ly nghiệp vụ cập nhật trạng thái đơn hàng
+- ghi lich su đổi trạng thái
 - phat event `OrderStatusUpdated`
 
 Luong:
@@ -39,10 +39,10 @@ File:
 
 Vai tro:
 
-- khi trang thai don hang thay doi, Laravel phat event
-- listener nhan event va gui mail thong bao cho khach hang
+- khi trạng thái đơn hàng thay doi, Laravel phat event
+- listener nhan event va gửi mail thong bao cho khách hàng
 - listener implement `ShouldQueue`
-- hien tai `.env` dang `QUEUE_CONNECTION=sync`, nen queue chay ngay de demo duoc tren lop
+- hiện tai `.env` dang `QUEUE_CONNECTION=sync`, nen queue chay ngay de demo duoc trên lop
 
 ### Order status history
 
@@ -62,9 +62,9 @@ Bang `order_status_histories` luu:
 
 Y nghia:
 
-- xem lai lich su doi trang thai
+- xem lai lich su đổi trạng thái
 - biet ai da doi
-- biet doi tu trang thai nao sang trang thai nao
+- biet doi tu trạng thái nao sang trạng thái nao
 
 ### Local scope trong Order model
 
@@ -81,7 +81,7 @@ Da them:
 
 Y nghia:
 
-- controller khong can viet query dai
+- controller không can viet query dai
 - query tim kiem/loc nam trong model
 - de tai su dung neu sau nay co API hoac dashboard
 
@@ -100,9 +100,9 @@ Da index:
 
 Y nghia:
 
-- toi uu loc theo trang thai
+- toi uu loc theo trạng thái
 - toi uu loc theo ngay
-- ho tro tim kiem theo phone/email tot hon
+- hỗ trợ tim kiem theo phone/email tot hon
 
 ### Eager loading
 
@@ -114,7 +114,7 @@ Da ap dung:
 Y nghia:
 
 - tranh loi N+1 query
-- khi view goi quan he thi du lieu da duoc load san
+- khi view goi quan he thi dữ liệu da duoc load san
 
 ### Windows cache workaround
 
@@ -127,23 +127,23 @@ De on dinh project nay, minh da:
 - bind `SafeFilesystem` trong `AppServiceProvider`
 - ghi file cache truc tiep thay vi dua vao `rename()` atomically
 
-Day la workaround cho moi truong Windows cua project, khong phai thay doi nghiep vu.
+Đây là workaround cho môi trường Windows cua project, không phai thay doi nghiệp vụ.
 
-## 3. Luong cap nhat trang thai don hang sau toi uu
+## 3. Luong cập nhật trạng thái đơn hàng sau toi uu
 
-1. Editor/Admin vao chi tiet don hang
+1. Editor/Admin vao chi tiết đơn hàng
 2. Submit form doi status
 3. `OrderController@updateStatus` nhan request
 4. Controller goi `OrderService@updateStatus`
-5. Service cap nhat bang `orders`
+5. Service cập nhật bang `orders`
 6. Service ghi them 1 dong vao `order_status_histories`
 7. Service phat event `OrderStatusUpdated`
-8. Listener `SendOrderStatusUpdatedMail` gui mail cho khach
-9. View `orders.show` hien lich su status
+8. Listener `SendOrderStatusUpdatedMail` gửi mail cho khach
+9. View `orders.show` hiện lich su status
 
-## 4. Cach giai thich khi van dap
+## 4. Cach giai thich khi vấn đáp
 
-“Luc dau em co the cap nhat status va gui mail truc tiep trong controller. Sau do em toi uu theo Laravel bang cach tach logic sang `OrderService`, dung event `OrderStatusUpdated` va listener `SendOrderStatusUpdatedMail` de gui mail. Em cung tao bang `order_status_histories` de luu lich su doi trang thai, va them local scope trong model `Order` de controller gon hon khi tim kiem va loc don hang.”
+“Luc dau em co the cập nhật status va gửi mail truc tiep trong controller. Sau do em toi uu theo Laravel bang cach tach logic sang `OrderService`, dung event `OrderStatusUpdated` va listener `SendOrderStatusUpdatedMail` de gửi mail. Em cùng tao bang `order_status_histories` de lưu lịch sử đổi trạng thái, va them local scope trong model `Order` de controller gon hon khi tim kiem va loc đơn hàng.”
 
 ## 5. Cac toi uu co the lam tiep
 

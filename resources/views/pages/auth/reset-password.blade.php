@@ -11,17 +11,17 @@
                         <svg class="stroke-current" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
                             <path d="M12.7083 5L7.5 10.2083L12.7083 15.4167" stroke="" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
-                        Back to sign in
+                        Quay lại đăng nhập
                     </a>
                 </div>
                 <div class="mx-auto flex w-full max-w-md flex-1 flex-col justify-center">
                     <div>
                         <div class="mb-5 sm:mb-8">
                             <h1 class="text-title-sm sm:text-title-md mb-2 font-semibold text-gray-800 dark:text-white/90">
-                                Reset Password
+                                Đặt lại mật khẩu
                             </h1>
                             <p class="text-sm text-gray-500 dark:text-gray-400">
-                                Enter your new password below.
+                                Nhập mật khẩu mới của bạn bên dưới.
                             </p>
                         </div>
                         <div>
@@ -29,7 +29,7 @@
                                 <div class="mb-5">
                                     <x-package-alert
                                         type="danger"
-                                        message="Khong the dat lai mat khau. Vui long kiem tra lai."
+                                        message="Không thể đặt lại mật khẩu. Vui lòng kiểm tra lại."
                                         :messages="$errors->all()"
                                     />
                                 </div>
@@ -44,7 +44,7 @@
                                         <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
                                             Email<span class="text-error-500">*</span>
                                         </label>
-                                        <input type="email" id="email" name="email" value="{{ old('email', $request->email) }}" placeholder="Enter your email" autofocus
+                                        <input type="email" id="email" name="email" value="{{ old('email', $request->email) }}" placeholder="Nhập email của bạn" autofocus
                                             class="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 @error('email') border-error-500 @enderror" />
                                         @error('email')
                                             <p class="mt-1.5 text-sm text-error-500">{{ $message }}</p>
@@ -53,11 +53,11 @@
                                     <!-- Password -->
                                     <div>
                                         <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-                                            New Password<span class="text-error-500">*</span>
+                                            Mật khẩu mới<span class="text-error-500">*</span>
                                         </label>
                                         <div x-data="{ showPassword: false }" class="relative">
                                             <input :type="showPassword ? 'text' : 'password'" name="password"
-                                                placeholder="Enter your new password"
+                                                placeholder="Nhập mật khẩu mới"
                                                 class="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent py-2.5 pr-11 pl-4 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 @error('password') border-error-500 @enderror" />
                                             <span @click="showPassword = !showPassword"
                                                 class="absolute top-1/2 right-4 z-30 -translate-y-1/2 cursor-pointer text-gray-500 dark:text-gray-400">
@@ -75,14 +75,14 @@
                                             <p class="mt-1.5 text-sm text-error-500">{{ $message }}</p>
                                         @enderror
                                     </div>
-                                    <!-- Confirm Password -->
+                                    <!-- Xác nhận mật khẩu -->
                                     <div>
                                         <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-                                            Confirm Password<span class="text-error-500">*</span>
+                                            Xác nhận mật khẩu<span class="text-error-500">*</span>
                                         </label>
                                         <div x-data="{ showPassword: false }" class="relative">
                                             <input :type="showPassword ? 'text' : 'password'" name="password_confirmation"
-                                                placeholder="Confirm your new password"
+                                                placeholder="Xác nhận mật khẩu mới"
                                                 class="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent py-2.5 pr-11 pl-4 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30" />
                                             <span @click="showPassword = !showPassword"
                                                 class="absolute top-1/2 right-4 z-30 -translate-y-1/2 cursor-pointer text-gray-500 dark:text-gray-400">
@@ -101,7 +101,7 @@
                                     <div>
                                         <button type="submit"
                                             class="bg-brand-500 shadow-theme-xs hover:bg-brand-600 flex w-full items-center justify-center rounded-lg px-4 py-3 text-sm font-medium text-white transition">
-                                            Reset Password
+                                            Đặt lại mật khẩu
                                         </button>
                                     </div>
                                 </div>

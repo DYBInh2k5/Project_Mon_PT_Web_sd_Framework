@@ -16,14 +16,14 @@
         <section class="surface-panel p-6">
             <div class="mb-6">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Create a new user</h3>
-                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Them user moi de demo danh sach, role va phan quyen.</p>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Them user moi de demo danh sach, role va phan quyền.</p>
             </div>
 
             @if ($errors->any())
                 <div class="mb-6">
                     <x-package-alert
                         type="danger"
-                        message="Khong the tao user. Vui long sua cac loi ben duoi."
+                        message="Không thể tao user. Vui long sua cac loi ben duoi."
                         :messages="$errors->all()"
                     />
                 </div>

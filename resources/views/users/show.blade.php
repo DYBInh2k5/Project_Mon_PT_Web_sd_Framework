@@ -1,12 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
-    {{-- Trang nay dung de xem chi tiet 1 user.
+    {{-- Trang nay dung de xem chi tiết 1 user.
          Day la noi de giai thich voi co:
          - role cua user
          - status active / inactive
          - email da verify hay chua
-         - thoi gian tao va cap nhat --}}
+         - thoi gian tao va cập nhật --}}
     <x-common.page-breadcrumb pageTitle="User Detail">
         <x-slot:breadcrumbs>
             <li>
@@ -55,23 +55,23 @@
                 <div class="mt-4 grid gap-4 md:grid-cols-2">
                     <div>
                         <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">Full name</p>
-                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ $user->profile?->full_name ?? 'Chua cap nhat' }}</p>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ $user->profile?->full_name ?? 'Chua cập nhật' }}</p>
                     </div>
                     <div>
                         <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">Phone</p>
-                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ $user->profile?->phone ?? 'Chua cap nhat' }}</p>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ $user->profile?->phone ?? 'Chua cập nhật' }}</p>
                     </div>
                     <div>
                         <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">Birthday</p>
-                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ $user->profile?->birthday ?? 'Chua cap nhat' }}</p>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ $user->profile?->birthday ?? 'Chua cập nhật' }}</p>
                     </div>
                     <div>
                         <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">Gender</p>
-                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ $user->profile?->gender ?? 'Chua cap nhat' }}</p>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ $user->profile?->gender ?? 'Chua cập nhật' }}</p>
                     </div>
                     <div class="md:col-span-2">
                         <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">Address</p>
-                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ $user->profile?->address ?? 'Chua cap nhat' }}</p>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ $user->profile?->address ?? 'Chua cập nhật' }}</p>
                     </div>
                 </div>
             </div>

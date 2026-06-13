@@ -121,13 +121,13 @@ Chức năng:
 
 - File chính:
   - `app/Http/Controllers/ShopCheckoutController.php`
-  - `app/Services/MomoPaymentService.php`
+  - `app/Services/VnpayPaymentService.php`
   - `resources/views/shop/checkout.blade.php`
 
 Chức năng:
 
 - checkout đơn hàng
-- chuyển sang MoMo sandbox
+- chuyển sang cổng VNPay
 - nhận callback `returnUrl`
 - nhận callback `ipnUrl`
 - cập nhật `payment_status`, `payment_method`, `transaction_code`, `paid_at`
@@ -196,7 +196,7 @@ Có thể trả lời theo thứ tự:
 1. Project của em là hệ thống quản trị website bán hàng bằng Laravel.
 2. Em có auth, middleware, role.
 3. Em có quản lý user, profile, category, product, order.
-4. Em có shop công khai, giỏ hàng, checkout, MoMo sandbox.
+4. Em có shop công khai, giỏ hàng, checkout, VNPay.
 5. Em có chatbot hỗ trợ khách hàng bằng `laravel/ai`.
 6. Em tối ưu module đơn hàng bằng service, event, listener và mail.
 7. Em dùng Eloquent relationship, Form Request và Blade Component để code gọn và đúng kiến trúc Laravel.
@@ -236,4 +236,3 @@ Có thể trả lời theo thứ tự:
 - Demo order nên mở chi tiết đơn để xem status history
 - Demo chatbot nên hỏi câu về order thật như `Kiem tra don ORD-00023`
 - Demo article nên chỉ vào quan hệ `Article - User - Tag`
-

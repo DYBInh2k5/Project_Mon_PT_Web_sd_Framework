@@ -23,7 +23,7 @@
                 <x-package-alert
                     class="mb-4"
                     type="danger"
-                    message="Khong the xoa tai khoan. Vui long kiem tra lai."
+                    message="Không thể xoa tai khoan. Vui long kiem tra lai."
                     :messages="$errors->userDeletion->all()"
                 />
             @endif

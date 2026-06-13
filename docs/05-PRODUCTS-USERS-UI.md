@@ -9,10 +9,10 @@ Controller:
 Chuc nang:
 
 - xem danh sach user
-- xem thong tin profile cua user
+- xem thông tin profile cua user
 - tao user
-- xem chi tiet user
-- sua user va cap nhat profile cua user
+- xem chi tiết user
+- sua user va cập nhật profile cua user
 - xoa user
 - doi `is_active`
 - loc theo role va status
@@ -46,11 +46,11 @@ Controller:
 
 Chuc nang:
 
-- CRUD san pham
+- CRUD sản phẩm
 - upload anh
 - loc theo category
 - loc theo status
-- xem chi tiet
+- xem chi tiết
 
 View:
 
@@ -79,14 +79,14 @@ Controller:
 
 Chuc nang:
 
-- mat tien shop cong khai cho khach xem san pham
-- tim kiem san pham
-- loc theo danh muc
-- xem chi tiet san pham
-- them san pham vao gio hang
-- tang/giam/xoa san pham trong gio
-- checkout sang MoMo sandbox
-- hien ket qua thanh toan quay ve trang shop
+- mặt tiền shop công khai cho khach xem sản phẩm
+- tim kiem sản phẩm
+- loc theo danh mục
+- xem chi tiết sản phẩm
+- them sản phẩm vao giỏ hàng
+- tang/giam/xoa sản phẩm trong gio
+- checkout sang cong VNPay
+- hiện kết quả thanh toán quay ve trang shop
 
 ## 5. Orders, chatbot, payment
 
@@ -99,14 +99,14 @@ View:
 
 Chuc nang:
 
-- danh sach don hang
-- loc theo ngay va trang thai
+- danh sach đơn hàng
+- loc theo ngay va trạng thái
 - tim kiem theo ma don, ten khach, email, so dien thoai
-- xem chi tiet don hang va khach hang
-- doi trang thai don hang
-- luu lich su doi trang thai
-- gui mail khi doi trang thai bang Event/Listener
-- chatbot goi y cau hoi va doc ma don that
+- xem chi tiết đơn hàng va khách hàng
+- đổi trạng thái đơn hàng
+- lưu lịch sử đổi trạng thái
+- gửi mail khi đổi trạng thái bang Event/Listener
+- chatbot gợi ý cau hoi va doc ma don that
 - checkout demo cho online payment
 
 ## 6. Blade Component Alert
@@ -123,9 +123,9 @@ Alias:
 
 - `x-package-alert`
 
-Dung de hien:
+Dung de hiện:
 
-- thong bao thanh cong
+- thong bao thành công
 - thong bao loi
 - danh sach nhieu loi
 
@@ -133,7 +133,7 @@ Dung de hien:
 
 Neu form co `required`, trinh duyet se chan submit truoc khi Laravel xu ly.
 
-De hien `x-package-alert` cua project, cac form chinh duoc them:
+De hiện `x-package-alert` cua project, cac form chinh duoc them:
 
 ```html
 novalidate
@@ -144,7 +144,7 @@ De:
 1. form submit len server
 2. Laravel validate
 3. tra loi ve view
-4. alert tong hien ra
+4. alert tong hiện ra
 
 ## 8. Cach test nhanh alert
 
@@ -153,7 +153,7 @@ Vi du:
 1. vao `/users/create`
 2. de trong form
 3. bam `Create User`
-4. alert do hien o dau form
+4. alert do hiện o dau form
 
 ## 9. Ghi chu ve contrast UI
 
@@ -161,4 +161,4 @@ Project da duoc chinh lai contrast o cac component dung chung:
 
 - body co mau chu mac dinh ro hon
 - breadcrumb, settings nav, card description va user dropdown co do tuong phan cao hon
-- muc dich la tranh chu bi chim tren nen sang hoac nen toi
+- muc dich la tranh chu bi chim trên nen sang hoac nen toi

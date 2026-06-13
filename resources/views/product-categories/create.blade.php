@@ -24,7 +24,7 @@
                 <div class="mb-6">
                     <x-package-alert
                         type="danger"
-                        message="Khong the tao danh muc. Vui long kiem tra lai du lieu."
+                        message="Không thể tao danh mục. Vui long kiem tra lai du lieu."
                         :messages="$errors->all()"
                     />
                 </div>

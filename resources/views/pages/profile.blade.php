@@ -13,7 +13,7 @@
         }
     @endphp
 
-    <x-common.component-card title="Test profile" desc="Thong tin profile dang duoc lay bang Eloquent qua quan he User hasOne Profile.">
+    <x-common.component-card title="Test profile" desc="Thông tin profile dang duoc lay bang Eloquent qua quan he User hasOne Profile.">
         <div class="mb-6 flex items-center justify-end">
             <a
                 href="{{ route('settings.profile.edit') }}"
@@ -52,16 +52,16 @@
                 <div>
                     <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">Birthday</p>
                     <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                        {{ $profile->birthday ? \Carbon\Carbon::parse($profile->birthday)->format('F j, Y') : 'Chua cap nhat' }}
+                        {{ $profile->birthday ? \Carbon\Carbon::parse($profile->birthday)->format('F j, Y') : 'Chua cập nhật' }}
                     </p>
                 </div>
                 <div>
                     <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">Gender</p>
-                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ $profile->gender ?: 'Chua cap nhat' }}</p>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ $profile->gender ?: 'Chua cập nhật' }}</p>
                 </div>
                 <div>
                     <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">Phone</p>
-                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ $profile->phone ?: 'Chua cap nhat' }}</p>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ $profile->phone ?: 'Chua cập nhật' }}</p>
                 </div>
             </div>
         </div>

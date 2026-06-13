@@ -26,8 +26,8 @@ Route::delete('/cart/items/{product}', [ShopCartController::class, 'destroy'])->
 Route::delete('/cart', [ShopCartController::class, 'clear'])->name('shop.cart.clear');
 Route::get('/checkout', [ShopCheckoutController::class, 'create'])->name('shop.checkout.create');
 Route::post('/checkout', [ShopCheckoutController::class, 'store'])->name('shop.checkout.store');
-Route::get('/checkout/momo/return', [ShopCheckoutController::class, 'callback'])->name('shop.checkout.return');
-Route::post('/checkout/momo/ipn', [ShopCheckoutController::class, 'ipn'])->name('shop.checkout.ipn');
+Route::get('/checkout/vnpay/return', [ShopCheckoutController::class, 'vnpayReturn'])->name('shop.checkout.return');
+Route::get('/checkout/vnpay/ipn', [ShopCheckoutController::class, 'ipn'])->name('shop.checkout.ipn');
 
 Route::get('/check_fail', function () {
     echo 'checkfail page';

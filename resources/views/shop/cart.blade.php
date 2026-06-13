@@ -4,16 +4,16 @@
     <section class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <div class="flex flex-col gap-3 border-b border-stone-200 pb-5 sm:flex-row sm:items-end sm:justify-between dark:border-gray-800">
             <div>
-                <h1 class="text-3xl font-semibold tracking-tight text-gray-950 dark:text-white">Gio hang</h1>
-                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ $count }} san pham trong gio.</p>
+                <h1 class="text-3xl font-semibold tracking-tight text-gray-950 dark:text-white">Giỏ hàng</h1>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ $count }} sản phẩm trong giỏ.</p>
             </div>
             <div class="flex flex-wrap gap-3">
-                <a href="{{ route('shop.index') }}" class="rounded-2xl border border-stone-200 px-4 py-2 text-sm font-medium text-gray-700 hover:border-brand-300 hover:text-brand-700 dark:border-gray-700 dark:text-gray-200">Tiep tuc mua sam</a>
+                <a href="{{ route('shop.index') }}" class="rounded-2xl border border-stone-200 px-4 py-2 text-sm font-medium text-gray-700 hover:border-brand-300 hover:text-brand-700 dark:border-gray-700 dark:text-gray-200">Tiếp tục mua sắm</a>
                 <form method="POST" action="{{ route('shop.cart.clear') }}">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="rounded-2xl border border-red-200 px-4 py-2 text-sm font-medium text-red-700 hover:border-red-300 hover:bg-red-50 dark:border-red-900/40 dark:text-red-300 dark:hover:bg-red-950/20">
-                        Xoa gio hang
+                        Xóa giỏ hàng
                     </button>
                 </form>
             </div>
@@ -21,7 +21,7 @@
 
         @if ($items === [])
             <div class="mt-8 rounded-3xl border border-dashed border-stone-300 bg-white p-10 text-center text-sm text-gray-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400">
-                Gio hang dang trong.
+                Giỏ hàng đang trống.
             </div>
         @else
             <div class="mt-8 grid gap-6 lg:grid-cols-[1.3fr_0.7fr]">
@@ -54,7 +54,7 @@
                                             @method('PATCH')
                                             <input type="number" min="0" max="{{ $item['product']->stock }}" name="quantity" value="{{ $item['quantity'] }}" class="w-24 rounded-xl border border-stone-300 bg-white px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-950">
                                             <button type="submit" class="rounded-xl border border-stone-200 px-3 py-2 text-sm font-medium text-gray-700 hover:border-brand-300 hover:text-brand-700 dark:border-gray-700 dark:text-gray-200">
-                                                Cap nhat
+                                                Cập nhật
                                             </button>
                                         </form>
 
@@ -78,27 +78,27 @@
 
                 <aside class="space-y-6">
                     <div class="rounded-3xl border border-stone-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-                        <h3 class="text-lg font-semibold text-gray-950 dark:text-white">Tong don hang</h3>
+                        <h3 class="text-lg font-semibold text-gray-950 dark:text-white">Tổng đơn hàng</h3>
                         <div class="mt-4 space-y-3 text-sm text-gray-600 dark:text-gray-300">
                             <div class="flex items-center justify-between">
-                                <span>Tong san pham</span>
+                                <span>Tổng sản phẩm</span>
                                 <span>{{ $count }}</span>
                             </div>
                             <div class="flex items-center justify-between">
-                                <span>Tam tinh</span>
+                                <span>Tạm tính</span>
                                 <span>{{ number_format((float) $subtotal, 0) }} VND</span>
                             </div>
                         </div>
 
                         <a href="{{ route('shop.checkout.create') }}" class="mt-6 inline-flex w-full items-center justify-center rounded-2xl bg-brand-600 px-4 py-3 text-sm font-semibold text-white hover:bg-brand-700">
-                            Tien hanh thanh toan MoMo
+                            Tiến hành thanh toán VNPay
                         </a>
                     </div>
 
                     <div class="rounded-3xl border border-stone-200 bg-stone-50 p-6 dark:border-gray-800 dark:bg-gray-950">
-                        <h4 class="text-sm font-semibold text-gray-900 dark:text-white">Luu y</h4>
+                        <h4 class="text-sm font-semibold text-gray-900 dark:text-white">Lưu ý</h4>
                         <p class="mt-2 text-sm leading-6 text-gray-600 dark:text-gray-300">
-                            Luong nay la gio hang thuc te cua shop cong khai. Khi bam thanh toan, he thong se tao don hang va chuyen sang MoMo sandbox neu cau hinh du thong tin.
+                            Luồng này là giỏ hàng thực tế của shop công khai. Khi bấm thanh toán, hệ thống sẽ tạo đơn hàng và chuyển sang cổng VNPay nếu cấu hình đủ thông tin trong `.env`.
                         </p>
                     </div>
                 </aside>

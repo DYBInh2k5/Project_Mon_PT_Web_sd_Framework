@@ -17,18 +17,18 @@
 
             <div class="space-y-6">
                 <div>
-                    <a href="{{ route('shop.index') }}" class="text-sm font-medium text-brand-700 hover:text-brand-800 dark:text-brand-400 dark:hover:text-brand-300">Quay lai shop</a>
+                    <a href="{{ route('shop.index') }}" class="text-sm font-medium text-brand-700 hover:text-brand-800 dark:text-brand-400 dark:hover:text-brand-300">Quay lại shop</a>
                     <h1 class="mt-3 text-4xl font-semibold tracking-tight text-gray-950 dark:text-white">{{ $product->name }}</h1>
-                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">{{ $product->category?->name ?? 'Khong co danh muc' }}</p>
+                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">{{ $product->category?->name ?? 'Không có danh mục' }}</p>
                 </div>
 
                 <div class="grid gap-3 sm:grid-cols-3">
                     <div class="rounded-2xl border border-stone-200 bg-white px-4 py-3 dark:border-gray-800 dark:bg-gray-900">
-                        <div class="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Gia</div>
+                        <div class="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Giá</div>
                         <div class="mt-1 text-lg font-semibold text-gray-950 dark:text-white">{{ number_format((float) $product->price, 0) }} VND</div>
                     </div>
                     <div class="rounded-2xl border border-stone-200 bg-white px-4 py-3 dark:border-gray-800 dark:bg-gray-900">
-                        <div class="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Ton kho</div>
+                        <div class="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Tồn kho</div>
                         <div class="mt-1 text-lg font-semibold text-gray-950 dark:text-white">{{ $product->stock }}</div>
                     </div>
                     <div class="rounded-2xl border border-stone-200 bg-white px-4 py-3 dark:border-gray-800 dark:bg-gray-900">
@@ -38,9 +38,9 @@
                 </div>
 
                 <div class="rounded-3xl border border-stone-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-                    <h2 class="text-lg font-semibold text-gray-950 dark:text-white">Mo ta san pham</h2>
+                    <h2 class="text-lg font-semibold text-gray-950 dark:text-white">Mô tả sản phẩm</h2>
                     <p class="mt-3 text-sm leading-7 text-gray-600 dark:text-gray-300">
-                        {{ $product->description ?: 'San pham dang cap nhat mo ta.' }}
+                        {{ $product->description ?: 'Sản phẩm đang cập nhật mô tả.' }}
                     </p>
                 </div>
 
@@ -49,11 +49,11 @@
                         @csrf
                         <input type="hidden" name="quantity" value="1">
                         <button type="submit" class="rounded-2xl bg-brand-600 px-5 py-3 text-sm font-semibold text-white hover:bg-brand-700">
-                            Them vao gio
+                            Thêm vào giỏ
                         </button>
                     </form>
                     <a href="{{ route('shop.cart.index') }}" class="rounded-2xl border border-stone-200 px-5 py-3 text-sm font-medium text-gray-700 hover:border-brand-300 hover:text-brand-700 dark:border-gray-700 dark:text-gray-200">
-                        Di den gio hang
+                        Đi đến giỏ hàng
                     </a>
                     <a href="{{ route('shop.checkout.create') }}" class="rounded-2xl border border-stone-200 px-5 py-3 text-sm font-medium text-gray-700 hover:border-brand-300 hover:text-brand-700 dark:border-gray-700 dark:text-gray-200">
                         Mua ngay
@@ -62,7 +62,7 @@
 
                 @if ($quantityInCart > 0)
                     <div class="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-900/40 dark:bg-amber-950/20 dark:text-amber-200">
-                        San pham nay dang co trong gio hang voi so luong {{ $quantityInCart }}.
+                        Sản phẩm này đang có trong giỏ hàng với số lượng {{ $quantityInCart }}.
                     </div>
                 @endif
             </div>
@@ -72,11 +72,11 @@
             <div class="mt-12 border-t border-stone-200 pt-10 dark:border-gray-800">
                 <div class="flex items-end justify-between gap-4">
                     <div>
-                        <h2 class="text-2xl font-semibold tracking-tight text-gray-950 dark:text-white">San pham lien quan</h2>
-                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Cac san pham trong cung danh muc.</p>
+                        <h2 class="text-2xl font-semibold tracking-tight text-gray-950 dark:text-white">Sản phẩm liên quan</h2>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Các sản phẩm trong cùng danh mục.</p>
                     </div>
                     <a href="{{ route('shop.index') }}" class="text-sm font-medium text-brand-700 hover:text-brand-800 dark:text-brand-400 dark:hover:text-brand-300">
-                        Xem tat ca
+                        Xem tất cả
                     </a>
                 </div>
 

@@ -24,7 +24,7 @@
                 <div class="px-6 pt-6">
                     <x-package-alert
                         type="danger"
-                        message="Khong the cap nhat user. Vui long kiem tra lai."
+                        message="Không thể cập nhật user. Vui long kiem tra lai."
                         :messages="$errors->all()"
                     />
                 </div>
@@ -73,7 +73,7 @@
 
                 <div class="mt-8 border-t border-gray-200 pt-6 dark:border-gray-800">
                     <h4 class="text-base font-semibold text-gray-900 dark:text-white">Profile information</h4>
-                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Admin cap nhat thong tin profile cua user.</p>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Admin cập nhật thông tin profile cua user.</p>
                 </div>
 
                 <div class="mt-4">

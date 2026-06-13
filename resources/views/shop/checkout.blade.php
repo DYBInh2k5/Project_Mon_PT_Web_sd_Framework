@@ -5,10 +5,10 @@
         <div class="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
             <div class="rounded-3xl border border-stone-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
                 <div>
-                    <span class="toolbar-chip">MoMo checkout</span>
-                    <h1 class="mt-3 text-3xl font-semibold tracking-tight text-gray-950 dark:text-white">Thanh toan don hang</h1>
+                    <span class="toolbar-chip">VNPay checkout</span>
+                    <h1 class="mt-3 text-3xl font-semibold tracking-tight text-gray-950 dark:text-white">Thanh toán đơn hàng</h1>
                     <p class="mt-2 text-sm leading-7 text-gray-600 dark:text-gray-300">
-                        He thong se tao don hang va chuyen ban sang MoMo sandbox de thanh toan. Sau khi quay ve, don hang se duoc cap nhat theo ket qua giao dich.
+                        Hệ thống sẽ tạo đơn hàng và chuyển bạn sang cổng thanh toán VNPay. Khi thanh toán xong, VNPay sẽ tự quay về trang kết quả và backend sẽ cập nhật trạng thái đơn hàng.
                     </p>
                 </div>
 
@@ -41,17 +41,17 @@
                         <div class="flex items-start gap-3">
                             <span class="mt-1 inline-flex h-2.5 w-2.5 rounded-full bg-brand-500"></span>
                             <p>
-                                Thanh toan se mo MoMo sandbox. Neu tai khoan sandbox chua cau hinh, he thong se bao loi va giu don hang o trang thai chua thanh toan.
+                                Thanh toán sẽ tạo đơn hàng và chuyển sang cổng VNPay. Nếu chưa cấu hình `VNPAY_TMN_CODE` hoặc `VNPAY_HASH_SECRET` trong `.env`, hệ thống sẽ báo lỗi và giữ đơn hàng ở trạng thái chưa thanh toán.
                             </p>
                         </div>
                     </div>
 
                     <div class="flex flex-wrap gap-3">
                         <button type="submit" class="rounded-2xl bg-brand-600 px-5 py-3 text-sm font-semibold text-white hover:bg-brand-700">
-                            Di den MoMo
+                            Thanh toán VNPay
                         </button>
                         <a href="{{ route('shop.cart.index') }}" class="rounded-2xl border border-stone-200 px-5 py-3 text-sm font-medium text-gray-700 hover:border-brand-300 hover:text-brand-700 dark:border-gray-700 dark:text-gray-200">
-                            Quay lai gio hang
+                            Quay lai giỏ hàng
                         </a>
                     </div>
                 </form>
@@ -59,7 +59,7 @@
 
             <aside class="space-y-6">
                 <div class="rounded-3xl border border-stone-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-                    <h2 class="text-lg font-semibold text-gray-950 dark:text-white">Don hang tam tinh</h2>
+                    <h2 class="text-lg font-semibold text-gray-950 dark:text-white">Đơn hàng tam tinh</h2>
                     <div class="mt-5 space-y-4">
                         @foreach ($items as $item)
                             <div class="flex items-center justify-between gap-4 text-sm">

@@ -5,23 +5,21 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
-use App\Services\MomoPaymentService;
 use App\Services\OrderService;
 use App\Services\ShoppingCartService;
+use App\Services\VnpayPaymentService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
-use Symfony\Component\HttpFoundation\Response;
 
 class ShopCheckoutController extends Controller
 {
     public function create(ShoppingCartService $cart): RedirectResponse|View
     {
-        // Chỉ cho phép vào checkout khi giỏ hàng còn dữ liệu hợp lệ.
+        // Chi cho phep vao checkout khi gio hang con du lieu hop le.
         $items = $this->resolveItems($cart);
 
         if ($items === []) {
@@ -29,22 +27,22 @@ class ShopCheckoutController extends Controller
         }
 
         return view('shop.checkout', [
-            'title' => 'Checkout',
+            'title' => 'Thanh toán VNPay',
             'items' => $items,
             'subtotal' => collect($items)->sum(fn (array $item) => $item['line_total']),
         ]);
     }
 
-    public function store(Request $request, ShoppingCartService $cart, MomoPaymentService $momo, OrderService $orders): RedirectResponse
+    public function store(Request $request, ShoppingCartService $cart, VnpayPaymentService $vnpay): RedirectResponse
     {
-        // Lọc lại giỏ hàng ngay trước khi tạo đơn để tránh sản phẩm đã bị ẩn hoặc hết hàng.
+        // Loc lai gio hang ngay truoc khi tao don de tranh san pham da bi an hoac het hang.
         $items = $this->resolveItems($cart);
 
         if ($items === []) {
             return redirect()->route('shop.index')->withErrors(['cart' => 'Giỏ hàng đang trống.']);
         }
 
-        // Validate thông tin khách hàng trước khi sinh đơn và chuyển sang MoMo.
+        // Validate thong tin khach hang truoc khi sinh don va tao URL thanh toan VNPay.
         $validated = $request->validate([
             'customer_name' => ['required', 'string', 'max:255'],
             'customer_email' => ['required', 'email', 'max:255'],
@@ -63,7 +61,7 @@ class ShopCheckoutController extends Controller
                 'notes' => $validated['notes'] ?? null,
                 'status' => 'pending',
                 'payment_status' => 'unpaid',
-                'payment_method' => 'momo_wallet',
+                'payment_method' => 'vnpay_qr',
                 'total_amount' => collect($items)->sum(fn (array $item) => $item['line_total']),
                 'placed_at' => now(),
             ]);
@@ -85,103 +83,152 @@ class ShopCheckoutController extends Controller
             return $order;
         });
 
-        try {
-            // Tạo yêu cầu thanh toán MoMo từ dữ liệu đơn hàng vừa lưu.
-            $response = $momo->createPayment($order, $items, [
-                'name' => $validated['customer_name'],
-                'email' => $validated['customer_email'],
-                'phone' => $validated['customer_phone'],
-            ]);
-        } catch (\Throwable $exception) {
-            $order->delete();
-
-            report($exception);
-
-            return back()
-                ->withInput()
-                ->withErrors(['payment' => 'Không tạo được giao dịch MoMo. Hãy kiểm tra cấu hình sandbox.']);
-        }
-
         session()->put('shop.checkout.pending_order', $order->order_number);
 
-        return redirect()->away($response['payUrl']);
+        $paymentUrl = $vnpay->createPaymentUrl(
+            $order->refresh(),
+            (string) $request->ip(),
+            route('shop.checkout.return'),
+            route('shop.checkout.ipn')
+        );
+
+        return redirect()->away($paymentUrl);
     }
 
-    public function callback(Request $request, OrderService $orders): View
+    public function vnpayReturn(Request $request, VnpayPaymentService $vnpay, OrderService $orders): View
     {
-        // MoMo trả người dùng về redirect URL sau khi thanh toán xong.
-        $payload = $request->all();
-        $order = Order::where('order_number', $request->string('orderId')->toString())->first();
+        $payload = $this->extractVnpPayload($request);
+        $order = $this->findOrderFromPayload($payload);
+        $isSuccess = false;
+        $message = 'Chưa xác nhận được giao dịch VNPay.';
 
-        $verified = $order && app(MomoPaymentService::class)->verifyNotification($payload);
-        $isSuccess = $verified && (int) $request->integer('resultCode') === 0 && $order;
+        if ($order && $vnpay->verifySignature($payload)) {
+            $amount = $vnpay->paymentAmountToVnd($payload);
+            $responseCode = (string) ($payload['vnp_ResponseCode'] ?? '');
+            $transactionStatus = (string) ($payload['vnp_TransactionStatus'] ?? '');
 
-        if ($isSuccess) {
-            // Nếu thanh toán thành công thì cập nhật trạng thái thanh toán của đơn.
-            $order->update([
-                'payment_status' => 'paid',
-                'payment_method' => 'momo_wallet',
-                'transaction_code' => 'MOMO-'.$request->input('transId'),
-                'paid_at' => Carbon::createFromTimestampMs((int) $request->input('responseTime')),
-            ]);
-
-            if ($order->status === 'pending') {
-                // Đơn còn pending sẽ được đẩy sang processing sau khi đã trả tiền.
-                $orders->updateStatus(
-                    $order->refresh(),
-                    'processing',
-                    null,
-                    'Auto updated after successful MoMo payment.'
-                );
+            if ($responseCode === '00' && $transactionStatus === '00' && $amount === (int) round((float) $order->total_amount)) {
+                $this->markOrderPaid($order, $payload, $orders);
+                session()->forget('shop.cart');
+                session()->forget('shop.checkout.pending_order');
+                $isSuccess = true;
+                $message = 'Giao dịch được thực hiện thành công.';
+            } else {
+                $message = 'Giao dịch chưa thành công hoặc số tiền không khớp.';
             }
-
-            $cart = app(ShoppingCartService::class);
-            $cart->clear();
+        } elseif (! $order) {
+            $message = 'Không tìm thấy đơn hàng để đối soát.';
+        } else {
+            $message = 'Chữ ký VNPay không hợp lệ.';
         }
 
         return view('shop.payment-result', [
-            'title' => 'Payment Result',
+            'title' => $isSuccess ? 'Thanh toán thành công' : 'Thanh toán chưa thành công',
             'order' => $order,
-            'verified' => $verified,
             'isSuccess' => $isSuccess,
+            'gateway' => 'VNPay',
+            'message' => $message,
+            'payload' => $payload,
         ]);
     }
 
-    public function ipn(Request $request, OrderService $orders): Response|JsonResponse
+    public function ipn(Request $request, VnpayPaymentService $vnpay, OrderService $orders): JsonResponse
     {
-        // IPN là callback server-to-server từ MoMo để xác nhận giao dịch.
-        $payload = $request->all();
-        $order = Order::where('order_number', $request->string('orderId')->toString())->first();
+        $payload = $this->extractVnpPayload($request);
+        $order = $this->findOrderFromPayload($payload);
 
-        if (! $order || ! app(MomoPaymentService::class)->verifyNotification($payload)) {
-            return response()->json(['message' => 'Invalid signature'], 400);
+        if (! $vnpay->verifySignature($payload)) {
+            return response()->json([
+                'RspCode' => '97',
+                'Message' => 'Chữ ký không hợp lệ',
+            ]);
         }
 
-        if ((int) $request->integer('resultCode') === 0) {
-            // IPN thành công thì cập nhật dữ liệu giống callback redirect.
+        if (! $order) {
+            return response()->json([
+                'RspCode' => '01',
+                'Message' => 'Không tìm thấy đơn hàng',
+            ]);
+        }
+
+        $amount = $vnpay->paymentAmountToVnd($payload);
+        if ($amount !== (int) round((float) $order->total_amount)) {
+            return response()->json([
+                'RspCode' => '04',
+                'Message' => 'Số tiền không khớp',
+            ]);
+        }
+
+        $responseCode = (string) ($payload['vnp_ResponseCode'] ?? '');
+        $transactionStatus = (string) ($payload['vnp_TransactionStatus'] ?? '');
+
+        if ($responseCode === '00' && $transactionStatus === '00') {
+            if ($order->payment_status === 'paid') {
+                return response()->json([
+                    'RspCode' => '02',
+                    'Message' => 'Đơn hàng đã được xác nhận',
+                ]);
+            }
+
+            $this->markOrderPaid($order, $payload, $orders);
+
+            return response()->json([
+                'RspCode' => '00',
+                'Message' => 'Xác nhận thành công',
+            ]);
+        }
+
+        return response()->json([
+            'RspCode' => '00',
+            'Message' => 'Giao dịch không thành công',
+        ]);
+    }
+
+    private function extractVnpPayload(Request $request): array
+    {
+        return collect($request->query())
+            ->filter(fn ($value, string $key) => str_starts_with($key, 'vnp_'))
+            ->all();
+    }
+
+    private function findOrderFromPayload(array $payload): ?Order
+    {
+        $txnRef = $payload['vnp_TxnRef'] ?? null;
+
+        if (! $txnRef) {
+            return null;
+        }
+
+        return Order::query()
+            ->with('items')
+            ->where('order_number', $txnRef)
+            ->first();
+    }
+
+    private function markOrderPaid(Order $order, array $payload, OrderService $orders): void
+    {
+        if ($order->payment_status !== 'paid') {
             $order->update([
                 'payment_status' => 'paid',
-                'payment_method' => 'momo_wallet',
-                'transaction_code' => 'MOMO-'.$request->input('transId'),
-                'paid_at' => Carbon::createFromTimestampMs((int) $request->input('responseTime')),
+                'payment_method' => 'vnpay_qr',
+                'transaction_code' => (string) ($payload['vnp_TransactionNo'] ?? $payload['vnp_TxnRef'] ?? Str::upper(Str::random(10))),
+                'paid_at' => now(),
             ]);
-
-            if ($order->status === 'pending') {
-                $orders->updateStatus(
-                    $order->refresh(),
-                    'processing',
-                    null,
-                    'Auto updated after successful MoMo IPN.',
-                );
-            }
         }
 
-        return response()->noContent();
+        if ($order->status === 'pending') {
+            $orders->updateStatus(
+                $order->refresh(),
+                'processing',
+                null,
+                'Auto updated after successful VNPay payment.'
+            );
+        }
     }
 
     private function resolveItems(ShoppingCartService $cart): array
     {
-        // Chỉ giữ các sản phẩm còn active và còn tồn tại trong database.
+        // Chi giu cac san pham con active va con ton tai trong database.
         $items = [];
         $products = Product::query()
             ->with('category')

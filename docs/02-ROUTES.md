@@ -13,14 +13,14 @@
 - `/shop`
 - `/cart`
 - `/checkout`
-- `/checkout/momo/return`
-- `/checkout/momo/ipn`
+- `/checkout/vnpay/return`
+- `/checkout/vnpay/ipn`
 - `/check_fail`
 - `/check_age/{age?}`
 - `/articles`
 - `/articles/{article}`
 
-### Can dang nhap
+### Can đăng nhập
 
 - `/dashboard`
 - `/profile`
@@ -63,8 +63,8 @@
 - `/shop/products/{product}`
 - `/cart`
 - `/checkout`
-- `/checkout/momo/return`
-- `/checkout/momo/ipn`
+- `/checkout/vnpay/return`
+- `/checkout/vnpay/ipn`
 
 ### Orders
 
@@ -124,7 +124,7 @@ Nghia la:
 - `/articles` se chay `ArticleController@index`
 - controller lay article bang Eloquent va tra ve view `article.list`
 
-Vi du mat tien shop:
+Vi du mặt tiền shop:
 
 ```php
 Route::get('/', [ShopController::class, 'index'])->name('home');
@@ -133,13 +133,13 @@ Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
 
 Nghia la:
 
-- route `/` va `/shop` cung mo trang shop cong khai
-- nguoi dung co the xem danh muc, tim san pham va loc san pham ma khong can dang nhap
+- route `/` va `/shop` cùng mo trang shop công khai
+- người dùng co the xem danh mục, tim sản phẩm va loc sản phẩm ma không can đăng nhập
 
 ## 5. Luong xu ly route
 
 1. User truy cap URL
-2. Laravel tim route phu hop
+2. Laravel tim route phù hợp
 3. Middleware chay truoc
 4. Neu hop le thi vao controller
 5. Controller tra ve view hoac redirect
