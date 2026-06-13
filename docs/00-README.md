@@ -34,3 +34,11 @@ Luong chung:
 Luong da toi uu cho đơn hàng:
 
 `Route -> Controller -> OrderService -> Event -> Listener -> Mail`
+
+## Cap nhat gan day
+
+- Da chuan hoa lai phan lon noi dung trong `docs/` va giao dien Blade sang tieng Viet co dau de de doc va de on van dap.
+- Da dong bo cac man hinh dang nhap, dang ky, quen mat khau, xac nhan mat khau va cac trang shop cong khai theo cung mot cach trinh bay.
+- Da loai bo huong Momo/cuoc thanh toan trung gian khong phu hop, chuyen sang VNPay sandbox de demo luong thanh toan thuc te hon.
+- Da cap nhat tai lieu van dap va tong quan kien truc de giai thich ro hon luong Route -> Middleware -> Controller -> Service -> Event -> Listener -> Mail.
+- Da giu bo test qua on dinh sau moi lan chinh sua giao dien va tai lieu.
