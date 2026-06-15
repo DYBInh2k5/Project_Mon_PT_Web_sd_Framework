@@ -40,7 +40,7 @@ class ProductController extends Controller
             ->withQueryString();
 
         return view('products.index', [
-            'title' => 'Products',
+            'title' => 'Sản phẩm',
             'products' => $products,
             'categories' => ProductCategory::orderBy('name')->get(),
             'filters' => $request->only(['search', 'category', 'status']),
@@ -57,7 +57,7 @@ class ProductController extends Controller
     {
         // Form tạo sản phẩm cần danh sách danh mục để gán category.
         return view('products.create', [
-            'title' => 'Create Product',
+            'title' => 'Tạo sản phẩm',
             'categories' => ProductCategory::orderBy('name')->get(),
         ]);
     }
@@ -79,14 +79,14 @@ class ProductController extends Controller
 
         return redirect()
             ->route('products.index')
-            ->with('success', 'Product created successfully.');
+            ->with('success', 'Tạo sản phẩm thành công.');
     }
 
     public function edit(Product $product): View
     {
         // Form sửa cần cả dữ liệu sản phẩm hiện tại lẫn danh mục để chọn lại category.
         return view('products.edit', [
-            'title' => 'Edit Product',
+            'title' => 'Chỉnh sửa sản phẩm',
             'product' => $product,
             'categories' => ProductCategory::orderBy('name')->get(),
         ]);
@@ -98,7 +98,7 @@ class ProductController extends Controller
         $product->load(['category', 'creator']);
 
         return view('products.show', [
-            'title' => 'Product Detail',
+            'title' => 'Chi tiết sản phẩm',
             'product' => $product,
         ]);
     }
@@ -121,7 +121,7 @@ class ProductController extends Controller
 
         return redirect()
             ->route('products.index')
-            ->with('success', 'Product updated successfully.');
+            ->with('success', 'Cập nhật sản phẩm thành công.');
     }
 
     public function destroy(Product $product): RedirectResponse
@@ -135,6 +135,6 @@ class ProductController extends Controller
 
         return redirect()
             ->route('products.index')
-            ->with('success', 'Product deleted successfully.');
+            ->with('success', 'Xóa sản phẩm thành công.');
     }
 }

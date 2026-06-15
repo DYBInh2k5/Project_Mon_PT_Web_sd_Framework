@@ -61,7 +61,7 @@ class ShopCheckoutController extends Controller
                 'notes' => $validated['notes'] ?? null,
                 'status' => 'pending',
                 'payment_status' => 'unpaid',
-                'payment_method' => 'vnpay_qr',
+                'payment_method' => 'vnpay',
                 'total_amount' => collect($items)->sum(fn (array $item) => $item['line_total']),
                 'placed_at' => now(),
             ]);
@@ -95,20 +95,37 @@ class ShopCheckoutController extends Controller
         return redirect()->away($paymentUrl);
     }
 
+    /**
+     * Xử lý kết quả trả về của VNPay qua trình duyệt (returnUrl).
+     *
+     * Nhiệm vụ chính của returnUrl là hiển thị kết quả giao dịch trực quan cho khách hàng (Frontend).
+     * Không nên hoàn toàn dựa vào returnUrl để cập nhật trạng thái đơn hàng trong database,
+     * vì khách hàng có thể tắt trình duyệt giữa chừng trước khi redirect về lại trang shop.
+     */
     public function vnpayReturn(Request $request, VnpayPaymentService $vnpay, OrderService $orders): View
     {
+        // Trích xuất các tham số dạng vnp_* từ URL query string.
         $payload = $this->extractVnpPayload($request);
+        
+        // Tìm đơn hàng tương ứng dựa trên mã giao dịch (vnp_TxnRef).
         $order = $this->findOrderFromPayload($payload);
         $isSuccess = false;
         $message = 'Chưa xác nhận được giao dịch VNPay.';
 
+        // Bước 1: Kiểm tra chữ ký an toàn (checksum) để đảm bảo dữ liệu không bị sửa đổi trên đường đi.
         if ($order && $vnpay->verifySignature($payload)) {
+            // Bước 2: Lấy số tiền thực tế khách đã thanh toán từ tham số VNPay.
             $amount = $vnpay->paymentAmountToVnd($payload);
             $responseCode = (string) ($payload['vnp_ResponseCode'] ?? '');
             $transactionStatus = (string) ($payload['vnp_TransactionStatus'] ?? '');
 
+            // Bước 3: So khớp số tiền thanh toán từ VNPay với tổng số tiền của đơn hàng trong hệ thống.
+            // Bước 4: Kiểm tra mã phản hồi vnp_ResponseCode (00 là thành công).
             if ($responseCode === '00' && $transactionStatus === '00' && $amount === (int) round((float) $order->total_amount)) {
+                // Đánh dấu đơn hàng đã thanh toán và chuyển đổi trạng thái đơn hàng.
                 $this->markOrderPaid($order, $payload, $orders);
+                
+                // Xóa giỏ hàng và đơn hàng tạm sau khi thanh toán thành công.
                 session()->forget('shop.cart');
                 session()->forget('shop.checkout.pending_order');
                 $isSuccess = true;
@@ -132,11 +149,20 @@ class ShopCheckoutController extends Controller
         ]);
     }
 
+    /**
+     * Xử lý truy vấn bất đồng bộ (IPN) từ server VNPay (ipnUrl).
+     *
+     * Nhiệm vụ chính của IPN là đối soát server-to-server tự động, hoạt động ngầm (Backend).
+     * Dù khách hàng có tắt trình duyệt thì VNPay vẫn gửi request IPN này tới server của shop.
+     * Đây là nơi quan trọng nhất để cập nhật trạng thái thanh toán đơn hàng một cách an toàn và tin cậy.
+     */
     public function ipn(Request $request, VnpayPaymentService $vnpay, OrderService $orders): JsonResponse
     {
         $payload = $this->extractVnpPayload($request);
         $order = $this->findOrderFromPayload($payload);
 
+        // Quy trình kiểm tra bảo mật bắt buộc của VNPay IPN:
+        // 1. Kiểm tra chữ ký checksum (signature)
         if (! $vnpay->verifySignature($payload)) {
             return response()->json([
                 'RspCode' => '97',
@@ -144,6 +170,7 @@ class ShopCheckoutController extends Controller
             ]);
         }
 
+        // 2. Tìm kiếm đơn hàng trong cơ sở dữ liệu dựa trên vnp_TxnRef
         if (! $order) {
             return response()->json([
                 'RspCode' => '01',
@@ -151,6 +178,7 @@ class ShopCheckoutController extends Controller
             ]);
         }
 
+        // 3. So khớp số tiền thanh toán thực tế với số tiền của đơn hàng
         $amount = $vnpay->paymentAmountToVnd($payload);
         if ($amount !== (int) round((float) $order->total_amount)) {
             return response()->json([
@@ -162,7 +190,9 @@ class ShopCheckoutController extends Controller
         $responseCode = (string) ($payload['vnp_ResponseCode'] ?? '');
         $transactionStatus = (string) ($payload['vnp_TransactionStatus'] ?? '');
 
+        // 4. Kiểm tra mã trạng thái giao dịch
         if ($responseCode === '00' && $transactionStatus === '00') {
+            // 5. Kiểm tra xem đơn hàng đã được cập nhật trạng thái thanh toán trước đó chưa (tránh trùng lặp)
             if ($order->payment_status === 'paid') {
                 return response()->json([
                     'RspCode' => '02',
@@ -170,6 +200,7 @@ class ShopCheckoutController extends Controller
                 ]);
             }
 
+            // Ghi nhận thanh toán và cập nhật trạng thái đơn hàng sang processing
             $this->markOrderPaid($order, $payload, $orders);
 
             return response()->json([
@@ -210,7 +241,7 @@ class ShopCheckoutController extends Controller
         if ($order->payment_status !== 'paid') {
             $order->update([
                 'payment_status' => 'paid',
-                'payment_method' => 'vnpay_qr',
+                'payment_method' => 'vnpay',
                 'transaction_code' => (string) ($payload['vnp_TransactionNo'] ?? $payload['vnp_TxnRef'] ?? Str::upper(Str::random(10))),
                 'paid_at' => now(),
             ]);

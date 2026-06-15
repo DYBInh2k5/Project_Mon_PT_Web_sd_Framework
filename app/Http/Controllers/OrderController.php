@@ -11,12 +11,16 @@ use Illuminate\View\View;
 
 class OrderController extends Controller
 {
+    /**
+     * Hiển thị danh sách các đơn hàng.
+     */
     public function index(Request $request): View
     {
+        // Khởi tạo query gốc để tính toán các số liệu thống kê.
         $baseQuery = Order::query();
 
-        // Cac dieu kien search/filter duoc dua vao local scope trong Order model
-        // de controller gon hon va co the tai su dung cho API/dashboard sau nay.
+        // Các điều kiện tìm kiếm và bộ lọc được chuyển vào local scope trong Model Order
+        // giúp Controller gọn hơn và dễ tái sử dụng hơn.
         $orders = Order::query()
             ->withCount('items')
             ->search($request->string('search')->toString())
@@ -28,7 +32,7 @@ class OrderController extends Controller
             ->withQueryString();
 
         return view('orders.index', [
-            'title' => 'Orders',
+            'title' => 'Đơn hàng',
             'orders' => $orders,
             'filters' => $request->only(['search', 'status', 'date_from', 'date_to']),
             'statuses' => Order::STATUSES,
@@ -42,24 +46,30 @@ class OrderController extends Controller
         ]);
     }
 
+    /**
+     * Hiển thị chi tiết một đơn hàng.
+     */
     public function show(Order $order): View
     {
-        // Load san san pham trong don va nguoi da doi status de tranh N+1 query tren view.
+        // Eager load các sản phẩm trong đơn hàng và lịch sử thay đổi trạng thái kèm người thực hiện để tránh lỗi N+1 query.
         $order->load(['items.product', 'statusHistories.changer']);
 
         return view('orders.show', [
-            'title' => 'Order Detail',
+            'title' => 'Chi tiết đơn hàng',
             'order' => $order,
             'statuses' => Order::STATUSES,
         ]);
     }
 
+    /**
+     * Cập nhật trạng thái của đơn hàng.
+     */
     public function updateStatus(UpdateOrderStatusRequest $request, Order $order, OrderService $orders): RedirectResponse
     {
         $newStatus = $request->validated('status');
 
-        // Controller chi nhan request va goi service.
-        // Nghiep vu cap nhat status, ghi history va phat event nam trong OrderService.
+        // Controller chỉ nhận request và gọi nghiệp vụ từ OrderService.
+        // Nghiệp vụ cập nhật trạng thái, ghi lịch sử và phát Event nằm trọn vẹn trong OrderService.
         $history = $orders->updateStatus(
             $order,
             $newStatus,
@@ -70,11 +80,11 @@ class OrderController extends Controller
         if (! $history) {
             return redirect()
                 ->route('orders.show', $order)
-                ->with('success', 'Order status is already up to date.');
+                ->with('success', 'Trạng thái đơn hàng hiện tại đã được cập nhật trước đó.');
         }
 
         return redirect()
             ->route('orders.show', $order)
-            ->with('success', 'Order status updated and notification email sent successfully.');
+            ->with('success', 'Cập nhật trạng thái đơn hàng và gửi email thông báo thành công.');
     }
 }

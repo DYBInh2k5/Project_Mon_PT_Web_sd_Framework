@@ -4,7 +4,6 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\OrderController;
-use App\Http\Controllers\OrderPaymentController;
 use App\Http\Controllers\ShopCartController;
 use App\Http\Controllers\ShopCheckoutController;
 use App\Http\Controllers\ShopController;
@@ -72,12 +71,6 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('orders/{order}/status', [OrderController::class, 'updateStatus'])
         ->middleware('role:editor,admin')
         ->name('orders.update-status');
-    Route::get('orders/{order}/payment', [OrderPaymentController::class, 'create'])
-        ->middleware('role:editor,admin')
-        ->name('orders.payment.create');
-    Route::post('orders/{order}/payment', [OrderPaymentController::class, 'store'])
-        ->middleware('role:editor,admin')
-        ->name('orders.payment.store');
     Route::get('support-chat', [SupportChatController::class, 'index'])
         ->middleware('role:user,editor,admin')
         ->name('support-chat.index');

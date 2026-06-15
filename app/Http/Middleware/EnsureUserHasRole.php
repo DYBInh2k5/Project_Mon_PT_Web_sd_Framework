@@ -10,28 +10,28 @@ class EnsureUserHasRole
 {
     public function handle(Request $request, Closure $next, string ...$roles): Response
     {
-        // Middleware nay duoc dat giua Route va Controller.
-        // Nhiem vu cua no la kiem tra xem user dang dang nhap co dung role
-        // ma route yeu cau hay khong.
+        // Middleware này được đặt ở giữa Route và Controller.
+        // Nhiệm vụ của nó là kiểm tra xem người dùng đang đăng nhập có đúng vai trò (role)
+        // mà route yêu cầu hay không.
         //
-        // Vi du trong route:
+        // Ví dụ cấu hình trong route:
         // ->middleware('role:admin')
         // ->middleware('role:editor,admin')
         //
-        // Khi do bien $roles se nhan duoc mang role tu route truyen vao.
+        // Khi đó tham số biến $roles (dạng splat operator string ...$roles) sẽ nhận được mảng chứa các role từ route truyền vào.
 
-        // Lay user dang dang nhap tu session/auth hien tai.
+        // Lấy thông tin người dùng đang đăng nhập từ session/auth hiện tại.
         $user = $request->user();
 
-        // Neu chua dang nhap hoac role cua user khong nam trong danh sach cho phep
-        // thi dung request tai day va tra ve 403.
-        // Khi bi chan o day thi controller phia sau se KHONG duoc chay.
+        // Nếu chưa đăng nhập hoặc vai trò (role) của người dùng không nằm trong danh sách được cho phép
+        // thì dừng request ngay tại đây và trả về mã lỗi HTTP 403 (Forbidden).
+        // Khi bị chặn ở đây, Controller phía sau sẽ KHÔNG được chạy.
         if (! $user || ! in_array($user->role, $roles, true)) {
             abort(403, 'You do not have permission to access this page.');
         }
 
-        // Neu role hop le thi cho request di tiep vao middleware tiep theo
-        // hoac vao controller.
+        // Nếu vai trò hợp lệ, cho phép request đi tiếp vào middleware tiếp theo
+        // hoặc chuyển trực tiếp vào Controller để xử lý logic.
         return $next($request);
     }
 }

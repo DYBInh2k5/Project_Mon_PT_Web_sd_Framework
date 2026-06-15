@@ -1,29 +1,8 @@
-# 12. Lecture Materials
+# Tài liệu bài giảng
 
-Thu muc nay dung de luu:
+Thư mục này dùng để lưu các code mẫu, ghi chú, slide và tài liệu cô giao để ôn lại project.
 
-- code mau cua co giao
-- slide bai giang
-- ghi chu tam ve cac vi du trên lop
+- `code-samples/`: các mẫu code tham khảo
+- `notes/`: ghi chú và hướng dẫn làm project
 
-## 1. De nghi cau truc
-
-```text
-docs/12-LECTURE-MATERIALS/
-  README.md
-  code-samples/
-  slides/
-  notes/
-```
-
-## 2. Cach dung
-
-- bo code mau vao `code-samples`
-- bo file slide vao `slides`
-- bo ghi chu noi dung hoc vao `notes`
-
-## 3. Muc dich
-
-Thu muc nay giup tach rieng tài liệu giang day khoi tài liệu mô tả project.
-Khi can on bai hoac vấn đáp, ban chi can mo thư mục nay de xem lai
-vi du cua co, sau do doi chieu với code trong project.
+Khi cần ôn bài hoặc vấn đáp, mở thư mục này trước để xem lại đúng nội dung đã học.

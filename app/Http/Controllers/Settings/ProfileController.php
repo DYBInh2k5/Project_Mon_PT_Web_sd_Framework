@@ -18,7 +18,7 @@ class ProfileController extends Controller
     {
         $user = $request->user();
 
-        // Lay profile bang Eloquent qua relationship de khong dung Query Builder nua.
+        // Lấy profile bằng Eloquent qua quan hệ relationship để không dùng Query Builder thô nữa.
         $profile = $this->ensureProfileExists($user);
 
         return view('pages.profile', [
@@ -31,7 +31,7 @@ class ProfileController extends Controller
     {
         $user = $request->user();
 
-        // Cung luong Eloquent cho trang edit profile.
+        // Sử dụng cùng một luồng Eloquent cho trang chỉnh sửa profile cá nhân.
         $profile = $this->ensureProfileExists($user);
 
         return view('pages.auth.settings.profile', [
@@ -105,8 +105,8 @@ class ProfileController extends Controller
             if ($userUpdate !== []) {
                 $user->fill($userUpdate);
 
-                // email_verified_at khong nam trong fillable nen phai gan truc tiep
-                // de dam bao Laravel reset trang thai xac minh khi email thay doi.
+                // Cột email_verified_at không nằm trong danh sách fillable nên phải gán trực tiếp
+                // nhằm đảm bảo Laravel reset trạng thái xác minh khi người dùng thay đổi địa chỉ email.
                 if ($emailChanged) {
                     $user->email_verified_at = null;
                 }
@@ -140,16 +140,17 @@ class ProfileController extends Controller
 
     private function ensureProfileExists(User $user): Profile
     {
-        // firstOrCreate qua relationship hasOne giup giu logic profile nam dung cho User.
+        // Sử dụng phương thức firstOrCreate qua relationship hasOne để đảm bảo logic
+        // tự động tạo profile nếu chưa có sẵn trên tài khoản của người dùng.
         return $user->profile()->firstOrCreate(
             [],
             [
                 'full_name' => $user->name,
-                'address' => 'Cap nhat dia chi',
+                'address' => 'Cập nhật địa chỉ',
                 'avatar' => null,
                 'birthday' => now()->subYears(20)->toDateString(),
-                'gender' => 'Khac',
-                'phone' => 'Chua cap nhat',
+                'gender' => 'Khác',
+                'phone' => 'Chưa cập nhật',
             ]
         );
     }

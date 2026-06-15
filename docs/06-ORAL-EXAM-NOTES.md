@@ -1,140 +1,59 @@
-# 06. Oral Exam Notes
+# 06. Ghi Chú Và Hướng Dẫn Vấn Đáp (Oral Exam Notes)
 
-## 1. Gioi thieu ngan ve project
+## 1. Giới thiệu ngắn gọn về dự án (Khi cô hỏi giới thiệu đề tài)
 
-Đây là project Laravel dung Blade, Tailwind va Alpine de demo:
+**Mẫu trả lời:**
+> "Dự án của em là Xây dựng ứng dụng phần quản trị của Website bán hàng bằng Laravel 12. Hệ thống được chia làm hai khu vực chính: Mặt tiền cửa hàng công khai dành cho khách xem sản phẩm, giỏ hàng, thanh toán VNPay và Khu vực quản trị dành cho Admin/Editor quản lý tài khoản người dùng, hồ sơ (profile), danh mục sản phẩm, sản phẩm, quản lý đơn hàng cùng với một Chatbot AI hỗ trợ khách hàng tích hợp. Dự án áp dụng đầy đủ các kỹ năng nâng cao của Laravel như Middleware phân quyền, Form Request Validation, Eloquent Relationship (1-1, 1-N, N-N), Blade Component, Service Pattern, và hệ thống Event/Listener gửi mail tự động."
 
-- auth
-- role
-- user management
-- product/category CRUD
-- order management
-- chatbot hỗ trợ khách hàng
-- thanh toán online dang demo
-- profile
-- Blade component
-- migration cho demo quan he n-n
-- trang hiện thi articles va tags bang Eloquent
+---
 
-## 2. Neu co hoi ve route
+## 2. Các câu hỏi thường gặp và gợi ý câu trả lời tuyển chọn
 
-Tra loi:
+### Câu 2.1: Route hoạt động thế nào trong dự án của em?
+- **Trả lời:**
+  - Tuyến đường định nghĩa trong 2 file: `routes/web.php` (quản trị, giỏ hàng, shop công khai) và `routes/auth.php` (xác thực).
+  - Khi người dùng gửi request, nó sẽ đi qua các bộ lọc Middleware (như `auth` kiểm tra đăng nhập, `role` kiểm tra quyền hạn) trước khi chuyển tiếp vào các phương thức tương ứng trong các Controller xử lý.
 
-- route duoc dinh nghia trong `routes/web.php` va `routes/auth.php`
-- route se di qua middleware truoc, sau do moi vao controller
+### Câu 2.2: Hệ thống phân quyền (Role) hoạt động ra sao?
+- **Trả lời:**
+  - Cột vai trò (`role`) được lưu trực tiếp trong bảng `users` với các giá trị: `admin`, `editor`, `user`.
+  - Em viết một middleware tùy chỉnh là [EnsureUserHasRole.php](../app/Http/Middleware/EnsureUserHasRole.php) để chặn các truy cập trái phép. Middleware sẽ lấy thông tin user đăng nhập từ Session, đối chiếu với danh sách role khai báo ở tuyến đường. Nếu không khớp sẽ dừng xử lý và trả về mã lỗi HTTP 403.
 
-## 3. Neu co hoi ve role
+### Câu 2.3: Hồ sơ người dùng (Profile) liên kết thế nào?
+- **Trả lời:**
+  - Em tách thông tin tài khoản và thông tin cá nhân thành 2 bảng (`users` và `profiles`) để tối ưu thiết kế, liên kết thông qua quan hệ 1-1: `User hasOne Profile` và `Profile belongsTo User`.
+  - Trong trang quản trị người dùng, Admin có thể cập nhật song song thông tin tài khoản chính và thông tin cá nhân của người dùng trên cùng một biểu mẫu.
 
-Tra loi:
+### Câu 2.4: Tại sao sử dụng thuộc tính `novalidate` trên thẻ `<form>`?
+- **Trả lời:**
+  - Để tắt cơ chế validate mặc định của trình duyệt (vốn hiển thị bong bóng thông báo tiếng Anh/tiếng Việt không đồng bộ).
+  - Em muốn form luôn submit lên server để Laravel validate thông qua Form Request, sau đó trả về danh sách lỗi chuẩn để hiển thị đồng bộ qua Blade Component `<x-package-alert>`.
 
-- role luu trong bang `users`
-- middleware `EnsureUserHasRole` doc role hiện tai
-- neu dung role thi `return $next($request)`
-- neu sai role thi `abort(403)`
+### Câu 2.5: Em thiết lập quan hệ Nhiều-Nhiều (Many-to-Many) thế nào?
+- **Trả lời:**
+  - Em demo mối quan hệ nhiều-nhiều giữa Bài viết (`articles`) và Nhãn (`tags`). Một bài viết có nhiều nhãn và một nhãn có thể gán cho nhiều bài viết.
+  - Em xây dựng bảng trung gian `article_tag` chứa khóa ngoại `article_id` và `tag_id`.
+  - Định nghĩa mối quan hệ bằng phương thức `belongsToMany()` trong cả hai Model `Article` và `Tag`.
 
-## 4. Neu co hoi ve profile
+### Câu 2.6: Eager Loading là gì và tại sao lại dùng?
+- **Trả lời:**
+  - Eager Loading giúp nạp trước các dữ liệu liên quan thông qua phương thức `with()` (ví dụ: `Article::with(['user', 'tags'])->get()`).
+  - Mục đích là giải quyết lỗi truy vấn **N+1 query**, gom nhiều truy vấn lẻ thành một vài truy vấn chính nhằm giảm tải cho cơ sở dữ liệu và tăng tốc độ tải trang.
 
-Tra loi:
+### Câu 2.7: Cơ chế cập nhật trạng thái đơn hàng và gửi email hoạt động ra sao?
+- **Trả lời:**
+  - Quy trình xử lý nghiệp vụ đơn hàng được tách ra khỏi Controller và đặt vào `OrderService`.
+  - Khi trạng thái đơn hàng thay đổi, `OrderService` tiến hành cập nhật bảng `orders`, tạo bản ghi lịch sử trạng thái mới trong bảng `order_status_histories`, sau đó phát sự kiện `OrderStatusUpdated`.
+  - Bộ lắng nghe sự kiện `SendOrderStatusUpdatedMail` sẽ bắt sự kiện này và tự động gửi email thông báo định dạng HTML (`OrderStatusUpdatedMail`) cho khách hàng.
 
-- profile tach rieng thanh bang `profiles`
-- quan he `1-1` với `users`
-- `ProfileController` dung Eloquent qua quan he `User hasOne Profile`
-- dữ liệu profile không chi lay tu `users` nua
+### Câu 2.8: Thanh toán trực tuyến VNPay hoạt động như thế nào?
+- **Trả lời:**
+  - Khi khách hàng nhấn thanh toán, hệ thống sử dụng `VnpayPaymentService` sắp xếp các tham số, băm chữ ký bảo mật secureHash theo chuẩn SHA512 và redirect khách hàng sang cổng VNPay Sandbox.
+  - Sau khi khách hàng thanh toán xong, VNPay điều hướng về trang kết quả (returnUrl) để báo cho khách hàng và đồng thời gửi thông tin ngầm về máy chủ qua IPN (ipnUrl) để đối soát số tiền, kiểm tra chữ ký và cập nhật trạng thái đơn hàng thành `processing` và trạng thái thanh toán thành `paid`.
 
-## 5. Neu co hoi ve Alert Component
-
-Tra loi:
-
-- em tao `Alert` class component
-- đăng ký alias la `x-package-alert`
-- component nhan `type`, `message`, `messages`
-- dung de hiện 1 thong bao hoac nhieu loi
-- em da gan vao cac form chinh cua project
-
-## 6. Neu co hoi vi sao alert luc dau không hiện
-
-Tra loi:
-
-- vi trinh duyet co HTML5 validation mac dinh
-- no chan submit va hiện popup rieng
-- em them `novalidate` de form submit len Laravel
-- sau do Laravel validate va tra ve `x-package-alert`
-
-## 7. Neu co hoi ve migration Article - Tag
-
-Tra loi:
-
-- em tao model `Article` va `Tag`
-- em tao bang trung gian `article_tag`
-- day la de chuan bi cho buoi demo quan he nhieu-nhieu
-
-## 8. Neu co hoi ve quan he Article - Tag
-
-Tra loi:
-
-- `Article` co `belongsTo(User::class)` vi moi article thuoc ve 1 user
-- `Article` co `belongsToMany(Tag::class)` vi 1 article co nhieu tag
-- `Tag` co `belongsToMany(Article::class)` vi 1 tag co the gan cho nhieu article
-- `User` co `hasMany(Article::class)` de truy cap danh sach article cua user
-
-## 9. Neu co hoi ve factory va seeding
-
-Tra loi:
-
-- em tao `ArticleFactory` de sinh `user_id`, `title`, `body`
-- em tao `TagFactory` de sinh dữ liệu cho cot `tag`
-- trong `DatabaseSeeder` em tao user, tao tag, tao article
-- sau do em gan nhieu tag cho tung article qua bang `article_tag`
-
-## 10. Neu co hoi ve dữ liệu da sinh chua
-
-Tra loi:
-
-- da co dữ liệu that trong SQLite
-- hiện tai co `16 users`, `50 articles`, `20 tags`, `500 dong article_tag`
-
-## 11. Neu co hoi ve trang danh sach Articles
-
-Tra loi:
-
-- em tao `ArticleController` bang resource controller
-- em đăng ký `Route::resource('articles', ArticleController::class)` trong `routes/web.php`
-- method `index()` dung `Article::with(['user', 'tags'])->get()` de lay article kem user va tag bang Eloquent
-- view `resources/views/article/list.blade.php` hiện thi title, user, body, created_at va tags
-- trong view em dung quan he `$article->user->name` va `$article->tags`
-
-## 12. Neu co hoi ve bug MySQL
-
-Tra loi:
-
-- em them `Schema::defaultStringLength(191)` trong `AppServiceProvider`
-- muc dich la tranh loi `Specified key was too long`
-
-## 13. Neu co hoi ve đơn hàng
-
-Tra loi:
-
-- em co model `Order` va `OrderItem`
-- co danh sach đơn hàng, chi tiết đơn hàng, tim theo ma don/ten/email/so dien thoai, loc theo ngay, loc theo trạng thái
-- chi tiết đơn hàng cho xem thông tin khách hàng va sản phẩm trong don
-- khi cập nhật trạng thái, he thong gửi mail thong bao cho khach
-
-## 14. Neu co hoi ve chatbot
-
-Tra loi:
-
-- em tao chatbot hỗ trợ khách hàng ngay trong admin app
-- bot tra loi theo tu khoa ve đơn hàng, giao hang, huy don, mail thong bao
-- neu nhap ma don nhu `ORD-00023` thi bot doc dữ liệu that trong SQLite
-
-## 15. Neu co hoi ve thanh toán online
-
-Tra loi:
-
-- em lam man checkout demo cho tung đơn hàng
-- khi thanh toán thành công, he thong cập nhật `payment_status`, `payment_method`, `transaction_code`, `paid_at`
-- dong thoi neu don dang `pending` thi doi sang `processing`
-
-## 16. Cau tra loi tong ket ngan
-
-“Project cua em gom auth, role, user management, product/category CRUD, order management, chatbot hỗ trợ khách hàng, payment demo va profile. Em dung middleware de phan quyền, dung Eloquent qua quan he `User hasOne Profile` cho profile, tao Blade component `Alert` de hiện thong bao loi/thành công. Ngoai ra em da tao model `Article`, `Tag`, bang trung gian `article_tag`, dinh nghia quan he, tao factory va seed dữ liệu gia. Phan đơn hàng cua em co đổi trạng thái, gửi mail, chatbot va checkout demo de phuc vu bai project.” 
+### Câu 2.9: Chatbot hỗ trợ khách hàng hoạt động như thế nào?
+- **Trả lời:**
+  - Em sử dụng package `laravel/ai` cấu hình kết nối trực tiếp tới mô hình Gemini AI.
+  - Khi người dùng nhắn tin, `ChatController` lưu tin nhắn vào database, sau đó chuyển tin nhắn sang Agent `SupportBot` gọi API Gemini xử lý.
+  - Đặc biệt, chatbot tích hợp 3 Tools: `SearchProducts`, `GetProductDetails`, `ListCategories` giúp AI tự động gọi cơ sở dữ liệu thật của dự án để tìm kiếm và trả về thông tin sản phẩm chuẩn xác nhất cho khách hàng.
+- **Mẹo vấn đáp:** Đăng nhập tài khoản Admin/Editor, mở khung chat lên và thử hỏi: *"Tìm sản phẩm áo thun"* hoặc *"Kiểm tra đơn hàng WEB-..."*, AI sẽ tự gọi công cụ và liệt kê thông tin.

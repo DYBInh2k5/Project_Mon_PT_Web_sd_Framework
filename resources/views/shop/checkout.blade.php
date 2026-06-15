@@ -21,19 +21,19 @@
                 <form method="POST" action="{{ route('shop.checkout.store') }}" class="mt-6 space-y-5" novalidate>
                     @csrf
                     <div class="grid gap-4 md:grid-cols-2">
-                        <x-forms.input name="customer_name" label="Ho va ten" type="text" :value="old('customer_name')" />
+                        <x-forms.input name="customer_name" label="Họ và tên" type="text" :value="old('customer_name')" />
                         <x-forms.input name="customer_email" label="Email" type="email" :value="old('customer_email')" />
-                        <x-forms.input name="customer_phone" label="So dien thoai" type="text" :value="old('customer_phone')" />
+                        <x-forms.input name="customer_phone" label="Số điện thoại" type="text" :value="old('customer_phone')" />
                         <div></div>
                     </div>
 
                     <div>
-                        <label for="customer_address" class="mb-2.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Dia chi giao hang</label>
+                        <label for="customer_address" class="mb-2.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Địa chỉ giao hàng</label>
                         <textarea id="customer_address" name="customer_address" rows="4" class="w-full rounded-2xl border border-stone-300 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm outline-none focus:border-brand-500 dark:border-gray-700 dark:bg-gray-950 dark:text-white">{{ old('customer_address') }}</textarea>
                     </div>
 
                     <div>
-                        <label for="notes" class="mb-2.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Ghi chu</label>
+                        <label for="notes" class="mb-2.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Ghi chú</label>
                         <textarea id="notes" name="notes" rows="3" class="w-full rounded-2xl border border-stone-300 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm outline-none focus:border-brand-500 dark:border-gray-700 dark:bg-gray-950 dark:text-white">{{ old('notes') }}</textarea>
                     </div>
 
@@ -51,7 +51,7 @@
                             Thanh toán VNPay
                         </button>
                         <a href="{{ route('shop.cart.index') }}" class="rounded-2xl border border-stone-200 px-5 py-3 text-sm font-medium text-gray-700 hover:border-brand-300 hover:text-brand-700 dark:border-gray-700 dark:text-gray-200">
-                            Quay lai giỏ hàng
+                            Quay lại giỏ hàng
                         </a>
                     </div>
                 </form>
@@ -59,7 +59,7 @@
 
             <aside class="space-y-6">
                 <div class="rounded-3xl border border-stone-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-                    <h2 class="text-lg font-semibold text-gray-950 dark:text-white">Đơn hàng tam tinh</h2>
+                    <h2 class="text-lg font-semibold text-gray-950 dark:text-white">Đơn hàng tạm tính</h2>
                     <div class="mt-5 space-y-4">
                         @foreach ($items as $item)
                             <div class="flex items-center justify-between gap-4 text-sm">
@@ -74,7 +74,7 @@
 
                     <div class="mt-6 border-t border-stone-200 pt-4 text-sm dark:border-gray-800">
                         <div class="flex items-center justify-between font-semibold text-gray-950 dark:text-white">
-                            <span>Tam tinh</span>
+                            <span>Tạm tính</span>
                             <span>{{ number_format((float) $subtotal, 0) }} VND</span>
                         </div>
                     </div>

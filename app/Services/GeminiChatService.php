@@ -9,7 +9,11 @@ use Throwable;
 class GeminiChatService
 {
     /**
-     * Ask Gemini to return a small JSON payload the UI can render safely.
+     * Gửi tin nhắn và ngữ cảnh của người dùng tới Gemini API, trả về mảng dữ liệu gồm câu trả lời và các gợi ý.
+     *
+     * @param  string  $message  Tin nhắn câu hỏi từ người dùng
+     * @param  array  $context  Thông tin ngữ cảnh bổ sung (như đơn hàng, sản phẩm)
+     * @return array|null Phản hồi đã được chuẩn hóa hoặc null nếu gặp lỗi
      */
     public function answer(string $message, array $context = []): ?array
     {
@@ -33,9 +37,10 @@ class GeminiChatService
                     ],
                 ],
             ],
+            // generationConfig cấu đặt các tham số điều khiển mức độ sáng tạo của AI.
             'generationConfig' => [
-                'temperature' => 0.35,
-                'maxOutputTokens' => 768,
+                'temperature' => 0.35, // Đặt nhiệt độ thấp để câu trả lời mang tính chính xác cao, bám sát context thực tế.
+                'maxOutputTokens' => 768, // Giới hạn số lượng token phản hồi tối đa.
             ],
         ];
 
@@ -58,10 +63,11 @@ class GeminiChatService
 
             $text = data_get($response->json(), 'candidates.0.content.parts.0.text');
 
-            if (! is_string($text) || trim($text) === '') {
+            if (!is_string($text) || trim($text) === '') {
                 return null;
             }
 
+            // Chuẩn hóa và làm sạch phản hồi JSON nhận được từ Gemini.
             return $this->normalizeGeminiResponse($text);
         } catch (Throwable $e) {
             Log::warning('Gemini chatbot exception', [
@@ -72,6 +78,9 @@ class GeminiChatService
         }
     }
 
+    /**
+     * Xây dựng Prompt hệ thống (System Prompt) và chèn ngữ cảnh ứng dụng gửi cho Gemini.
+     */
     protected function buildPrompt(string $message, array $context = []): string
     {
         $contextText = $context !== []
@@ -86,7 +95,7 @@ You must be able to answer broad questions about the project, including:
 - auth, middleware, roles
 - users, profiles, products, categories
 - orders, order status, mail notifications
-- payment demo
+- VNPay checkout
 - articles and tags
 - chatbot implementation
 - Laravel Boost / AI workflow in this project
@@ -105,6 +114,8 @@ PROMPT;
     }
 
     /**
+     * Chuẩn hóa kết quả phản hồi của Gemini đảm bảo có cấu trúc JSON hợp lệ để render ở Frontend.
+     *
      * @return array{message:string,suggestions:array<int, string>}
      */
     protected function normalizeGeminiResponse(string $text): array
@@ -112,6 +123,7 @@ PROMPT;
         $trimmed = trim($text);
         $decoded = json_decode($trimmed, true);
 
+        // Trường hợp Gemini bọc JSON trong Markdown code fence (ví dụ: ```json ... ```).
         if (! is_array($decoded)) {
             $decoded = $this->extractJsonObject($trimmed);
         }
@@ -128,6 +140,7 @@ PROMPT;
             ];
         }
 
+        // Fallback trong trường hợp phản hồi là một chuỗi văn bản thuần túy không thể parse JSON.
         return [
             'message' => $trimmed,
             'suggestions' => [],
@@ -135,7 +148,7 @@ PROMPT;
     }
 
     /**
-     * Try to recover a JSON object from Markdown fences or surrounding text.
+     * Trích xuất đối tượng JSON từ chuỗi phản hồi thô bằng biểu thức chính quy (Regex).
      */
     protected function extractJsonObject(string $text): ?array
     {
@@ -150,3 +163,5 @@ PROMPT;
         return null;
     }
 }
+
+

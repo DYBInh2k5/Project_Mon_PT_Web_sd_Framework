@@ -1,164 +1,99 @@
-# 05. Products, Users, UI
+# 05. Quản Lý Sản Phẩm, Người Dùng Và Giao Diện (Products, Users, UI)
 
-## 1. User Management
+## 1. Quản lý Người dùng (User Management)
 
-Controller:
+### Vai trò chịu trách nhiệm: `admin`
+Admin hệ thống thực hiện các thao tác quản trị người dùng, phân quyền và kiểm soát hoạt động thông qua:
+- **Controller chính:** [UserController.php](../app/Http/Controllers/UserController.php)
+- **Form Requests validate:** `StoreUserRequest.php` và `UpdateUserRequest.php`
 
-- [UserController.php](../app/Http/Controllers/UserController.php)
+**Các chức năng cốt lõi:**
+- **Danh sách người dùng:** Hiển thị danh sách, phân trang, tích hợp tìm kiếm theo tên/email, lọc theo vai trò (`role`) và trạng thái (`status`).
+- **Thống kê nhanh:** Số liệu tổng hợp số lượng admin, editor, user thông thường, tài khoản đang hoạt động và tài khoản đã xác minh email.
+- **Tạo người dùng mới:** Điền thông tin tài khoản, tự động khởi tạo bản ghi hồ sơ trống liên kết (quan hệ 1-1).
+- **Xem thông tin chi tiết:** Xem tài khoản kết hợp hồ sơ cá nhân (`profile`).
+- **Chỉnh sửa nâng cao:** Admin được quyền thay đổi vai trò (role), bật/tắt trạng thái hoạt động tài khoản và cập nhật trực tiếp hồ sơ cá nhân của người dùng.
+- **Xóa tài khoản:** Xóa tài khoản khỏi database (ngăn chặn tự xóa tài khoản của chính mình).
+- **Chuyển nhanh trạng thái (`is_active`):** Cho phép click nhanh để kích hoạt/khóa tài khoản trực tiếp từ danh sách.
 
-Chuc nang:
+**Các View Blade liên quan:**
+- [users/index.blade.php](../resources/views/users/index.blade.php) - Bảng danh sách người dùng kèm bộ lọc.
+- [users/create.blade.php](../resources/views/users/create.blade.php) - Form tạo người dùng mới.
+- [users/edit.blade.php](../resources/views/users/edit.blade.php) - Form cập nhật tài khoản và hồ sơ.
+- [users/show.blade.php](../resources/views/users/show.blade.php) - Trang chi tiết thông tin hồ sơ của người dùng.
 
-- xem danh sach user
-- xem thông tin profile cua user
-- tao user
-- xem chi tiết user
-- sua user va cập nhật profile cua user
-- xoa user
-- doi `is_active`
-- loc theo role va status
+---
 
-View:
+## 2. Quản lý Danh mục Sản phẩm (Product Category)
 
-- [users/index.blade.php](../resources/views/users/index.blade.php)
-- [users/create.blade.php](../resources/views/users/create.blade.php)
-- [users/edit.blade.php](../resources/views/users/edit.blade.php)
-- [users/show.blade.php](../resources/views/users/show.blade.php)
+### Vai trò chịu trách nhiệm: `editor` hoặc `admin`
+Quản lý các nhóm danh mục để phân loại sản phẩm:
+- **Controller chính:** [ProductCategoryController.php](../app/Http/Controllers/ProductCategoryController.php)
+- **Form Request validate:** `ProductCategoryRequest.php`
 
-## 2. Product Category
+**Các View Blade liên quan:**
+- [product-categories/index.blade.php](../resources/views/product-categories/index.blade.php) - Danh sách danh mục sản phẩm có đếm số lượng sản phẩm liên kết (`withCount('products')`).
+- [product-categories/create.blade.php](../resources/views/product-categories/create.blade.php) - Form tạo danh mục mới.
+- [product-categories/edit.blade.php](../resources/views/product-categories/edit.blade.php) - Form chỉnh sửa danh mục.
+- [product-categories/show.blade.php](../resources/views/product-categories/show.blade.php) - Chi tiết danh mục và danh sách sản phẩm thuộc về danh mục đó.
+- [product-categories/_form.blade.php](../resources/views/product-categories/_form.blade.php) - Biểu mẫu khai báo trường nhập liệu dùng chung.
 
-Controller:
+---
 
-- [ProductCategoryController.php](../app/Http/Controllers/ProductCategoryController.php)
+## 3. Quản lý Sản phẩm (Product)
 
-View:
+### Vai trò chịu trách nhiệm: `editor` hoặc `admin`
+- **Controller chính:** [ProductController.php](../app/Http/Controllers/ProductController.php)
+- **Form Request validate:** `ProductRequest.php`
 
-- [product-categories/index.blade.php](../resources/views/product-categories/index.blade.php)
-- [product-categories/create.blade.php](../resources/views/product-categories/create.blade.php)
-- [product-categories/edit.blade.php](../resources/views/product-categories/edit.blade.php)
-- [product-categories/show.blade.php](../resources/views/product-categories/show.blade.php)
-- [product-categories/_form.blade.php](../resources/views/product-categories/_form.blade.php)
+**Các chức năng cốt lõi:**
+- **CRUD sản phẩm:** Tạo mới, chỉnh sửa và xóa sản phẩm.
+- **Quản lý tồn kho & giá cả:** Cập nhật số lượng sản phẩm trong kho (`stock`) và giá bán (`price`).
+- **Tải lên hình ảnh:** Hỗ trợ upload ảnh sản phẩm, tự động lưu vào đĩa lưu trữ `public` và xóa bỏ file ảnh cũ trong storage khi cập nhật ảnh mới hoặc xóa sản phẩm để tiết kiệm không gian máy chủ.
+- **Thống kê kho hàng:** Hiển thị tổng số sản phẩm, số sản phẩm sắp hết hàng (tồn kho dưới hoặc bằng 10) và ước tính tổng giá trị kho hàng (`SUM(price * stock)`).
 
-## 3. Product
+**Các View Blade liên quan:**
+- [products/index.blade.php](../resources/views/products/index.blade.php) - Danh sách sản phẩm kèm bộ lọc.
+- [products/create.blade.php](../resources/views/products/create.blade.php) - Form tạo sản phẩm mới.
+- [products/edit.blade.php](../resources/views/products/edit.blade.php) - Form sửa sản phẩm.
+- [products/show.blade.php](../resources/views/products/show.blade.php) - Xem chi tiết thông số sản phẩm và hình ảnh minh họa.
 
-Controller:
+---
 
-- [ProductController.php](../app/Http/Controllers/ProductController.php)
+## 4. Mặt tiền Cửa hàng (Public Shop)
 
-Chuc nang:
+Giao diện bán hàng công khai phục vụ khách mua hàng không bắt buộc đăng nhập:
+- **Layout giao diện:** [layouts/shop.blade.php](../resources/views/layouts/shop.blade.php)
+- **ShopController:** Hiển thị sản phẩm, xem chi tiết sản phẩm công khai.
+- **ShopCartController:** Quản lý giỏ hàng thông qua Session (thêm, cập nhật số lượng, xóa sản phẩm khỏi giỏ).
+- **ShopCheckoutController:** Xử lý đặt hàng, tạo mã đơn hàng duy nhất và liên kết chuyển hướng sang cổng thanh toán VNPay Sandbox.
 
-- CRUD sản phẩm
-- upload anh
-- loc theo category
-- loc theo status
-- xem chi tiết
+**Các View Blade liên quan:**
+- [shop/index.blade.php](../resources/views/shop/index.blade.php) - Trang trưng bày sản phẩm có bộ tìm kiếm và lọc theo danh mục sản phẩm.
+- [shop/show.blade.php](../resources/views/shop/show.blade.php) - Trang chi tiết sản phẩm dành cho khách hàng.
+- [shop/cart.blade.php](../resources/views/shop/cart.blade.php) - Giao diện giỏ hàng của khách.
+- [shop/checkout.blade.php](../resources/views/shop/checkout.blade.php) - Form khai báo thông tin đặt hàng (Tên, SĐT, Email, Địa chỉ nhận hàng).
+- [shop/payment-result.blade.php](../resources/views/shop/payment-result.blade.php) - Giao diện hiển thị trạng thái kết quả thanh toán VNPay.
 
-View:
+---
 
-- [products/index.blade.php](../resources/views/products/index.blade.php)
-- [products/create.blade.php](../resources/views/products/create.blade.php)
-- [products/edit.blade.php](../resources/views/products/edit.blade.php)
-- [products/show.blade.php](../resources/views/products/show.blade.php)
-- [products/_form.blade.php](../resources/views/products/_form.blade.php)
+## 5. Blade Component Alert (`x-package-alert`)
 
-## 4. Public shop
+Để tối ưu hóa mã nguồn giao diện và tái sử dụng, hệ thống xây dựng một Custom Blade Component để hiển thị thông báo:
+- **Class xử lý:** [app/View/Components/Alert.php](../app/View/Components/Alert.php)
+- **View component:** [resources/views/components/alert.blade.php](../resources/views/components/alert.blade.php)
+- **Cách dùng trong Blade:**
+  ```blade
+  <x-package-alert type="success" message="Thao tác thành công!" />
+  ```
 
-Layout / view:
+### Tại sao sử dụng thuộc tính `novalidate` trên thẻ `<form>`?
+- Mặc định, trình duyệt sẽ chặn hành động submit nếu một thẻ input có thuộc tính `required` bị bỏ trống, và hiển thị bong bóng thông báo lỗi riêng của trình duyệt.
+- Để hệ thống Laravel thực hiện validate ở phía máy chủ (Backend) và hiển thị thông báo lỗi đồng bộ, đẹp mắt qua component `<x-package-alert>`, tất cả các form chính trong dự án đều được thêm thuộc tính `novalidate`.
+- Việc này giúp form luôn được submit lên máy chủ, Laravel tiến hành kiểm tra dữ liệu và trả về lỗi biểu mẫu qua biến `$errors` để hiển thị danh sách lỗi chi tiết ở đầu trang.
+- **Cách thử nghiệm nhanh:** Vào trang tạo người dùng mới, để trống tất cả các trường và ấn nút submit, khung thông báo lỗi màu đỏ của Alert component sẽ xuất hiện ngay ở đầu form.
 
-- [layouts/shop.blade.php](../resources/views/layouts/shop.blade.php)
-- [shop/index.blade.php](../resources/views/shop/index.blade.php)
-- [shop/cart.blade.php](../resources/views/shop/cart.blade.php)
-- [shop/checkout.blade.php](../resources/views/shop/checkout.blade.php)
-- [shop/payment-result.blade.php](../resources/views/shop/payment-result.blade.php)
-
-Controller:
-
-- [ShopController.php](../app/Http/Controllers/ShopController.php)
-- [ShopCartController.php](../app/Http/Controllers/ShopCartController.php)
-- [ShopCheckoutController.php](../app/Http/Controllers/ShopCheckoutController.php)
-- [shop/show.blade.php](../resources/views/shop/show.blade.php)
-
-Chuc nang:
-
-- mặt tiền shop công khai cho khach xem sản phẩm
-- tim kiem sản phẩm
-- loc theo danh mục
-- xem chi tiết sản phẩm
-- them sản phẩm vao giỏ hàng
-- tang/giam/xoa sản phẩm trong gio
-- checkout sang cong VNPay
-- hiện kết quả thanh toán quay ve trang shop
-
-## 5. Orders, chatbot, payment
-
-View:
-
-- [orders/index.blade.php](../resources/views/orders/index.blade.php)
-- [orders/show.blade.php](../resources/views/orders/show.blade.php)
-- [orders/payment.blade.php](../resources/views/orders/payment.blade.php)
-- [support/chat.blade.php](../resources/views/support/chat.blade.php)
-
-Chuc nang:
-
-- danh sach đơn hàng
-- loc theo ngay va trạng thái
-- tim kiem theo ma don, ten khach, email, so dien thoai
-- xem chi tiết đơn hàng va khách hàng
-- đổi trạng thái đơn hàng
-- lưu lịch sử đổi trạng thái
-- gửi mail khi đổi trạng thái bang Event/Listener
-- chatbot gợi ý cau hoi va doc ma don that
-- checkout demo cho online payment
-
-## 6. Blade Component Alert
-
-File class:
-
-- [app/View/Components/Alert.php](../app/View/Components/Alert.php)
-
-File view:
-
-- [resources/views/components/alert.blade.php](../resources/views/components/alert.blade.php)
-
-Alias:
-
-- `x-package-alert`
-
-Dung de hiện:
-
-- thong bao thành công
-- thong bao loi
-- danh sach nhieu loi
-
-## 7. Tai sao co `novalidate`
-
-Neu form co `required`, trinh duyet se chan submit truoc khi Laravel xu ly.
-
-De hiện `x-package-alert` cua project, cac form chinh duoc them:
-
-```html
-novalidate
-```
-
-De:
-
-1. form submit len server
-2. Laravel validate
-3. tra loi ve view
-4. alert tong hiện ra
-
-## 8. Cach test nhanh alert
-
-Vi du:
-
-1. vao `/users/create`
-2. de trong form
-3. bam `Create User`
-4. alert do hiện o dau form
-
-## 9. Ghi chu ve contrast UI
-
-Project da duoc chinh lai contrast o cac component dung chung:
-
-- body co mau chu mac dinh ro hon
-- breadcrumb, settings nav, card description va user dropdown co do tuong phan cao hon
-- muc dich la tranh chu bi chim trên nen sang hoac nen toi
+## 6. Thiết kế giao diện và Độ tương phản (UI Contrast)
+Dự án được tối ưu hóa độ tương phản giao diện (UI Contrast) trên các trang quản trị để cải thiện trải nghiệm người dùng:
+- Màu văn bản mặc định được chuyển sang các tông màu đậm, rõ ràng hơn để tránh mỏi mắt.
+- Các liên kết breadcrumb, menu điều hướng phụ (settings nav) và văn bản mô tả trong các thẻ card được tinh chỉnh độ tương phản cao, đảm bảo hiển thị sắc nét trên cả nền sáng lẫn nền tối.

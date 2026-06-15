@@ -12,8 +12,8 @@ class ArticleController extends Controller
      */
     public function index()
     {
-        // Eager loading user va tags de khi view goi $article->user / $article->tags
-        // Laravel khong phai query lap lai cho tung dong article.
+        // Eager loading user và tags để khi view gọi $article->user / $article->tags
+        // Laravel không phải thực hiện câu truy vấn lặp lại cho từng dòng article (tránh lỗi N+1 query).
         $articles = Article::with(['user', 'tags'])->get();
 
         return view('article.list', ['articles' => $articles]);

@@ -1,66 +1,90 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🛒 Xây Dựng Ứng Dụng Quản Trị Website Bán Hàng (Laravel 12)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Chào mừng bạn đến với dự án kết thúc môn học **Phát triển Web sử dụng Framework**. Dự án được xây dựng trên nền tảng **Laravel 12**, **SQLite**, tích hợp **Chatbot AI (Gemini)** hỗ trợ khách hàng và cổng thanh toán trực tuyến **VNPay**.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🗺️ Bản Đồ Tài Liệu Hướng Dẫn & Ôn Thi Vấn Đáp (docs/)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Toàn bộ tài liệu hướng dẫn đã được chuẩn hóa Tiếng Việt có dấu, cập nhật chi tiết luồng xử lý mới và bổ sung nội dung ôn thi vấn đáp:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+1. **[00-README.md](file:///d:/HSU/2533Semester%203(2025-2026)/Ph%C3%A1t%20tri%E1%BB%83n%20Web%20sd%20Framework/Project/docs/00-README.md)** - Định hướng và phân loại tài liệu hướng dẫn.
+2. **[01-OVERVIEW.md](file:///d:/HSU/2533Semester%203(2025-2026)/Ph%C3%A1t%20tri%E1%BB%83n%20Web%20sd%20Framework/Project/docs/01-OVERVIEW.md)** - Tổng quan đề tài, mục tiêu và danh sách các tính năng.
+3. **[02-ROUTES.md](file:///d:/HSU/2533Semester%203(2025-2026)/Ph%C3%A1t%20tri%E1%BB%83n%20Web%20sd%20Framework/Project/docs/02-ROUTES.md)** - Danh sách toàn bộ các tuyến đường (Route), quyền truy cập và middleware.
+4. **[03-DATABASE.md](file:///d:/HSU/2533Semester%203(2025-2026)/Ph%C3%A1t%20tri%E1%BB%83n%20Web%20sd%20Framework/Project/docs/03-DATABASE.md)** - Cấu trúc các bảng cơ sở dữ liệu SQLite, các mối quan hệ (Relationships) và tối ưu hóa index.
+5. **[04-AUTH-ROLE-PROFILE.md](file:///d:/HSU/2533Semester%203(2025-2026)/Ph%C3%A1t%20tri%E1%BB%83n%20Web%20sd%20Framework/Project/docs/04-AUTH-ROLE-PROFILE.md)** - Luồng xác thực, phân quyền Middleware (`role:admin`, `role:editor`, `role:user`) và cập nhật Profile.
+6. **[05-PRODUCTS-USERS-UI.md](file:///d:/HSU/2533Semester%203(2025-2026)/Ph%C3%A1t%20tri%E1%BB%83n%20Web%20sd%20Framework/Project/docs/05-PRODUCTS-USERS-UI.md)** - Chức năng CRUD Danh mục, Sản phẩm (kèm hình ảnh), tài khoản và tùy biến giao diện.
+7. **[06-ORAL-EXAM-NOTES.md](file:///d:/HSU/2533Semester%203(2025-2026)/Ph%C3%A1t%20tri%E1%BB%83n%20Web%20sd%20Framework/Project/docs/06-ORAL-EXAM-NOTES.md)** - Những câu hỏi vấn đáp cốt lõi và cách trả lời thông minh.
+8. **[07-ARTICLE-TAG-FACTORY-SEEDING.md](file:///d:/HSU/2533Semester%203(2025-2026)/Ph%C3%A1t%20tri%E1%BB%83n%20Web%20sd%20Framework/Project/docs/07-ARTICLE-TAG-FACTORY-SEEDING.md)** - Tính năng bài viết & thẻ bài viết (mối quan hệ Many-to-Many), Factory và Seeder.
+9. **[08-CONTROLLER-BY-CONTROLLER.md](file:///d:/HSU/2533Semester%203(2025-2026)/Ph%C3%A1t%20tri%E1%BB%83n%20Web%20sd%20Framework/Project/docs/08-CONTROLLER-BY-CONTROLLER.md)** - Hướng dẫn chi tiết từng Controller xử lý request trong dự án.
+10. **[09-ORDERS-CHATBOT-PAYMENT.md](file:///d:/HSU/2533Semester%203(2025-2026)/Ph%C3%A1t%20tri%E1%BB%83n%20Web%20sd%20Framework/Project/docs/09-ORDERS-CHATBOT-PAYMENT.md)** - Luồng giỏ hàng, đặt hàng, gửi mail sự kiện, tích hợp thanh toán VNPay và Chatbot hỗ trợ.
+11. **[10-LARAVEL-OPTIMIZATION.md](file:///d:/HSU/2533Semester%203(2025-2026)/Ph%C3%A1t%20tri%E1%BB%83n%20Web%20sd%20Framework/Project/docs/10-LARAVEL-OPTIMIZATION.md)** - Các kỹ thuật tối ưu hóa mã nguồn (Eager Loading, Queue, Service Pattern).
+12. **[11-FULL-PROJECT-GUIDE.md](file:///d:/HSU/2533Semester%203(2025-2026)/Ph%C3%A1t%20tri%E1%BB%83n%20Web%20sd%20Framework/Project/docs/11-FULL-PROJECT-GUIDE.md)** - Hướng dẫn chạy dự án nhanh và danh sách tài khoản dùng thử.
+13. **[13-CHATBOT-AGENT-GUIDE.md](file:///d:/HSU/2533Semester%203(2025-2026)/Ph%C3%A1t%20tri%E1%BB%83n%20Web%20sd%20Framework/Project/docs/13-CHATBOT-AGENT-GUIDE.md)** - Chi tiết cách cấu hình và luồng Agent AI hoạt động.
+14. **[14-TAI-LIEU-VAN-DAP-CHI-TIET.md](file:///d:/HSU/2533Semester%203(2025-2026)/Ph%C3%A1t%20tri%E1%BB%83n%20Web%20sd%20Framework/Project/docs/14-TAI-LIEU-VAN-DAP-CHI-TIET.md)** - Ngân hàng câu hỏi vấn đáp chi tiết nhất cho kì thi.
+15. **[15-ARCHITECTURE-OVERVIEW.md](file:///d:/HSU/2533Semester%203(2025-2026)/Ph%C3%A1t%20tri%E1%BB%83n%20Web%20sd%20Framework/Project/docs/15-ARCHITECTURE-OVERVIEW.md)** - Sơ đồ kiến trúc phân lớp của dự án.
+16. **[16-TONG-QUAN-VA-CAI-DAT.md](file:///d:/HSU/2533Semester%203(2025-2026)/Ph%C3%A1t%20tri%E1%BB%83n%20Web%20sd%20Framework/Project/docs/16-TONG-QUAN-VA-CAI-DAT.md)** - Tóm tắt cài đặt nhanh cho hệ thống.
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## ⚡ Hướng Dẫn Chạy Nhanh Dự Án
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### 1. Chuẩn bị Môi trường
+- PHP >= 8.2 (đầy đủ extension `pdo_sqlite`, `openssl`, `mbstring`, `zip`, `fileinfo`).
+- Composer.
+- Node.js & NPM.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 2. Cài đặt các gói phụ thuộc
+```bash
+composer install
+npm install
+```
 
-## Laravel Sponsors
+### 3. Cấu hình môi trường (`.env`)
+Tạo file `.env` bằng cách copy từ `.env.example`:
+```bash
+cp .env.example .env
+```
+Đảm bảo đã thiết lập kết nối cơ sở dữ liệu SQLite:
+```env
+DB_CONNECTION=sqlite
+DB_DATABASE=database/database.sqlite
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 4. Tạo cơ sở dữ liệu và nạp dữ liệu mẫu
+```bash
+# Tạo file sqlite nếu chưa có
+touch database/database.sqlite
 
-### Premium Partners
+# Migrate và seed dữ liệu mẫu
+php artisan migrate:fresh --seed
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+### 5. Khởi chạy Server
+- Chạy PHP Dev Server:
+```bash
+php artisan serve
+```
+- Chạy Vite để compile các assets CSS/JS:
+```bash
+npm run dev
+```
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## 🧪 Chạy Bộ Kiểm Thử (Testing)
 
-## Code of Conduct
+Dự án đi kèm bộ kiểm thử tự động gồm 61 test cases bảo đảm toàn bộ logic nghiệp vụ (Auth, Roles, CRUD, Cart, Checkout, VNPay, Chatbot) hoạt động ổn định:
+```bash
+php artisan test
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+## 📝 Tài khoản Đăng nhập Demo
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+| Vai trò (Role) | Email Đăng nhập | Mật khẩu mặc định | Chức năng truy cập |
+|---|---|---|---|
+| **Admin** | `admin@example.com` | `password` | Quản lý User, thay đổi Role, xem Profile, và toàn quyền hệ thống. |
+| **Editor** | `editor@example.com` | `password` | Quản lý Danh mục, Sản phẩm và Đơn hàng. |
+| **User** | `user@example.com` | `password` | Mua sắm, Đặt hàng, Thanh toán VNPay và Chat với AI Support. |

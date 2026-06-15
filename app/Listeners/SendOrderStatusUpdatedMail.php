@@ -12,8 +12,8 @@ class SendOrderStatusUpdatedMail implements ShouldQueue
 {
     public function handle(OrderStatusUpdated $event): void
     {
-        // Listener duoc queue de tach viec gui mail khoi controller/service.
-        // Try/catch giup thao tac cap nhat don hang khong bi hong neu mail/log co loi moi truong.
+        // Listener được đưa vào hàng đợi (Queue) để tách tác vụ gửi mail ra khỏi luồng xử lý chính của Controller/Service.
+        // Khối Try/Catch giúp quá trình cập nhật trạng thái đơn hàng không bị lỗi hoặc gián đoạn nếu hệ thống gửi email gặp sự cố môi trường.
         try {
             Mail::to($event->order->customer_email)
                 ->send(new OrderStatusUpdatedMail($event->order, $event->previousStatus));

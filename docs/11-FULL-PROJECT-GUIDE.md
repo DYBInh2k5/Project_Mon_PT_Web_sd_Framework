@@ -1,918 +1,132 @@
-# 11. Full Project Guide
+# 11. Hướng Dẫn Toàn Diện Về Dự Án (Full Project Guide)
 
-## 1. Ten de tai
+## 1. Tên đề tài môn học
 
-Xay dung ung dung phan quan tri cua website ban hang bang Laravel.
+**XÂY DỰNG ỨNG DỤNG PHẦN QUẢN TRỊ CỦA WEBSITE BÁN HÀNG BẰNG LARAVEL**
 
-Project nay tap trung vao cac chuc nang:
+Dự án tập trung triển khai và làm nổi bật các chức năng sau:
+- **Xác thực người dùng:** Đăng ký, đăng nhập, quên mật khẩu và đổi mật khẩu.
+- **Middleware phân quyền & tuổi:** Kiểm tra vai trò của tài khoản truy cập (`EnsureUserHasRole`) và lọc độ tuổi (`CheckAge`).
+- **Phân cấp vai trò người dùng (Role):** `admin`, `editor`, `user` kết hợp phân quyền tuyến đường.
+- **Quản lý người dùng:** CRUD danh sách tài khoản và cập nhật hồ sơ cá nhân (`Profile`) đi kèm thông qua quan hệ 1-1.
+- **Quản lý danh mục & sản phẩm:** CRUD danh mục và sản phẩm (tải lên/xóa hình ảnh trên đĩa cứng) qua quan hệ 1-N.
+- **Quản lý đơn hàng:** Xem danh sách, tìm kiếm nâng cao, lọc theo trạng thái/ngày, xem chi tiết mặt hàng và khách hàng.
+- **Tối ưu hóa đơn hàng:** Tách rời logic Controller qua `OrderService`, ghi vết lịch sử trạng thái trong bảng `order_status_histories`, phát sự kiện gửi mail thông báo tự động cho khách hàng bằng mô hình Event & Listener.
+- **Cửa hàng công khai (Public Shop):** Xem sản phẩm, tìm kiếm, lọc theo danh mục, quản lý giỏ hàng thông qua Session và đặt hàng.
+- **Thanh toán trực tuyến VNPay:** Tích hợp liên kết cổng thanh toán Sandbox VNPay, xác nhận giao dịch qua returnUrl (Frontend hiển thị) và ipnUrl (Backend đối soát ẩn bảo mật).
+- **Trợ lý AI hỗ trợ khách hàng (Chatbot Agent):** Tích hợp package `laravel/ai` và mô hình Gemini AI, lưu lịch sử trò chuyện trong database qua quan hệ 1-N (`AgentConversation` và `AgentConversationMessage`), hỗ trợ gọi công cụ tự động (Function Calling: `SearchProducts`, `GetProductDetails`, `ListCategories`).
+- **Demo quan hệ Nhiều-Nhiều (Many-to-Many):** Bài viết (`articles`) và nhãn (`tags`) kết nối qua bảng trung gian `article_tag` và tối ưu truy vấn bằng Eager Loading.
 
-- đăng nhập va đăng ký
-- middleware auth
-- phan quyền theo role
-- quan ly user
-- xem va cập nhật profile user
-- quan ly danh mục sản phẩm
-- quan ly sản phẩm co hinh anh
-- quan ly đơn hàng
-- mặt tiền shop công khai de khach xem sản phẩm
-- giỏ hàng va checkout VNPay
-- cập nhật trạng thái đơn hàng
-- gửi mail khi đổi trạng thái đơn hàng
-- chatbot hỗ trợ khách hàng
-- thanh toán online dang demo
-- demo Article - Tag bang Eloquent many-to-many
-- toi uu Laravel bang Service, Event, Listener, Queue, Local Scope
-- cai dat `laravel/boost` de bo tro workflow AI trong project
+---
 
-## 2. Cong nghe dung trong project
+## 2. Công nghệ sử dụng trong dự án
 
-- Laravel 12
-- PHP 8.2+
-- Blade
-- Tailwind CSS
-- Alpine.js
-- SQLite
-- Laravel Mail
-- Laravel Queue với `QUEUE_CONNECTION=sync`
-- Eloquent ORM
-- Query Builder
-- Form Request Validation
-- Blade Component
+- **Framework chính:** Laravel 12
+- **Phiên bản PHP:** PHP 8.2 trở lên
+- **Template Engine:** Blade Template (Giao diện sạch sẽ, chuyên nghiệp)
+- **CSS Utility:** Tailwind CSS
+- **JS Interactivity:** Alpine.js
+- **Database Engine:** SQLite (Lưu trữ tệp tin)
 
-## 3. Cach chay project
+---
 
-### Buoc 1: Mo terminal tai thư mục project
+## 3. Cách chạy dự án dưới máy cục bộ
 
-Thu muc hiện tai:
-
-```powershell
-D:\HSU\2533Semester 3(2025-2026)\Phat trien Web sd Framework\Project
+### Bước 1: Mở terminal tại thư mục gốc của dự án
+Đảm bảo bạn đang đứng tại thư mục:
+```text
+D:\HSU\2533Semester 3(2025-2026)\Phát triển Web sd Framework\Project
 ```
 
-Luu y:
-
-- `DB_DATABASE` dang tro sang ban SQLite trong thư mục temp cua Windows
-- day la cach de tranh loi `disk I/O error` khi update profile/avatar trên may nay
-
-### Buoc 2: Cai dependency PHP neu may chưa có vendor
-
+### Bước 2: Cài đặt các thư viện PHP (dependencies)
 ```powershell
 composer install
 ```
 
-### Buoc 3: Cai dependency frontend neu chưa có node_modules
-
+### Bước 3: Cài đặt các thư viện Frontend (node_modules)
 ```powershell
 npm install
 ```
 
-### Buoc 4: Tao file `.env` neu chưa có
-
+### Bước 4: Tạo file môi trường `.env`
 ```powershell
 copy .env.example .env
 ```
+*Mẹo:* Đảm bảo các cấu hình VNPay và Gemini API Key được khai báo đầy đủ trong `.env`.
 
-### Buoc 5: Tao app key
-
+### Bước 5: Tạo mã khóa ứng dụng (App Key)
 ```powershell
 php artisan key:generate
 ```
 
-### Buoc 6: Chay migrate
-
+### Bước 6: Chạy cấu trúc bảng dữ liệu (Migrations)
 ```powershell
 php artisan migrate
 ```
 
-### Buoc 7: Do dữ liệu mau
-
+### Bước 7: Đổ dữ liệu thử nghiệm ban đầu (Seeders)
 ```powershell
 php artisan db:seed
 ```
 
-### Buoc 8: Chay project
-
+### Bước 8: Khởi chạy dự án
 ```powershell
 php artisan serve
 ```
+Mở trình duyệt truy cập đường dẫn: `http://127.0.0.1:8000`
 
-Mo trinh duyet:
-
-```text
-http://127.0.0.1:8000
-```
-
-Neu can build frontend:
-
+Đồng thời, khởi động trình biên dịch tài nguyên frontend:
 ```powershell
 npm run dev
 ```
 
-Hoac chay full stack theo script:
+---
 
-```powershell
-composer run dev
-```
+## 4. Tài khoản thử nghiệm có sẵn (Demo Accounts)
 
-## 4. Tai khoan demo
+Sau khi chạy câu lệnh `db:seed`, hệ thống khởi tạo sẵn các tài khoản sau với mật khẩu mặc định là `password`:
+- **Tài khoản Admin:** `admin@example.com`
+  - Vai trò: `admin`
+  - Quyền hạn: Quản lý người dùng, xem và sửa thông tin profile người dùng.
+- **Tài khoản Editor:** `support@example.com`
+  - Vai trò: `editor`
+  - Quyền hạn: Quản lý danh mục, sản phẩm, và đơn hàng.
+- **Tài khoản User thông thường:** Khách hàng đăng ký trên giao diện.
 
-Seeder tao san:
+---
 
-```text
-admin@example.com
-password
-```
+## 5. Mối quan hệ giữa các thực thể (Eloquent Relationships)
 
-```text
-support@example.com
-password
-```
+- **User ↔ Profile (1-1):** `User hasOne Profile` và `Profile belongsTo User`. Sử dụng để mở rộng thông tin cá nhân mở rộng mà không làm phình bảng `users`.
+- **ProductCategory ↔ Product (1-N):** `ProductCategory hasMany Product` và `Product belongsTo ProductCategory`. Dùng để hiển thị danh mục sản phẩm và lọc sản phẩm.
+- **Order ↔ OrderItem (1-N):** `Order hasMany OrderItem`. Một đơn hàng chứa nhiều sản phẩm đặt mua.
+- **Product ↔ OrderItem (1-N):** `Product hasMany OrderItem` và `OrderItem belongsTo Product`. Link thông tin chi tiết sản phẩm đã mua.
+- **Order ↔ OrderStatusHistory (1-N):** `Order hasMany OrderStatusHistory`. Lưu lịch sử thay đổi trạng thái đơn hàng.
+- **Article ↔ Tag (Many-to-Many):** `Article belongsToMany Tag` và `Tag belongsToMany Article` kết nối qua bảng trung gian `article_tag`.
 
-Y nghia:
+---
 
-- `admin@example.com`: role `admin`, dung de quan ly user
-- `support@example.com`: role `editor`, dung de quan ly category, product, order
+## 6. Cơ chế hoạt động của Chatbot AI và Cổng thanh toán VNPay
 
-## 5. Role trong project
+### 6.1. Chatbot AI hỗ trợ
+- Hệ thống không sử dụng session để lưu lịch sử chat tạm thời, thay vào đó tạo bảng `agent_conversations` và `agent_conversations_messages` trong database để lưu vết hội thoại bền vững cho mỗi tài khoản người dùng đăng nhập.
+- Khi gửi tin nhắn qua `POST /chat/send`, `ChatController` đón nhận, chuyển tiếp cho Agent `SupportBot`.
+- AI sử dụng cơ chế Function Calling qua các Tool đã đăng ký (`SearchProducts`, `GetProductDetails`, `ListCategories`) để tự động tra cứu dữ liệu thật từ SQLite.
 
-Project co 3 role:
+### 6.2. Thanh toán trực tuyến VNPay
+- Giao dịch thanh toán được mã hóa chữ ký HMAC SHA512 bằng khóa bảo mật secret key.
+- Khi checkout, hệ thống sinh URL thanh toán VNPay và redirect khách hàng sang cổng VNPay.
+- Sau khi thanh toán, VNPay điều hướng về `returnUrl` trên trình duyệt để hiển thị kết quả cho khách hàng, đồng thời gửi request IPN (`ipnUrl`) ẩn phía backend-to-backend để đối soát an toàn, phòng ngừa lỗi mất gói tin hoặc khách tắt trình duyệt giữa chừng.
 
-- `admin`
-- `editor`
-- `user`
+---
 
-Trong `users` table co cot:
+## 7. Các câu trả lời vấn đáp ngắn gọn phục vụ thi cử
 
-- `role`
-- `is_active`
+### Hỏi: Tại sao phải tách nghiệp vụ đơn hàng ra lớp `OrderService`?
+- **Trả lời:** Nếu để toàn bộ logic validate dữ liệu, cập nhật cơ sở dữ liệu, ghi nhật ký thay đổi và gửi mail thông báo trực tiếp trong Controller, Controller sẽ bị phình to (Fat Controller) và rất khó kiểm thử hoặc tái sử dụng. Việc tách logic đơn hàng ra `OrderService` giúp giữ cho Controller luôn gọn gàng (Skinny Controller), chỉ làm nhiệm vụ điều phối request và response.
 
-Phan quyền dung middleware:
+### Hỏi: Vai trò của Event và Listener trong luồng gửi email là gì?
+- **Trả lời:** Event và Listener giúp thực hiện lập trình hướng sự kiện (Event-Driven Development) và tách rời logic nghiệp vụ. Khi đơn hàng đổi trạng thái, Service chỉ cần phát đi sự kiện `OrderStatusUpdated`. Tác vụ gửi email (vốn tốn thời gian kết nối server mail) sẽ được giao cho Listener xử lý ở chế độ nền (Queue), giúp phản hồi giao diện tải nhanh hơn.
 
-```php
-->middleware('role:admin')
-->middleware('role:editor,admin')
-->middleware('role:user,editor,admin')
-```
-
-File middleware:
-
-- [EnsureUserHasRole.php](../app/Http/Middleware/EnsureUserHasRole.php)
-
-Luong middleware:
-
-1. Lay user dang đăng nhập
-2. Lay role route yeu cau
-3. Neu user co role phù hợp thi cho vao controller
-4. Neu sai role thi `abort(403)`
-
-## 6. Route quan trong
-
-File route:
-
-- [routes/web.php](../routes/web.php)
-- [routes/auth.php](../routes/auth.php)
-
-### Auth
-
-- `/login`
-- `/register`
-- `/forgot-password`
-- `/reset-password`
-- `/confirm-password`
-- `/logout`
-
-### Dashboard
-
-- `/dashboard`
-
-### Public shop
-
-- `/`
-- `/shop`
-- `/shop/products/{product}`
-- `/cart`
-- `/checkout`
-- `/checkout/vnpay/return`
-- `/checkout/vnpay/ipn`
-
-Đây là mặt tiền công khai cua website:
-
-- khach co the xem danh mục
-- tim sản phẩm
-- loc sản phẩm theo danh mục
-- xem chi tiết sản phẩm
-- them sản phẩm vao gio
-- cập nhật so luồng / xoa sản phẩm trong gio
-- tao đơn hàng va chuyen sang VNPay checkout
-- xem gia va trạng thái ton kho
-
-### User management
-
-- `/users`
-- `/users/create`
-- `/users/{user}`
-- `/users/{user}/edit`
-- `PATCH /users/{user}/status`
-
-Role:
-
-- `admin`
-
-### Product category
-
-- `/product-categories`
-- `/product-categories/create`
-- `/product-categories/{productCategory}`
-- `/product-categories/{productCategory}/edit`
-
-Role:
-
-- `editor`, `admin`
-
-### Product
-
-- `/products`
-- `/products/create`
-- `/products/{product}`
-- `/products/{product}/edit`
-
-Role:
-
-- `editor`, `admin`
-
-### Orders
-
-- `/orders`
-- `/orders/{order}`
-- `PATCH /orders/{order}/status`
-- `/orders/{order}/payment`
-- `POST /orders/{order}/payment`
-
-Role:
-
-- `editor`, `admin`
-
-### Chatbot
-
-- `/support-chat`
-- `POST /support-chat`
-- `POST /chat/send`
-- `POST /support-chat/clear`
-- bot dung Gemini de tra loi broad question ve project, không chi keyword
-- neu co ma don, bot se tra cuu order that truoc khi tong hop tra loi
-- prompt co them context tu Boost guideline va guide cua project
-- neu Gemini bi 429/quota, bot co local fallback de van tra loi duoc cac cau hoi co ban va theo module
-
-Role:
-
-- `user`, `editor`, `admin`
-
-### Articles demo Eloquent
-
-- `/articles`
-
-Dung de demo:
-
-- Article thuoc ve User
-- Article co nhieu Tag
-- Tag co nhieu Article
-
-## 7. Cau truc thư mục nen nho
-
-```text
-app/
-  Http/
-    Controllers/
-    Middleware/
-    Requests/
-  Models/
-  Services/
-  Events/
-  Listeners/
-  Mail/
-  Support/
-database/
-  migrations/
-  seeders/
-  factories/
-resources/
-  views/
-routes/
-  web.php
-  auth.php
-docs/
-```
-
-## 8. Database chinh
-
-Database đang dùng:
-
-```text
-database/database.sqlite
-```
-
-Bang quan trong:
-
-- `users`
-- `profiles`
-- `product_categories`
-- `products`
-- `orders`
-- `order_items`
-- `order_status_histories`
-- `articles`
-- `tags`
-- `article_tag`
-
-## 9. Quan he Eloquent
-
-### User - Profile
-
-```text
-User hasOne Profile
-Profile belongsTo User
-```
-
-Dung cho:
-
-- profile cua user dang đăng nhập
-- admin xem/cập nhật profile user trong user management
-
-### ProductCategory - Product
-
-```text
-ProductCategory hasMany Product
-Product belongsTo ProductCategory
-```
-
-Dung cho:
-
-- loc product theo category
-- xem chi tiết category kem danh sach product
-
-### Product - OrderItem
-
-```text
-Product hasMany OrderItem
-OrderItem belongsTo Product
-```
-
-Dung cho:
-
-- xem sản phẩm trong chi tiết đơn hàng
-
-### Order - OrderItem
-
-```text
-Order hasMany OrderItem
-OrderItem belongsTo Order
-```
-
-Dung cho:
-
-- chi tiết đơn hàng
-- tinh so luồng item trong don
-
-### Order - OrderStatusHistory
-
-```text
-Order hasMany OrderStatusHistory
-OrderStatusHistory belongsTo Order
-```
-
-Dung cho:
-
-- xem lich su đổi trạng thái đơn hàng
-
-### Article - Tag
-
-```text
-Article belongsTo User
-User hasMany Article
-Article belongsToMany Tag
-Tag belongsToMany Article
-```
-
-Bang trung gian:
-
-```text
-article_tag
-```
-
-## 10. User management
-
-Controller:
-
-- [UserController.php](../app/Http/Controllers/UserController.php)
-
-Request validation:
-
-- [StoreUserRequest.php](../app/Http/Requests/StoreUserRequest.php)
-- [UpdateUserRequest.php](../app/Http/Requests/UpdateUserRequest.php)
-
-View:
-
-- [users/index.blade.php](../resources/views/users/index.blade.php)
-- [users/create.blade.php](../resources/views/users/create.blade.php)
-- [users/show.blade.php](../resources/views/users/show.blade.php)
-- [users/edit.blade.php](../resources/views/users/edit.blade.php)
-
-Chuc nang:
-
-- danh sach user
-- tim theo ten/email
-- loc theo role
-- loc theo status
-- tao user
-- xem chi tiết user
-- xem thông tin profile
-- cập nhật account va profile
-- neu email thay doi thi `email_verified_at` se reset ve `null`
-- doi `is_active`
-- xoa user
-
-Luong update user:
-
-```text
-Route /users/{user}
--> UserController@update
--> UpdateUserRequest validate
--> update users table
--> update profiles table
--> redirect users.index
-```
-
-## 11. Product category
-
-Controller:
-
-- [ProductCategoryController.php](../app/Http/Controllers/ProductCategoryController.php)
-
-Request:
-
-- [ProductCategoryRequest.php](../app/Http/Requests/ProductCategoryRequest.php)
-
-Chuc nang:
-
-- danh sach category
-- tim theo name/slug
-- loc status
-- tao category
-- sua category
-- xoa category
-- xem chi tiết category
-- dem so product trong category bang `withCount`
-
-## 12. Product
-
-Controller:
-
-- [ProductController.php](../app/Http/Controllers/ProductController.php)
-
-Request:
-
-- [ProductRequest.php](../app/Http/Requests/ProductRequest.php)
-
-Chuc nang:
-
-- danh sach product
-- tim theo name/sku/slug
-- loc theo category
-- loc theo status
-- tao product
-- upload image
-- sua product
-- xoa product
-- xoa image cu khi upload image moi
-
-Upload file:
-
-```php
-$request->file('image')->store('products', 'public');
-```
-
-## 13. Orders
-
-Controller:
-
-- [OrderController.php](../app/Http/Controllers/OrderController.php)
-
-Service:
-
-- [OrderService.php](../app/Services/OrderService.php)
-
-Models:
-
-- [Order.php](../app/Models/Order.php)
-- [OrderItem.php](../app/Models/OrderItem.php)
-- [OrderStatusHistory.php](../app/Models/OrderStatusHistory.php)
-
-Views:
-
-- [orders/index.blade.php](../resources/views/orders/index.blade.php)
-- [orders/show.blade.php](../resources/views/orders/show.blade.php)
-
-Chuc nang:
-
-- xem danh sach đơn hàng
-- tim theo order number, customer name, email, phone
-- loc theo status
-- loc theo date from/date to
-- sap xep moi den cu
-- xem chi tiết đơn hàng
-- xem thông tin khách hàng
-- xem sản phẩm trong don
-- cập nhật status
-- luu history doi status
-- gửi mail khi doi status
-
-## 14. Toi uu Order bang Laravel
-
-Luc dau co the viet tat ca trong `OrderController`.
-
-Sau toi uu:
-
-```text
-OrderController
--> OrderService
--> OrderStatusUpdated event
--> SendOrderStatusUpdatedMail listener
--> OrderStatusUpdatedMail
-```
-
-Y nghia:
-
-- controller gon hon
-- service chua logic nghiệp vụ
-- event/listener tach gửi mail khoi controller
-- history giup xem lai qua trinh doi status
-- local scope giup query gon va tai su dung duoc
-
-## 15. Luong cập nhật status đơn hàng
-
-1. Editor/Admin vao `/orders/{order}`
-2. Chon status moi
-3. Submit form `PATCH /orders/{order}/status`
-4. `UpdateOrderStatusRequest` validate status
-5. `OrderController@updateStatus` goi `OrderService@updateStatus`
-6. `OrderService` update `orders.status`
-7. `OrderService` tao dong moi trong `order_status_histories`
-8. `OrderService` phat event `OrderStatusUpdated`
-9. Listener `SendOrderStatusUpdatedMail` gửi mail
-10. Redirect ve trang chi tiết đơn hàng
-
-## 16. Payment demo
-
-Controller:
-
-- [OrderPaymentController.php](../app/Http/Controllers/OrderPaymentController.php)
-
-Request:
-
-- [ProcessOrderPaymentRequest.php](../app/Http/Requests/ProcessOrderPaymentRequest.php)
-
-View:
-
-- [orders/payment.blade.php](../resources/views/orders/payment.blade.php)
-
-Luong:
-
-1. Mở chi tiết đơn hàng
-2. Bam `Open checkout`
-3. Nhap thông tin payment demo
-4. Submit form
-5. Cập nhật:
-   - `payment_status = paid`
-   - `payment_method`
-   - `transaction_code`
-   - `paid_at`
-6. Neu order dang `pending`, goi `OrderService` doi status sang `processing`
-
-## 17. Mail
-
-Mail class:
-
-- [OrderStatusUpdatedMail.php](../app/Mail/OrderStatusUpdatedMail.php)
-
-View:
-
-- [status-updated.blade.php](../resources/views/emails/orders/status-updated.blade.php)
-
-Config hiện tai:
-
-```env
-MAIL_MAILER=log
-QUEUE_CONNECTION=sync
-```
-
-Y nghia:
-
-- mail không gui ra Gmail that
-- mail ghi vao log de demo
-- listener queue chay ngay vi queue la `sync`
-
-## 18. Chatbot
-
-Controller:
-
-- [SupportChatController.php](../app/Http/Controllers/SupportChatController.php)
-
-Logic:
-
-- [CustomerSupportChatbot.php](../app/Support/CustomerSupportChatbot.php)
-
-View:
-
-- [support/chat.blade.php](../resources/views/support/chat.blade.php)
-
-Chuc nang:
-
-- tra loi theo keyword
-- neu không co rule phù hợp thi goi Gemini API
-- tra ve JSON de UI render on dinh
-- lưu lịch sử chat trong session
-- doc ma don that nhu `ORD-00023`
-- neu gap ma don, bot query bang `orders`
-
-## 19. Articles va Tags
-
-Controller:
-
-- [ArticleController.php](../app/Http/Controllers/ArticleController.php)
-
-Models:
-
-- [Article.php](../app/Models/Article.php)
-- [Tag.php](../app/Models/Tag.php)
-- [User.php](../app/Models/User.php)
-
-View:
-
-- [article/list.blade.php](../resources/views/article/list.blade.php)
-
-Route:
-
-```php
-Route::resource('articles', ArticleController::class);
-```
-
-Code chinh:
-
-```php
-$articles = Article::with(['user', 'tags'])->get();
-```
-
-Y nghia:
-
-- lay danh sach article
-- eager load user va tags
-- tranh N+1 query
-- view hiện `$article->user->name`
-- view lap `$article->tags`
-
-## 20. Form Request Validation
-
-Project dung Form Request de controller gon hon.
-
-Vi du:
-
-- `StoreUserRequest`
-- `UpdateUserRequest`
-- `ProductRequest`
-- `ProductCategoryRequest`
-- `UpdateOrderStatusRequest`
-- `ProcessOrderPaymentRequest`
-
-Luong:
-
-```text
-Form submit
--> FormRequest validate
--> neu sai quay ve view kem errors
--> neu dung vao controller
-```
-
-## 21. Blade Component Alert
-
-Class:
-
-- [Alert.php](../app/View/Components/Alert.php)
-
-View:
-
-- [alert.blade.php](../resources/views/components/alert.blade.php)
-
-Alias:
-
-```php
-Blade::component('package-alert', Alert::class);
-```
-
-Dung:
-
-```blade
-<x-package-alert type="danger" message="..." :messages="$errors->all()" />
-```
-
-## 22. Cac lenh hay dung
-
-### Route
-
-```powershell
-php artisan route:list
-php artisan route:list --path=orders
-php artisan route:list --path=articles
-```
-
-### Database
-
-```powershell
-php artisan migrate
-php artisan migrate:status
-php artisan db:seed
-```
-
-### Cache
-
-```powershell
-php artisan view:clear
-php artisan cache:clear
-php artisan config:clear
-```
-
-Tren may nay, Laravel con dung them thư mục `cache/` o root de luu compiled view va package cache tam thoi.
-Thu muc nay la runtime-only va da duoc them vao `.gitignore`.
-
-### Test
-
-```powershell
-php artisan test
-```
-
-### Serve
-
-```powershell
-php artisan serve
-```
-
-## 23. Thu tu doc code de hieu nhanh
-
-Nen doc theo thu tu:
-
-1. `routes/web.php`
-2. middleware neu route co middleware
-3. controller tuong ung
-4. request validation
-5. service neu co
-6. model va relationship
-7. migration de biet bang/cot
-8. view blade
-
-Vi du với order:
-
-```text
-routes/web.php
--> OrderController
--> UpdateOrderStatusRequest
--> OrderService
--> Order model
--> OrderStatusHistory model
--> OrderStatusUpdated event
--> SendOrderStatusUpdatedMail listener
--> orders/show.blade.php
-```
-
-## 24. Demo nhanh trên lop
-
-### Demo role
-
-1. Đăng nhập admin
-2. Vao `/users`
-3. Tao/sua user
-4. Doi status user
-5. Đăng nhập editor
-6. Thu vao `/users` de thay bi chan
-
-### Demo product/category
-
-1. Đăng nhập editor
-2. Vao `/product-categories`
-3. Tao category
-4. Vao `/products`
-5. Tao product co upload image
-6. Loc product theo category/status
-
-### Demo order
-
-1. Vao `/orders`
-2. Tim theo phone/email/order number
-3. Loc theo status
-4. Loc theo date from/date to
-5. Mở chi tiết order
-6. Doi status
-7. Xem status history
-8. Kiem tra mail log
-
-### Demo payment
-
-1. Mo order detail
-2. Bam `Open checkout`
-3. Nhap payment demo
-4. Submit
-5. Xem payment status thanh `paid`
-6. Neu order pending thi status thanh `processing`
-
-### Demo chatbot
-
-1. Vao `/support-chat`
-2. Nhap `Kiem tra don ORD-00023`
-3. Bot doc dữ liệu that tu SQLite
-4. Nhap cau hoi khac nhu `Laravel middleware role nay dung nhu the nao?`
-5. Bot se tra loi bang Gemini dua trên context cua project va Boost
-
-### Demo articles
-
-1. Vao `/articles`
-2. Xem title, user, body, created_at, tags
-3. Giai thich Eloquent relationship
-
-## 25. Cau tra loi vấn đáp ngan
-
-“Project cua em la phan quan tri website ban hang bang Laravel. Em co auth, middleware role, user management, profile, product/category CRUD, order management, chatbot, mail va payment demo. Em dung Eloquent relationship cho cac model, Form Request de validate, Blade Component de hiện alert. Rieng module đơn hàng em toi uu bang `OrderService`, event `OrderStatusUpdated`, listener gửi mail va bang `order_status_histories` de lưu lịch sử đổi trạng thái.”
-
-## 26. Cau tra loi khi bi hoi vi sao tach Service
-
-“Neu de controller vua validate, vua update database, vua gửi mail thi controller se bi dai va kho bao tri. Em tach nghiệp vụ đổi trạng thái đơn hàng sang `OrderService`, controller chi nhan request va goi service. Cach nay dung với Laravel hon va de mo rong sau nay.”
-
-## 27. Cau tra loi khi bi hoi Event/Listener de lam gi
-
-“Event/Listener giup tach viec gửi mail khoi logic cập nhật đơn hàng. Khi status thay doi, service phat event `OrderStatusUpdated`. Listener `SendOrderStatusUpdatedMail` nhan event va gửi mail. Sau nay neu muon them notification hay log khac, em chi can them listener moi.”
-
-## 28. Cau tra loi khi bi hoi local scope la gi
-
-“Local scope la ham trong model de tai su dung query. Trong `Order`, em tao `scopeSearch`, `scopeStatus`, `scopePlacedFrom`, `scopePlacedUntil`. Nhờ vậy controller không can viet nhieu `when`, query gon hon va co the dung lai o noi khac.”
-
-## 29. Cau tra loi khi bi hoi eager loading la gi
-
-“Eager loading la lay san dữ liệu quan he de tranh N+1 query. Vi du trang articles can user va tags, em dung `Article::with(['user', 'tags'])->get()`. Trang order detail can sản phẩm va lich su status, em dung `$order->load(['items.product', 'statusHistories.changer'])`.”
-
-## 30. Loi thuong gap
-
-### Loi mail không vao Gmail
-
-Do `.env` dang:
-
-```env
-MAIL_MAILER=log
-```
-
-Mail se ghi vao:
-
-```text
-storage/logs/laravel.log
-```
-
-### Loi SQLite journal / disk I/O
-
-Neu migration bi ngat giua chung, co the con file:
-
-```text
-database/database.sqlite-journal
-```
-
-Cach xu ly:
-
-1. Tat server Laravel dang chay
-2. Chay lai:
-
-```powershell
-php artisan migrate
-```
-
-Neu van loi, backup database truoc khi xoa file journal.
-
-### Loi route không thay
-
-Chay:
-
-```powershell
-php artisan route:list
-```
-
-### Loi view cu
-
-Chay:
-
-```powershell
-php artisan view:clear
-```
-
-## 31. Ghi nho cuoi
-
-Project nen duoc giai thich theo luồng:
-
-```text
-Route -> Middleware -> Request Validation -> Controller -> Service -> Model -> Event/Listener -> View
-```
-
-Không phải module nao cùng co service/event. Module đơn hàng co service/event vi no la module quan trong nhat va co nhieu nghiệp vụ nhat.
+### Hỏi: Eager Loading giải quyết vấn đề gì và dùng như thế nào?
+- **Trả lời:** Eager Loading giải quyết lỗi truy vấn **N+1 query** (lỗi thực hiện quá nhiều câu lệnh SELECT lặp lại trong vòng lặp hiển thị dữ liệu quan hệ). Em sử dụng phương thức `with()` trong Eloquent (ví dụ: `Article::with(['user', 'tags'])->get()`) để nạp trước toàn bộ dữ liệu quan hệ vào bộ nhớ chỉ trong 1 hoặc 2 câu truy vấn duy nhất.

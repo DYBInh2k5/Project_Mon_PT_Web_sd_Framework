@@ -1,184 +1,97 @@
-# 09. Orders, Chatbot, Payment
+# 09. Đơn Hàng, Chatbot Trợ Lý AI Và Thanh Toán VNPay (Orders, Chatbot, Payment)
 
-## 1. Order management
+## 1. Nghiệp vụ Quản lý Đơn hàng (Order Management)
 
-Model:
+### Các Model tham gia:
+- [Order.php](../app/Models/Order.php) - Lưu trữ thông tin tổng quát của đơn đặt hàng và thông tin khách hàng.
+- [OrderItem.php](../app/Models/OrderItem.php) - Lưu chi tiết các sản phẩm đã mua tại thời điểm đặt hàng.
+- [OrderStatusHistory.php](../app/Models/OrderStatusHistory.php) - Ghi nhật ký lịch sử thay đổi trạng thái đơn hàng.
 
-- [Order.php](../app/Models/Order.php)
-- [OrderItem.php](../app/Models/OrderItem.php)
-- [OrderStatusHistory.php](../app/Models/OrderStatusHistory.php)
+### Luồng xử lý nghiệp vụ đơn hàng (Đã được tối ưu bằng Event/Listener):
 
-Controller:
+```text
+Nhân viên cập nhật trạng thái đơn (pending -> processing -> completed)
+  ↓
+Gọi phương thức updateStatus() trong OrderController.php
+  ↓
+Chuyển tiếp xử lý sang OrderService.php
+  ↓
+Mở Database Transaction
+  - Cập nhật trường status trong bảng orders
+  - Tạo một dòng ghi vết lịch sử trong bảng order_status_histories
+  ↓
+Phát ra sự kiện OrderStatusUpdated
+  ↓
+Listener SendOrderStatusUpdatedMail bắt được sự kiện
+  ↓
+Gửi email thông báo OrderStatusUpdatedMail (dạng HTML) tới email của khách hàng.
+```
 
-- [OrderController.php](../app/Http/Controllers/OrderController.php)
+**Các View Blade liên quan:**
+- [orders/index.blade.php](../resources/views/orders/index.blade.php) - Danh sách đơn hàng cho editor/admin.
+- [orders/show.blade.php](../resources/views/orders/show.blade.php) - Trang chi tiết đơn hàng (Xem sản phẩm đã đặt, lịch sử đổi trạng thái đơn và form đổi trạng thái).
 
-Service/Event/Listener:
+**Lưu ý kỹ thuật:**
+- **Môi trường cục bộ:** File cấu hình `.env` thiết lập `MAIL_MAILER=log`, nghĩa là email thông báo được ghi nhận trực tiếp vào file log hệ thống (`storage/logs/laravel.log`) thay vì gửi qua SMTP hộp thư thật.
+- **Hàng đợi Queue:** Cấu hình `QUEUE_CONNECTION=sync` giúp bộ lắng nghe (Listener) chạy đồng bộ ngay lập tức để phục vụ kiểm tra nhanh lúc thi vấn đáp.
 
-- [OrderService.php](../app/Services/OrderService.php)
-- [OrderStatusUpdated.php](../app/Events/OrderStatusUpdated.php)
-- [SendOrderStatusUpdatedMail.php](../app/Listeners/SendOrderStatusUpdatedMail.php)
+---
 
-View:
+## 2. Trợ lý AI Hỗ trợ Khách hàng (Chatbot Agent)
 
-- [orders/index.blade.php](../resources/views/orders/index.blade.php)
-- [orders/show.blade.php](../resources/views/orders/show.blade.php)
+Hệ thống đã nâng cấp toàn diện chatbot sang sử dụng package **`laravel/ai`** chính thức và mô hình lưu trữ lịch sử qua cơ sở dữ liệu thay vì sử dụng session tạm thời:
 
-Chuc nang:
+### Các file cốt lõi:
+- [SupportChatController.php](../app/Http/Controllers/SupportChatController.php) - Render trang chat và tải lịch sử tin nhắn từ database để hiển thị cho Alpine.js.
+- [ChatController.php](../app/Http/Controllers/ChatController.php) - Single Action Controller nhận câu hỏi bằng ajax, lưu tin nhắn, gọi Agent AI tạo phản hồi và lưu phản hồi của AI.
+- [SupportBot.php](../app/Ai/Agents/SupportBot.php) - Lớp Agent cấu hình System Instructions và đăng ký các công cụ truy xuất dữ liệu thực tế.
+- [AgentConversation.php](../app/Models/AgentConversation.php) - Model lưu trữ phiên trò chuyện của người dùng đăng nhập.
+- [AgentConversationMessage.php](../app/Models/AgentConversationMessage.php) - Model lưu chi tiết tin nhắn của user và AI phản hồi (kèm thông tin cuộc gọi công cụ `tool_calls` và `tool_results`).
 
-- xem danh sach đơn hàng
-- loc theo trạng thái
-- tim theo ma don, ten khach, email, so dien thoai
-- tim theo ngay `from - to`
-- sap xep moi den cu
-- xem chi tiết đơn hàng
-- xem thông tin khách hàng
-- cập nhật trạng thái đơn hàng
-- lưu lịch sử đổi trạng thái đơn hàng
+### Cơ chế gọi công cụ (Function Calling) trong dự án:
+AI Gemini không trực tiếp kết nối với cơ sở dữ liệu. Thay vào đó, Agent `SupportBot` đăng ký 3 công cụ (Tools) sau để AI tự động chọn gọi khi cần thông tin thực tế:
+1. [SearchProducts.php](../app/Ai/Tools/SearchProducts.php) - Tìm kiếm sản phẩm theo từ khóa tên.
+2. [GetProductDetails.php](../app/Ai/Tools/GetProductDetails.php) - Lấy thông số kỹ thuật chi tiết của sản phẩm bằng ID.
+3. [ListCategories.php](../app/Ai/Tools/ListCategories.php) - Liệt kê tất cả danh mục sản phẩm hiện có.
 
-## 2. Mail khi đổi trạng thái
+**Quy trình hoạt động:**
+```text
+Người dùng nhập: "Xem cho tôi chi tiết sản phẩm có ID là 5"
+  ↓
+ChatController nhận tin nhắn và chuyển sang Agent SupportBot
+  ↓
+Gemini AI phân tích câu hỏi, phát hiện cần dùng công cụ GetProductDetails
+  ↓
+Gemini AI phản hồi yêu cầu chạy công cụ với tham số {"product_id": 5}
+  ↓
+Laravel chạy code PHP trong GetProductDetails@handle, truy vấn sản phẩm trong SQLite
+  ↓
+Kết quả JSON sản phẩm được trả ngược lại cho Gemini AI
+  ↓
+Gemini AI tổng hợp thông tin và phản hồi câu trả lời Tiếng Việt hoàn chỉnh cho khách hàng.
+```
 
-File:
+---
 
-- [OrderStatusUpdatedMail.php](../app/Mail/OrderStatusUpdatedMail.php)
-- [status-updated.blade.php](../resources/views/emails/orders/status-updated.blade.php)
+## 3. Tích hợp cổng thanh toán trực tuyến VNPay
 
-Luong:
+Dự án thay thế phương thức thanh toán ví Momo cũ bằng cổng **VNPay Sandbox** (môi trường thử nghiệm):
 
-1. nhan vien doi status trong `orders.show`
-2. `OrderController@updateStatus` goi `OrderService`
-3. `OrderService` cập nhật dữ liệu va ghi `order_status_histories`
-4. `OrderService` phat event `OrderStatusUpdated`
-5. listener `SendOrderStatusUpdatedMail` gửi mail thong bao cho `customer_email`
+### Các file xử lý:
+- [VnpayPaymentService.php](../app/Services/VnpayPaymentService.php) - Đóng gói logic sắp xếp tham số alphabet, mã hóa chữ ký SHA512 và trích xuất số tiền.
+- [ShopCheckoutController.php](../app/Http/Controllers/ShopCheckoutController.php) - Quản lý quy trình đặt hàng từ giỏ hàng và tiếp nhận phản hồi từ VNPay.
 
-Luu y:
+### Luồng xử lý giao dịch VNPay:
+1. Khách hàng lựa chọn sản phẩm, thêm vào giỏ hàng và truy cập trang `/checkout`.
+2. Khách điền thông tin cá nhân. Hệ thống khởi tạo một đơn hàng mới trong bảng `orders` ở trạng thái `pending` và `unpaid`.
+3. Hệ thống gọi `VnpayPaymentService` để sinh liên kết thanh toán VNPay và thực hiện chuyển hướng khách hàng (Redirect).
+4. Khách hàng thực hiện thanh toán trên cổng VNPay Sandbox.
+5. Cổng VNPay điều hướng trình duyệt quay về trang kết quả của shop (`returnUrl`):
+   - `ShopCheckoutController@vnpayReturn` kiểm tra chữ ký checksum và tổng số tiền đơn hàng.
+   - Nếu hợp lệ, hệ thống cập nhật đơn hàng thành đã thanh toán và hiển thị thông báo thành công cho khách hàng, đồng thời xóa sạch giỏ hàng hiện tại trong Session.
+6. **Xác nhận IPN bảo mật (ipnUrl):** Cổng VNPay tự động gọi ngầm một request bất đồng bộ tới đầu cuối IPN của shop. `ShopCheckoutController@ipn` thực hiện quy trình kiểm tra 5 bước bảo mật bắt buộc của VNPay. Nếu hợp lệ, cập nhật trạng thái đơn hàng sang `processing` và trạng thái thanh toán thành `paid` để đảm bảo đơn hàng được xác nhận thành công ngay cả khi khách hàng tắt trình duyệt.
 
-- trong môi trường hiện tai, `MAIL_MAILER=log`
-- `QUEUE_CONNECTION=sync` nen listener queue chay ngay trong luc demo
-- nghia la mail duoc ghi vao log de demo, không gui ra hop thu that
-
-## 3. Customer support chatbot
-
-File:
-
-- [SupportChatController.php](../app/Http/Controllers/SupportChatController.php)
-- [CustomerSupportChatbot.php](../app/Support/CustomerSupportChatbot.php)
-- [GeminiChatService.php](../app/Services/GeminiChatService.php)
-- [chat.blade.php](../resources/views/support/chat.blade.php)
-
-Chuc nang:
-
-- tra loi moi cau hoi bang Gemini API với context cua project
-- neu cau hoi co ma don thi tra cuu đơn hàng that trong SQLite truoc
-- tra ve cau tra loi duoi dang JSON de UI render on dinh
-- lưu lịch sử chat trong session
-- doc ma don that nhu `ORD-00023`
-
-Neu gap ma don:
-
-- bot se truy van bang `orders`
-- tra ve trạng thái, tong tien, thoi gian dat hang
-
-Ghi chu:
-
-- `laravel/boost` da duoc cai lam dev dependency de hỗ trợ workflow AI cua du an
-- chatbot runtime van goi Gemini API bang `GEMINI_API_KEY` trong `.env`
-- prompt duoc bo sung ngung canh tu `.ai/guidelines/project-chatbot.md` va `docs/11-FULL-PROJECT-GUIDE.md`
-- neu Gemini het quota hoac bi loi, chatbot van tra loi bang local knowledge fallback cua project
-- nut truy cap chatbot duoc ghep thanh widget nho co dinh o goc duoi ben phai
-
-## 4. Payment demo
-
-File:
-
-- [OrderPaymentController.php](../app/Http/Controllers/OrderPaymentController.php)
-- [ProcessOrderPaymentRequest.php](../app/Http/Requests/ProcessOrderPaymentRequest.php)
-- [orders/payment.blade.php](../resources/views/orders/payment.blade.php)
-
-Migration:
-
-- [2026_05_18_103000_add_payment_fields_to_orders_table.php](../database/migrations/2026_05_18_103000_add_payment_fields_to_orders_table.php)
-
-Field moi trong `orders`:
-
-- `payment_status`
-- `payment_method`
-- `transaction_code`
-- `paid_at`
-
-Luong demo:
-
-1. mở chi tiết đơn hàng
-2. bam `Open checkout`
-3. nhap thông tin thanh toán
-4. submit
-5. he thong cập nhật `payment_status = paid`
-6. sinh `transaction_code`
-7. neu status cu la `pending` thi goi `OrderService` doi sang `processing`
-
-## 5. Public shop + cart + VNPay checkout
-
-File:
-
-- [ShopController.php](../app/Http/Controllers/ShopController.php)
-- [ShopCartController.php](../app/Http/Controllers/ShopCartController.php)
-- [ShopCheckoutController.php](../app/Http/Controllers/ShopCheckoutController.php)
-- [ShoppingCartService.php](../app/Services/ShoppingCartService.php)
-- [VnpayPaymentService.php](../app/Services/VnpayPaymentService.php)
-- [shop/index.blade.php](../resources/views/shop/index.blade.php)
-- [shop/cart.blade.php](../resources/views/shop/cart.blade.php)
-- [shop/checkout.blade.php](../resources/views/shop/checkout.blade.php)
-- [shop/payment-result.blade.php](../resources/views/shop/payment-result.blade.php)
-
-Route:
-
-- `/`
-- `/shop`
-- `/cart`
-- `/checkout`
-- `/checkout/vnpay/return`
-- `/checkout/vnpay/ipn`
-
-Chuc nang:
-
-- hiện mặt tiền shop công khai cho khach xem sản phẩm
-- tim sản phẩm va loc theo danh mục
-- them sản phẩm vao giỏ hàng
-- cập nhật so luồng va xoa sản phẩm trong gio
-- tao đơn hàng tu giỏ hàng
-- tao URL thanh toán VNPay theo đơn hàng
-- VNPay hiện thi QR/checkout page cho khach
-- returnUrl va IPN se cập nhật `payment_status`, `payment_method`, `transaction_code`, `paid_at`
-
-Luu y:
-
-- vi day la luồng VNPay checkout, shop public van hiện thi gia theo VND khi checkout
-- neu chưa cấu hình du `VNPAY_TMN_CODE` va `VNPAY_HASH_SECRET` thi thanh toán se bao loi ro rang
-
-## 6. Seeder lien quan
-
-File:
-
-- [DatabaseSeeder.php](../database/seeders/DatabaseSeeder.php)
-
-Hien tai da tao:
-
-- `25` orders
-- `56` order_items
-
-Vi du ma don co the demo:
-
-- `ORD-00023`
-- `ORD-00025`
-
-## 7. Cach demo nhanh trên lop
-
-1. vao `/orders`
-2. loc theo `pending` hoac `processing`
-3. mở chi tiết 1 đơn hàng
-4. doi status đơn hàng de demo lich su trạng thái va gửi mail
-5. bam `Open checkout` de demo payment
-6. vao `/support-chat` va nhap `Kiem tra don ORD-00023`
-
-## 8. Cau tra loi ngan de vấn đáp
-
-“Em da bo sung module đơn hàng gom danh sach, chi tiết, loc theo ngay va trạng thái. Khi đổi trạng thái đơn hàng, controller goi `OrderService`, service ghi lich su vao `order_status_histories`, phat event va listener gửi mail thong bao cho khach. Em cùng tao chatbot hỗ trợ khách hàng co the doc ma don that trong SQLite. Ngoai ra em lam man thanh toán online dang demo cho tung đơn hàng, cập nhật `payment_status`, `payment_method`, `transaction_code` va `paid_at`.”
+## 4. Cách demo nghiệp vụ khi vấn đáp
+1. **Demo Đơn hàng:** Vào trang chi tiết đơn hàng `/orders/{id}` bất kỳ. Thay đổi trạng thái đơn hàng và kiểm tra lịch sử trạng thái hiển thị bên dưới. Kiểm tra file log `storage/logs/laravel.log` để xem nội dung email thông báo dạng HTML đã được tạo thành công.
+2. **Demo Thanh toán VNPay:** Thêm sản phẩm vào giỏ hàng, mở trang `/checkout`, nhập thông tin giao hàng và chọn VNPay. Hệ thống sẽ redirect sang cổng thanh toán VNPay. Sử dụng thẻ test của VNPay Sandbox để thanh toán, sau đó trình duyệt tự động chuyển hướng về trang kết quả thành công của cửa hàng.
+3. **Demo Chatbot AI:** Mở trang `/support-chat`. Hãy nhập các câu hỏi để AI gọi công cụ như: *"Tìm giúp mình sản phẩm áo thun"* hoặc *"Trong shop có các danh mục sản phẩm nào?"*. Chatbot AI sẽ tự động kích hoạt Tool tương ứng để truy vấn database SQLite và phản hồi thông tin thực tế.

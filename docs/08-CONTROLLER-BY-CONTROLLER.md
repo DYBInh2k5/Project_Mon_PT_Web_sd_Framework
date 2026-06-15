@@ -1,552 +1,131 @@
-# 08. Controller By Controller
-
-## 1. Muc dich file nay
-
-File nay dung de map tung controller quan trong trong project:
-
-- controller nam o dau
-- controller xu ly chuc nang gi
-- method nao dung de lam gi
-- method do tra ve view nao hoac xu ly dữ liệu nao
-
-Neu bi hoi “file nao xu ly chuc nang nay”, ban co the tra loi dua trên file nay.
-
-## 2. Controller tổng quan
-
-Thu muc:
-
-- [app/Http/Controllers](../app/Http/Controllers)
-- [app/Http/Controllers/Auth](../app/Http/Controllers/Auth)
-- [app/Http/Controllers/Settings](../app/Http/Controllers/Settings)
-
-## 3. DashboardController
-
-File:
-
-- [DashboardController.php](../app/Http/Controllers/DashboardController.php)
-
-Vai tro:
-
-- xu ly route `/dashboard`
-- tong hop dữ liệu de dua len dashboard
-
-Thuong dung de:
-
-- dem so luồng
-- hiện thong ke nhanh
-- hiện danh sach gan day
-
-## 4. UserController
-
-File:
-
-- [UserController.php](../app/Http/Controllers/UserController.php)
-
-Vai tro:
-
-- xu ly toan bo CRUD user
-- loc user
-- doi status user
-
-### Cac method chinh
-
-#### `index(Request $request)`
-
-- lay danh sach user
-- tim kiem theo ten/email
-- loc theo `role`
-- loc theo `status`
-- phan trang
-- tra ve view:
-  - `users.index`
-
-#### `create()`
-
-- mo form tao user
-- tra ve view:
-  - `users.create`
-
-#### `store(StoreUserRequest $request)`
-
-- validate qua `StoreUserRequest`
-- tao user moi
-- redirect ve danh sach user
-
-#### `show(User $user)`
-
-- hiện chi tiết 1 user
-- load va hiện thông tin profile cua user
-- tra ve view:
-  - `users.show`
-
-#### `edit(User $user)`
-
-- mo form sua user
-- tra ve view:
-  - `users.edit`
-
-#### `update(UpdateUserRequest $request, User $user)`
-
-- cập nhật `name`, `email`, `role`, `is_active`
-- cập nhật them `full_name`, `address`, `avatar`, `birthday`, `gender`, `phone` trong `profiles`
-- redirect ve danh sach user
-
-#### `toggleStatus(User $user, Request $request)`
-
-- dao nguoc `is_active`
-- co chan không cho user tu tat chinh tai khoan dang đăng nhập
-
-#### `destroy(User $user, Request $request)`
-
-- xoa user
-- co chan không cho user tu xoa chinh tai khoan dang đăng nhập
-
-## 5. ProductController
-
-File:
-
-- [ProductController.php](../app/Http/Controllers/ProductController.php)
-
-Vai tro:
-
-- CRUD sản phẩm
-- upload anh
-- loc sản phẩm
-- xem chi tiết sản phẩm
-
-### Cac method chinh
-
-#### `index(Request $request)`
-
-- tim theo `name`, `sku`, `slug`
-- loc theo `category`
-- loc theo `status`
-- phan trang
-- load quan he `category`
-- tra ve view:
-  - `products.index`
-
-#### `create()`
-
-- mo form tao sản phẩm
-- lay danh sach category
-- tra ve view:
-  - `products.create`
-
-#### `store(ProductRequest $request)`
-
-- validate qua `ProductRequest`
-- neu co anh thi upload vao `storage/public/products`
-- tao product moi
-
-#### `show(Product $product)`
-
-- load `category`, `creator`
-- hiện chi tiết sản phẩm
-- tra ve view:
-  - `products.show`
-
-#### `edit(Product $product)`
-
-- mo form sua sản phẩm
-- lay danh sach category
-- tra ve view:
-  - `products.edit`
-
-#### `update(ProductRequest $request, Product $product)`
-
-- cập nhật sản phẩm
-- neu upload anh moi thi xoa anh cu
-
-#### `destroy(Product $product)`
-
-- xoa sản phẩm
-- neu co anh thi xoa anh trong storage
-
-## 6. ProductCategoryController
-
-File:
-
-- [ProductCategoryController.php](../app/Http/Controllers/ProductCategoryController.php)
-
-Vai tro:
-
-- CRUD danh mục sản phẩm
-- loc danh mục
-- xem chi tiết danh mục
-
-### Cac method chinh
-
-#### `index(Request $request)`
-
-- tim theo `name`, `slug`
-- loc theo `status`
-- dem so product lien quan bang `withCount('products')`
-- tra ve view:
-  - `product-categories.index`
-
-#### `create()`
-
-- mo form tao danh mục
-- tra ve view:
-  - `product-categories.create`
-
-#### `store(ProductCategoryRequest $request)`
-
-- tao danh mục moi
-- gan `created_by`
-
-#### `show(ProductCategory $productCategory)`
-
-- load `creator` va `products.creator`
-- tra ve view:
-  - `product-categories.show`
-
-#### `edit(ProductCategory $productCategory)`
-
-- mo form sua
-- tra ve view:
-  - `product-categories.edit`
-
-#### `update(ProductCategoryRequest $request, ProductCategory $productCategory)`
-
-- cập nhật danh mục
-
-#### `destroy(ProductCategory $productCategory)`
-
-- xoa danh mục
-
-## 7. Settings\\ProfileController
-
-File:
-
-- [Settings/ProfileController.php](../app/Http/Controllers/Settings/ProfileController.php)
-
-Vai tro:
-
-- xu ly profile cua user dang đăng nhập
-- phan nay dung Eloquent va quan he `User hasOne Profile`
-
-### Cac method chinh
-
-#### `show(Request $request)`
-
-- lay user hiện tai
-- dam bao profile ton tai
-- lay dữ liệu profile bang Eloquent tu model `Profile`
-- tra ve view:
-  - `pages.profile`
-
-#### `edit(Request $request)`
-
-- mo form sua profile
-- tra ve view:
-  - `pages.auth.settings.profile`
-
-#### `update(Request $request)`
-
-- validate dữ liệu
-- upload avatar neu co
-- cập nhật profile bang Eloquent
-- neu doi `name` hoac `email` thi cập nhật them bang `users` bang Eloquent
-
-#### `destroy(Request $request)`
-
-- yeu cau nhap `current_password`
-- logout
-- xoa tai khoan
-
-#### `ensureProfileExists(...)`
-
-- ham private
-- neu user chưa có profile thi tao profile mac dinh bang `firstOrCreate()` qua quan he `profile()`
-
-## 8. ArticleController
-
-File:
-
-- [ArticleController.php](../app/Http/Controllers/ArticleController.php)
-
-Vai tro:
-
-- xu ly route resource `/articles`
-- demo Eloquent relationship giua `Article`, `User`, `Tag`
-- hiện danh sach articles va tags tuong ung
-
-### Cac method chinh
-
-#### `index()`
-
-- lay danh sach article bang `Article::with(['user', 'tags'])->get()`
-- view se goi quan he `$article->user` de lay user
-- view se goi quan he `$article->tags` de lay danh sach tag
-- tra ve view:
-  - `article.list`
-
-## 9. Settings\\PasswordController
-
-File:
-
-- [Settings/PasswordController.php](../app/Http/Controllers/Settings/PasswordController.php)
-
-Vai tro:
-
-- xu ly doi mật khẩu trong khu `settings/password`
-
-Thuong co:
-
-- `edit()`
-- `update()`
-
-## 10. RoleDemoController
-
-File:
-
-- [RoleDemoController.php](../app/Http/Controllers/RoleDemoController.php)
-
-Vai tro:
-
-- demo middleware role
-- de giao vien test nhanh quyền truy cap theo vai tro
-
-### Cac method chinh
-
-#### `index(Request $request)`
-
-- hiện trang tong hop cac route demo role
-
-#### `admin(Request $request)`
-
-- trang chi cho `admin`
-
-#### `editor(Request $request)`
-
-- trang cho `editor` va `admin`
-
-#### `user(Request $request)`
-
-- trang cho `user`, `editor`, `admin`
-
-#### `renderAccessPage(...)`
-
-- ham private dung chung
-- gom logic tra ve view demo
-
-## 11. Auth Controllers quan trong
-
-### LoginController
-
-File:
-
-- [Auth/LoginController.php](../app/Http/Controllers/Auth/LoginController.php)
-
-Chuc nang:
-
-- `create()`: mo trang đăng nhập `pages.auth.signin`
-- `store()`: xu ly đăng nhập
-- `destroy()`: đăng xuất
-
-### RegistrationController
-
-File:
-
-- [Auth/RegistrationController.php](../app/Http/Controllers/Auth/RegistrationController.php)
-
-Chuc nang:
-
-- mo trang đăng ký
-- tao tai khoan moi
-
-### PasswordResetLinkController
-
-File:
-
-- [Auth/PasswordResetLinkController.php](../app/Http/Controllers/Auth/PasswordResetLinkController.php)
-
-Chuc nang:
-
-- mo trang quen mật khẩu
-- gửi mail reset password
-
-### NewPasswordController
-
-File:
-
-- [Auth/NewPasswordController.php](../app/Http/Controllers/Auth/NewPasswordController.php)
-
-Chuc nang:
-
-- mo form reset password
-- cập nhật mật khẩu moi
-
-### ConfirmationController
-
-File:
-
-- [Auth/ConfirmationController.php](../app/Http/Controllers/Auth/ConfirmationController.php)
-
-Chuc nang:
-
-- mo form confirm password
-- xac nhan lai mật khẩu de vao khu vuc bao mat
-
-### VerificationController
-
-File:
-
-- [Auth/VerificationController.php](../app/Http/Controllers/Auth/VerificationController.php)
-
-Chuc nang:
-
-- thong bao verify email
-- gui lai mail verify
-- xac nhan email
-
-## 12. OrderController
-
-File:
-
-- [OrderController.php](../app/Http/Controllers/OrderController.php)
-
-Vai tro:
-
-- quan ly danh sach đơn hàng
-- loc theo ngay, trạng thái, tu khoa
-- xem chi tiết đơn hàng
-- đổi trạng thái đơn hàng thong qua `OrderService`
-
-### Cac method chinh
-
-#### `index(Request $request)`
-
-- lay danh sach order
-- tim theo ma don, ten khach, email, so dien thoai bang `scopeSearch`
-- loc theo `status` bang `scopeStatus`
-- loc theo `date_from`, `date_to` bang `scopePlacedFrom`, `scopePlacedUntil`
-- sap xep moi den cu
-- tra ve view:
-  - `orders.index`
-
-#### `show(Order $order)`
-
-- load `items.product`
-- load `statusHistories.changer`
-- hiện chi tiết đơn hàng
-- hiện lich su đổi trạng thái đơn hàng
-- tra ve view:
-  - `orders.show`
-
-#### `updateStatus(UpdateOrderStatusRequest $request, Order $order)`
-
-- validate status
-- goi `OrderService@updateStatus`
-- service cập nhật trạng thái, ghi lich su, phat event
-- listener gửi mail qua `OrderStatusUpdatedMail`
-- redirect lai trang chi tiết
-
-## 13. OrderService, Event, Listener
-
-File:
-
-- [OrderService.php](../app/Services/OrderService.php)
-- [OrderStatusUpdated.php](../app/Events/OrderStatusUpdated.php)
-- [SendOrderStatusUpdatedMail.php](../app/Listeners/SendOrderStatusUpdatedMail.php)
-
-Vai tro:
-
-- tach logic nghiệp vụ khoi controller
-- ghi lich su status vao `order_status_histories`
-- gửi mail bang Event/Listener cua Laravel
-
-Luong:
-
-`OrderController -> OrderService -> OrderStatusUpdated -> SendOrderStatusUpdatedMail`
-
-## 14. OrderPaymentController
-
-File:
-
-- [OrderPaymentController.php](../app/Http/Controllers/OrderPaymentController.php)
-
-Vai tro:
-
-- mo man checkout demo
-- xu ly online payment mo phong
-
-### Cac method chinh
-
-#### `create(Order $order)`
-
-- mo trang payment cho mot đơn hàng
-- tra ve view:
-  - `orders.payment`
-
-#### `store(ProcessOrderPaymentRequest $request, Order $order)`
-
-- validate thông tin thanh toán
-- cập nhật `payment_status`, `payment_method`, `transaction_code`, `paid_at`
-- neu don dang `pending` thi goi `OrderService` doi sang `processing`
-
-## 15. SupportChatController
-
-File:
-
-- [SupportChatController.php](../app/Http/Controllers/SupportChatController.php)
-
-Vai tro:
-
-- hiện man chatbot
-- nhan cau hoi
-- lưu lịch sử chat trong session
-
-### Cac method chinh
-
-#### `index(Request $request)`
-
-- lay lich su chat tu session
-- tra ve view:
-  - `support.chat`
-
-#### `store(Request $request, CustomerSupportChatbot $chatbot)`
-
-- validate cau hoi
-- them tin nhan user vao session
-- goi `CustomerSupportChatbot` de lay cau tra loi
-- neu không co rule phù hợp, `CustomerSupportChatbot` se goi `GeminiChatService`
-- them tra loi cua bot vao session
-
-#### `clear(Request $request)`
-
-- xoa lich su hoi thoai trong session
-
-## 16. Controller nao nen nho ky nhat
-
-Neu vấn đáp, nen nho ky:
-
-- [UserController.php](../app/Http/Controllers/UserController.php)
-- [ProductController.php](../app/Http/Controllers/ProductController.php)
-- [ProductCategoryController.php](../app/Http/Controllers/ProductCategoryController.php)
-- [OrderController.php](../app/Http/Controllers/OrderController.php)
-- [OrderPaymentController.php](../app/Http/Controllers/OrderPaymentController.php)
-- [OrderService.php](../app/Services/OrderService.php)
-- [SupportChatController.php](../app/Http/Controllers/SupportChatController.php)
-- [Settings/ProfileController.php](../app/Http/Controllers/Settings/ProfileController.php)
-- [ArticleController.php](../app/Http/Controllers/ArticleController.php)
-- [RoleDemoController.php](../app/Http/Controllers/RoleDemoController.php)
-- [Auth/LoginController.php](../app/Http/Controllers/Auth/LoginController.php)
-
-## 17. Cach tra loi khi bi hoi “luồng chay di dau”
-
-Ban co the noi:
-
-1. route duoc khai bao trong `routes/web.php` hoac `routes/auth.php`
-2. request di qua middleware neu route co gan middleware
-3. controller nhan request va xu ly logic
-4. controller truy van model/Eloquent
-5. controller tra ve view hoac redirect
-
-Vi du:
-
-- `/users/create` -> `UserController@create` -> `users.create`
-- submit form `/users` -> `UserController@store` -> validate -> tao user -> redirect
-- `/articles` -> `ArticleController@index` -> `Article::with(['user', 'tags'])->get()` -> `article.list`
+# 08. Bản Đồ Controller (Controller By Controller)
+
+## 1. Mục đích của tài liệu này
+
+Tài liệu này ánh xạ chi tiết từng Controller quan trọng trong dự án để phục vụ thi vấn đáp:
+- Vị trí tệp tin Controller trong mã nguồn.
+- Vai trò, nhiệm vụ chính của Controller.
+- Danh sách các phương thức xử lý và kết quả trả về tương ứng (view/redirect).
+
+Nếu giáo viên hỏi *"File nào chịu trách nhiệm xử lý chức năng X"*, bạn có thể sử dụng tài liệu này để định vị và trả lời chính xác.
+
+## 2. Thư mục chứa các Controller
+
+- `app/Http/Controllers/` - Chứa các Controller chính của hệ thống.
+- `app/Http/Controllers/Auth/` - Chứa các Controller xử lý chức năng xác thực tài khoản.
+- `app/Http/Controllers/Settings/` - Chứa các Controller xử lý cài đặt tài khoản của người dùng.
+
+---
+
+## 3. Chi tiết các Controller Quản trị (Admin/Editor Area)
+
+### 3.1. DashboardController
+- **Đường dẫn:** [DashboardController.php](../app/Http/Controllers/DashboardController.php)
+- **Nhiệm vụ:** Xử lý hiển thị trang chủ quản trị (`/dashboard`).
+- **Các phương thức:**
+  - `index(Request $request)`: Tổng hợp các số liệu thống kê nhanh trong cơ sở dữ liệu (tổng số người dùng, tổng số sản phẩm, tổng doanh thu, số đơn hàng gần đây) và truyền dữ liệu sang view `pages.dashboard`.
+
+### 3.2. UserController
+- **Đường dẫn:** [UserController.php](../app/Http/Controllers/UserController.php)
+- **Nhiệm vụ:** Quản lý toàn bộ chức năng CRUD tài khoản người dùng và hồ sơ (Profile) đi kèm (chỉ dành cho vai trò `admin`).
+- **Các phương thức:**
+  - `index(Request $request)`: Tải danh sách người dùng phân trang, hỗ trợ tìm kiếm theo tên/email, lọc theo vai trò và trạng thái hoạt động. Trả về view `users.index`.
+  - `create()`: Trả về view `users.create` chứa biểu mẫu tạo mới tài khoản.
+  - `store(StoreUserRequest $request)`: Thực hiện lưu tài khoản mới sau khi validate dữ liệu và tự động khởi tạo bản ghi hồ sơ trống liên kết (quan hệ 1-1). Redirect về `users.index`.
+  - `show(User $user)`: Nạp thông tin hồ sơ thông qua `load('profile')` để hiển thị trang chi tiết người dùng tại view `users.show`.
+  - `edit(User $user)`: Trả về view `users.edit` để hiển thị biểu mẫu chỉnh sửa tài khoản và hồ sơ.
+  - `update(UpdateUserRequest $request, User $user)`: Cập nhật song song thông tin bảng `users` và bảng `profiles` (bao gồm xử lý tải lên ảnh đại diện mới và xóa ảnh cũ). Redirect về `users.index`.
+  - `toggleStatus(User $user, Request $request)`: Bật/Tắt nhanh trạng thái hoạt động của tài khoản người dùng (ngăn chặn tự tắt chính mình).
+  - `destroy(User $user, Request $request)`: Xóa tài khoản người dùng khỏi hệ thống (ngăn chặn tự xóa tài khoản đang đăng nhập).
+
+### 3.3. ProductController
+- **Đường dẫn:** [ProductController.php](../app/Http/Controllers/ProductController.php)
+- **Nhiệm vụ:** Quản lý CRUD sản phẩm trong hệ thống (dành cho vai trò `editor` hoặc `admin`).
+- **Các phương thức:**
+  - `index(Request $request)`: Hiển thị bảng sản phẩm có kèm tên danh mục liên kết, hỗ trợ tìm kiếm từ khóa, lọc theo danh mục, lọc theo trạng thái và phân trang. Trả về view `products.index`.
+  - `create()`: Trả về view `products.create` kèm theo danh sách danh mục để người dùng lựa chọn.
+  - `store(ProductRequest $request)`: Thực hiện lưu sản phẩm mới, xử lý lưu trữ file hình ảnh sản phẩm tải lên vào thư mục public. Redirect về `products.index`.
+  - `show(Product $product)`: Xem chi tiết sản phẩm và ảnh tại view `products.show`.
+  - `edit(Product $product)`: Hiển thị form sửa sản phẩm và danh sách danh mục để chọn lại tại view `products.edit`.
+  - `update(ProductRequest $request, Product $product)`: Cập nhật thông tin sản phẩm, xử lý xóa ảnh cũ khỏi ổ đĩa nếu khách hàng upload ảnh sản phẩm mới. Redirect về `products.index`.
+  - `destroy(Product $product)`: Xóa sản phẩm khỏi database và xóa file ảnh liên kết trên ổ đĩa. Redirect về `products.index`.
+
+### 3.4. ProductCategoryController
+- **Đường dẫn:** [ProductCategoryController.php](../app/Http/Controllers/ProductCategoryController.php)
+- **Nhiệm vụ:** Quản lý CRUD danh mục sản phẩm (dành cho vai trò `editor` hoặc `admin`).
+- **Các phương thức:**
+  - `index(Request $request)`: Liệt kê danh sách danh mục sản phẩm, tính toán số lượng sản phẩm thuộc mỗi danh mục bằng phương thức `withCount('products')`. Trả về view `product-categories.index`.
+  - `create()`: Trả về form tạo danh mục mới tại view `product-categories.create`.
+  - `store(ProductCategoryRequest $request)`: Lưu danh mục mới và gán khóa ngoại `created_by` của người dùng hiện tại.
+  - `show(ProductCategory $productCategory)`: Hiển thị chi tiết danh mục và danh sách sản phẩm liên kết tại view `product-categories.show`.
+  - `edit(ProductCategory $productCategory)`: Trả về form sửa danh mục tại view `product-categories.edit`.
+  - `update(ProductCategoryRequest $request, ProductCategory $productCategory)`: Cập nhật thông tin danh mục.
+  - `destroy(ProductCategory $productCategory)`: Xóa danh mục khỏi cơ sở dữ liệu.
+
+### 3.5. OrderController
+- **Đường dẫn:** [OrderController.php](../app/Http/Controllers/OrderController.php)
+- **Nhiệm vụ:** Quản lý danh sách đơn hàng và cập nhật trạng thái đơn hàng (dành cho vai trò `editor` hoặc `admin`).
+- **Các phương thức:**
+  - `index(Request $request)`: Liệt kê danh sách đơn hàng sử dụng các local scope từ Model Order để tìm kiếm từ khóa, lọc theo trạng thái đơn hàng, lọc theo thời gian đặt hàng (từ ngày, đến ngày) và sắp xếp đơn mới lên đầu. Trả về view `orders.index`.
+  - `show(Order $order)`: Hiển thị chi tiết hóa đơn đặt hàng, danh sách sản phẩm đã mua và lịch sử thay đổi trạng thái tại view `orders.show`.
+  - `updateStatus(UpdateOrderStatusRequest $request, Order $order, OrderService $orders)`: Tiếp nhận yêu cầu đổi trạng thái đơn, gọi xử lý nghiệp vụ tại `OrderService` (đổi trạng thái đơn, ghi nhật ký đổi trạng thái và phát event gửi mail tự động). Redirect về `orders.show`.
+
+---
+
+## 4. Chi tiết các Controller dành cho Khách hàng (Public Shop Area)
+
+### 4.1. ShopController
+- **Đường dẫn:** [ShopController.php](../app/Http/Controllers/ShopController.php)
+- **Nhiệm vụ:** Hiển thị sản phẩm ra mặt tiền cửa hàng công khai cho khách xem.
+- **Các phương thức:**
+  - `index(Request $request)`: Hiển thị trang chủ shop công khai, hỗ trợ tìm kiếm sản phẩm theo tên, lọc sản phẩm theo danh mục và hiển thị ảnh. Trả về view `shop.index`.
+  - `show(Product $product)`: Trang xem thông tin chi tiết của một sản phẩm dành cho khách hàng. Trả về view `shop.show`.
+
+### 4.2. ShopCartController
+- **Đường dẫn:** [ShopCartController.php](../app/Http/Controllers/ShopCartController.php)
+- **Nhiệm vụ:** Quản lý các thao tác thêm, bớt, sửa, xóa sản phẩm trong giỏ hàng (lưu trữ thông tin trong Session).
+- **Các phương thức:**
+  - `index()`: Hiển thị trang giỏ hàng cá nhân tại view `shop.cart`.
+  - `store(Product $product, Request $request)`: Thêm sản phẩm vào giỏ hàng.
+  - `update(Product $product, Request $request)`: Thay đổi số lượng mua của một mặt hàng trong giỏ.
+  - `destroy(Product $product)`: Xóa bỏ một sản phẩm ra khỏi giỏ hàng.
+  - `clear()`: Xóa sạch toàn bộ sản phẩm trong giỏ hàng.
+
+### 4.3. ShopCheckoutController
+- **Đường dẫn:** [ShopCheckoutController.php](../app/Http/Controllers/ShopCheckoutController.php)
+- **Nhiệm vụ:** Xử lý biểu mẫu thanh toán đơn hàng và liên kết với cổng VNPay Sandbox.
+- **Các phương thức:**
+  - `create(ShoppingCartService $cart)`: Hiển thị form điền thông tin đặt hàng tại view `shop.checkout`.
+  - `store(Request $request, ShoppingCartService $cart, VnpayPaymentService $vnpay)`: Xác nhận đơn hàng, khởi tạo giao dịch trong database với trạng thái thanh toán là `unpaid`, sau đó tạo URL và chuyển hướng người dùng sang cổng thanh toán VNPay Sandbox.
+  - `vnpayReturn(Request $request, VnpayPaymentService $vnpay, OrderService $orders)`: Tiếp nhận phản hồi từ trình duyệt sau khi thanh toán xong trên VNPay, thực hiện kiểm tra chữ ký checksum và số tiền thanh toán. Nếu thành công sẽ cập nhật đơn hàng thành đã thanh toán (`paid`, `processing`) và hiển thị kết quả tại view `shop.payment-result`.
+  - `ipn(Request $request, VnpayPaymentService $vnpay, OrderService $orders)`: Tiếp nhận truy vấn ngầm bất đồng bộ (IPN) từ server VNPay gửi tới nhằm đối soát giao dịch độc lập, bảo mật và cập nhật trạng thái đơn hàng an toàn nhất. Trả về chuỗi JSON phản hồi cho VNPay.
+
+---
+
+## 5. Chi tiết các Controller Thành viên & Tính năng khác
+
+### 5.1. Settings/ProfileController
+- **Đường dẫn:** [Settings/ProfileController.php](../app/Http/Controllers/Settings/ProfileController.php)
+- **Nhiệm vụ:** Cho phép người dùng tự xem và cập nhật thông tin cá nhân hoặc xóa tài khoản của mình.
+- **Các phương thức:**
+  - `show(Request $request)`: Hiển thị thông tin hồ sơ của người dùng đang đăng nhập tại view `pages.profile`.
+  - `edit(Request $request)`: Hiển thị biểu mẫu chỉnh sửa thông tin hồ sơ tại view `pages.auth.settings.profile`.
+  - `update(Request $request)`: Validate thông tin cá nhân và cập nhật vào cơ sở dữ liệu.
+  - `destroy(Request $request)`: Xóa vĩnh viễn tài khoản của chính người dùng sau khi xác nhận mật khẩu hiện tại.
+
+### 5.2. SupportChatController
+- **Đường dẫn:** [SupportChatController.php](../app/Http/Controllers/SupportChatController.php)
+- **Nhiệm vụ:** Quản lý giao diện cửa sổ chat hỗ trợ trực tuyến của người dùng.
+- **Các phương thức:**
+  - `index(Request $request)`: Lấy ra hoặc khởi tạo phiên hội thoại (`AgentConversation`) của người dùng hiện tại, tải danh sách tin nhắn cũ từ cơ sở dữ liệu để Alpine.js render và hiển thị cửa sổ chat tại view `support.chat`.
+  - `clear(Request $request)`: Xóa toàn bộ lịch sử trò chuyện của người dùng trong database để bắt đầu một phiên hội thoại mới.
+
+### 5.3. ChatController
+- **Đường dẫn:** [ChatController.php](../app/Http/Controllers/ChatController.php)
+- **Nhiệm vụ:** Đây là Single Action Controller (chỉ có duy nhất phương thức `__invoke`) nhận nhiệm vụ tiếp nhận câu hỏi của người dùng, lưu trữ vào cơ sở dữ liệu, gọi Agent AI sinh câu trả lời, lưu câu trả lời vào database và trả phản hồi dạng JSON về giao diện.
+
+### 5.4. ArticleController
+- **Đường dẫn:** [ArticleController.php](../app/Http/Controllers/ArticleController.php)
+- **Nhiệm vụ:** Demo mối quan hệ Nhiều - Nhiều (Many-to-Many).
+- **Các phương thức:**
+  - `index()`: Truy vấn danh sách bài viết sử dụng Eager Loading `Article::with(['user', 'tags'])->get()` để tránh lỗi N+1 query và hiển thị tại view `article.list`.

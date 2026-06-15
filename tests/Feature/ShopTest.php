@@ -66,7 +66,7 @@ class ShopTest extends TestCase
         config()->set('services.vnpay.version', '2.1.0');
         config()->set('services.vnpay.locale', 'vn');
         config()->set('services.vnpay.order_type', 'other');
-        config()->set('services.vnpay.bank_code', 'VNPAYQR');
+        config()->set('services.vnpay.bank_code', null);
         config()->set('services.vnpay.expire_minutes', 15);
 
         $product = Product::factory()->create([
@@ -92,11 +92,12 @@ class ShopTest extends TestCase
         $order = Order::query()->latest('id')->first();
 
         $this->assertNotNull($order);
-        $this->assertSame('vnpay_qr', $order->payment_method);
+        $this->assertSame('vnpay', $order->payment_method);
         $this->assertSame('unpaid', $order->payment_status);
         $this->assertStringStartsWith(
             'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?',
             $response->headers->get('Location')
         );
+        $this->assertStringNotContainsString('vnp_BankCode=', $response->headers->get('Location'));
     }
 }

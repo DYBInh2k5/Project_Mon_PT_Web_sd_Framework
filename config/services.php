@@ -48,7 +48,7 @@ return [
         'version' => env('VNPAY_VERSION', '2.1.0'),
         'locale' => env('VNPAY_LOCALE', 'vn'),
         'order_type' => env('VNPAY_ORDER_TYPE', 'other'),
-        'bank_code' => env('VNPAY_BANK_CODE', 'VNPAYQR'),
+        'bank_code' => env('VNPAY_BANK_CODE'),
         'expire_minutes' => env('VNPAY_EXPIRE_MINUTES', 15),
     ],
 

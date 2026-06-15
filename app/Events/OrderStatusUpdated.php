@@ -11,8 +11,8 @@ class OrderStatusUpdated
 {
     use Dispatchable, SerializesModels;
 
-    // Event nay gom du lieu can thiet de listener gui mail va/hoac xu ly them sau nay.
-    // Vi du: order hien tai, status cu, va dong history vua duoc tao.
+    // Event này chứa dữ liệu cần thiết để Listener gửi mail và/hoặc xử lý thêm sau này.
+    // Ví dụ: thông tin đơn hàng hiện tại, trạng thái cũ, và bản ghi lịch sử vừa được tạo.
     public function __construct(
         public Order $order,
         public string $previousStatus,

@@ -14,17 +14,17 @@ use Illuminate\View\View;
 class UserController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Hiển thị danh sách người dùng.
      */
     public function index(Request $request): View
     {
-        // Query nay dung de tinh cac thong ke tong hop o dau trang users.
+        // Truy vấn gốc dùng để tính toán các số liệu thống kê tổng hợp ở đầu trang quản lý người dùng.
         $baseQuery = User::query();
 
-        // Query chinh de lay danh sach user hien thi trong bang.
-        // Du lieu co the duoc tim kiem, loc va phan trang.
+        // Truy vấn chính để lấy danh sách người dùng hiển thị trong bảng.
+        // Dữ liệu hỗ trợ tìm kiếm, lọc theo vai trò, trạng thái hoạt động và phân trang.
         $users = User::query()
-            // Tim theo ten hoac email.
+            // Tìm kiếm theo tên hoặc địa chỉ email nếu có tham số 'search'.
             ->when($request->filled('search'), function ($query) use ($request) {
                 $search = $request->string('search')->toString();
 
@@ -33,11 +33,11 @@ class UserController extends Controller
                         ->orWhere('email', 'like', "%{$search}%");
                 });
             })
-            // Loc theo role.
+            // Lọc theo vai trò (role) nếu được chọn.
             ->when($request->filled('role'), function ($query) use ($request) {
                 $query->where('role', $request->string('role')->toString());
             })
-            // Loc theo status Active / Inactive.
+            // Lọc theo trạng thái Hoạt động (Active) / Ngưng hoạt động (Inactive) nếu được chọn.
             ->when($request->filled('status'), function ($query) use ($request) {
                 $query->where('is_active', $request->string('status')->toString() === 'active');
             })
@@ -45,9 +45,9 @@ class UserController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        // Tra du lieu sang view users.index.
+        // Trả dữ liệu sang view users.index.
         return view('users.index', [
-            'title' => 'Users',
+            'title' => 'Người dùng',
             'users' => $users,
             'filters' => $request->only(['search', 'role', 'status']),
             'summary' => [
@@ -62,24 +62,25 @@ class UserController extends Controller
     }
 
     /**
-     * Show the form for creating a newly created resource.
+     * Hiển thị form tạo mới người dùng.
      */
     public function create(): View
     {
         return view('users.create', [
-            'title' => 'Create User',
+            'title' => 'Tạo người dùng',
         ]);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Lưu thông tin người dùng mới tạo vào database.
      */
     public function store(StoreUserRequest $request): RedirectResponse
     {
-        // Validation da duoc xu ly trong StoreUserRequest.
-        // Neu hop le thi tao moi user trong database.
+        // Validation đã được xử lý tự động trong StoreUserRequest.
+        // Nếu dữ liệu hợp lệ, tiến hành tạo tài khoản mới trong database.
         $user = User::create($request->validated());
 
+        // Tạo profile mặc định đi kèm cho tài khoản mới (Quan hệ 1-1).
         Profile::create([
             'user_id' => $user->id,
             'full_name' => $user->name,
@@ -87,46 +88,47 @@ class UserController extends Controller
 
         return redirect()
             ->route('users.index')
-            ->with('success', 'User created successfully');
+            ->with('success', 'Tạo tài khoản người dùng thành công.');
     }
 
     /**
-     * Display the specified resource.
+     * Hiển thị thông tin chi tiết của người dùng.
      */
     public function show(User $user): View
     {
+        // Eager load quan hệ profile để tránh truy vấn thừa N+1.
         $user->load('profile');
 
         return view('users.show', [
-            'title' => 'User Detail',
+            'title' => 'Chi tiết người dùng',
             'user' => $user,
         ]);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Hiển thị form chỉnh sửa thông tin người dùng.
      */
     public function edit(User $user): View
     {
-        // Route model binding:
-        // {user} tren URL se tu dong duoc map thanh model User $user.
+        // Route Model Binding: {user} trên URL tự động map thành model User $user.
+        // Nạp thêm thông tin profile đi kèm để truyền sang view chỉnh sửa.
         $user->load('profile');
 
         return view('users.edit', [
-            'title' => 'Edit User',
+            'title' => 'Chỉnh sửa người dùng',
             'user' => $user,
             'profile' => $user->profile,
         ]);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Cập nhật thông tin người dùng trong database.
      */
     public function update(UpdateUserRequest $request, User $user): RedirectResponse
     {
         $validated = $request->validated();
 
-        // Update thong tin account trong bang users.
+        // Cập nhật thông tin tài khoản chính trong bảng users.
         $user->update([
             'name' => $validated['name'],
             'email' => $validated['email'],
@@ -134,10 +136,13 @@ class UserController extends Controller
             'is_active' => $validated['is_active'],
         ]);
 
+        // Lấy profile hiện tại hoặc tạo mới nếu chưa tồn tại.
         $profile = $user->profile ?: new Profile(['user_id' => $user->id]);
         $avatarPath = $profile->avatar;
 
+        // Xử lý upload ảnh đại diện (avatar) nếu có file mới tải lên.
         if ($request->hasFile('avatar')) {
+            // Xóa file avatar cũ trên ổ đĩa nếu có và không phải là ảnh mẫu trực tuyến.
             if ($avatarPath && ! str_starts_with($avatarPath, 'http')) {
                 Storage::disk('public')->delete($avatarPath);
             }
@@ -145,7 +150,7 @@ class UserController extends Controller
             $avatarPath = $request->file('avatar')->store('profiles', 'public');
         }
 
-        // Update thong tin profile cua user de admin co the xem va cap nhat.
+        // Cập nhật thông tin chi tiết cá nhân trong bảng profiles.
         $profile->fill([
             'full_name' => ($validated['full_name'] ?? null) ?: $validated['name'],
             'address' => $validated['address'] ?? null,
@@ -157,48 +162,50 @@ class UserController extends Controller
 
         $profile->save();
 
-        return redirect()->route('users.index')->with('success', 'User updated successfully');
+        return redirect()->route('users.index')->with('success', 'Cập nhật tài khoản người dùng thành công.');
     }
 
+    /**
+     * Chuyển đổi trạng thái hoạt động (is_active) của người dùng.
+     */
     public function toggleStatus(User $user, Request $request): RedirectResponse
     {
-        // Khong cho user tu tat chinh tai khoan dang dang nhap.
-        // Muc dich la tranh viec admin bi mat quyen quan tri do tu tay tat account.
+        // Ngăn chặn admin tự khóa/vô hiệu hóa chính tài khoản của mình.
+        // Tránh trường hợp hệ thống mất quyền quản trị cao nhất.
         if ($request->user()?->is($user)) {
             return redirect()
                 ->route('users.index')
-                ->with('success', 'You cannot deactivate the account currently being used.');
+                ->with('success', 'Bạn không thể vô hiệu hóa tài khoản đang đăng nhập.');
         }
 
-        // Dao nguoc status hien tai:
-        // true -> false
-        // false -> true
-        // Route nay duoc goi khi bam vao badge status hoac menu Actions.
+        // Đảo ngược trạng thái hoạt động hiện tại (true -> false hoặc false -> true).
+        // Chức năng này được gọi trực tiếp khi admin click nhanh vào nhãn trạng thái.
         $user->update([
             'is_active' => ! $user->is_active,
         ]);
 
         return redirect()
             ->route('users.index')
-            ->with('success', 'User status updated successfully');
+            ->with('success', 'Cập nhật trạng thái người dùng thành công.');
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Xóa tài khoản người dùng khỏi cơ sở dữ liệu.
      */
     public function destroy(User $user, Request $request): RedirectResponse
     {
-        // Khong cho xoa chinh tai khoan dang dang nhap.
+        // Không cho phép tự xóa tài khoản của chính mình khi đang đăng nhập.
         if ($request->user()?->is($user)) {
             return redirect()
                 ->route('users.index')
-                ->with('success', 'You cannot delete the account currently being used.');
+                ->with('success', 'Bạn không thể xóa tài khoản đang đăng nhập.');
         }
 
+        // Thực hiện xóa mềm/xóa cứng tài khoản người dùng.
         $user->delete();
 
         return redirect()
             ->route('users.index')
-            ->with('success', 'User deleted successfully');
+            ->with('success', 'Xóa tài khoản người dùng thành công.');
     }
 }

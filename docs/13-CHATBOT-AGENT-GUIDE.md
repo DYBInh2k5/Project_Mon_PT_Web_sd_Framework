@@ -1,60 +1,60 @@
-# Hướng dẫn chatbot agent
+# 13. Hướng Dẫn Chatbot Agent AI (Chatbot Agent Guide)
 
-Tài liệu này mô tả luồng chatbot hiện tại sau khi chuyển sang dùng package `laravel/ai` và mô hình `conversation + message + agent` theo hướng dẫn của cô.
+Tài liệu này mô tả chi tiết kiến trúc và luồng hoạt động của Chatbot hỗ trợ khách hàng sau khi dự án chuyển sang tích hợp package **`laravel/ai`** chính thức và mô hình lưu trữ lịch sử qua cơ sở dữ liệu bền vững.
 
-## 1. Tổng quan
+## 1. Tổng quan cấu trúc hệ thống
 
-Chatbot không còn lưu hội thoại bằng session nữa. Thay vào đó:
+Chatbot không còn lưu trữ lịch sử trò chuyện bằng Session tạm thời nữa, thay vào đó:
+- **`SupportChatController`**: Phụ trách hiển thị giao diện trang chat (`support.chat`) và xóa phiên hội thoại của người dùng khi được yêu cầu.
+- **`ChatController`**: Là Single Action Controller (`__invoke`), tiếp nhận nội dung câu hỏi gửi lên bằng Ajax, lưu tin nhắn, kích hoạt AI xử lý và trả kết quả dạng JSON.
+- **`AgentConversation`**: Lưu trữ phiên hội thoại của người dùng đăng nhập trong cơ sở dữ liệu (Bảng `agent_conversations`).
+- **`AgentConversationMessage`**: Lưu chi tiết từng tin nhắn hỏi và đáp tương ứng (Bảng `agent_conversations_messages`).
+- **`SupportBot`**: Lớp cấu hình Agent kế thừa các giao diện của package `laravel/ai` để định nghĩa System Instructions và danh sách Tools.
+- **`config/ai.php`**: Khai báo nhà cung cấp AI mặc định là Gemini, chỉ định model và kết nối API Key từ file `.env`.
 
-- `SupportChatController` render trang chat và xoá hội thoại
-- `ChatController` là controller `__invoke`, nhận message và trả JSON
-- `AgentConversation` lưu phiên hội thoại
-- `AgentConversationMessage` lưu từng câu hỏi/câu trả lời
-- `SupportBot` là agent public theo stub của `php artisan make:agent`
-- `config/ai.php` dùng default gateway là Gemini
+## 2. Danh sách các file tham gia xử lý
 
-## 2. File chính
+- **Controller:**
+  - [app/Http/Controllers/SupportChatController.php](../app/Http/Controllers/SupportChatController.php)
+  - [app/Http/Controllers/ChatController.php](../app/Http/Controllers/ChatController.php)
+- **AI Agent & Tools:**
+  - [app/Ai/Agents/SupportBot.php](../app/Ai/Agents/SupportBot.php)
+  - [app/Ai/Tools/SearchProducts.php](../app/Ai/Tools/SearchProducts.php)
+  - [app/Ai/Tools/GetProductDetails.php](../app/Ai/Tools/GetProductDetails.php)
+  - [app/Ai/Tools/ListCategories.php](../app/Ai/Tools/ListCategories.php)
+- **Models:**
+  - [app/Models/AgentConversation.php](../app/Models/AgentConversation.php)
+  - [app/Models/AgentConversationMessage.php](../app/Models/AgentConversationMessage.php)
+- **Database Schema:**
+  - Bảng `agent_conversations` và `agent_conversations_messages`.
+- **Giao diện Blade View:**
+  - [resources/views/support/chat.blade.php](../resources/views/support/chat.blade.php)
 
-- `app/Http/Controllers/SupportChatController.php`
-- `app/Http/Controllers/ChatController.php`
-- `app/Ai/Agents/SupportBot.php`
-- `app/Models/AgentConversation.php`
-- `app/Models/AgentConversationMessage.php`
-- `resources/views/support/chat.blade.php`
-- `database/migrations/2026_06_08_103331_create_agent_conversations_table.php`
-- `stubs/agent.stub`
-- `stubs/structured-agent.stub`
+## 3. Cấu hình AI trong dự án
 
-## 3. Cấu hình AI
+Tài liệu cấu hình bám sát bài giảng tại file `config/ai.php`:
+- Môi trường sử dụng API Gateway mặc định là `gemini`.
+- Mô hình mặc định (AI Model): `gemini-2.0-flash` hoặc `gemini-1.5-flash`.
+- Các biến cấu hình tương ứng được lấy từ file `.env`:
+  ```env
+  GEMINI_API_KEY=AIzaSy...
+  GEMINI_MODEL=gemini-2.0-flash
+  GEMINI_BASE_URL=https://generativelanguage.googleapis.com
+  ```
 
-File `config/ai.php` bám sát bài giảng:
+## 4. Luồng xử lý một lượt trò chuyện (Chat Flow)
 
-- `AI_GATEWAY=gemini`
-- `AI_MODEL=gemini-1.5-flash`
-- `GEMINI_API_KEY=...`
+1. Người dùng mở trang Hỗ trợ trực tuyến tại địa chỉ `/support-chat`.
+2. `SupportChatController@index` kiểm tra và tải phiên hội thoại `AgentConversation` của người dùng. Nếu chưa có, tự động tạo mới một phiên hội thoại trống.
+3. Người dùng nhập câu hỏi và nhấn nút gửi.
+4. Giao diện (sử dụng thư viện Alpine.js) gửi request `POST /chat/send` bằng phương thức `fetch()` bất đồng bộ kèm tin nhắn dạng JSON.
+5. `ChatController` tiếp nhận request, lưu trữ tin nhắn của người dùng vào bảng `agent_conversations_messages` với vai trò `role = 'user'`.
+6. `ChatController` khởi tạo Agent `SupportBot` và gọi phương thức `prompt()` gửi tin nhắn tới Gemini API qua package `laravel/ai`.
+7. Gemini AI tiếp nhận câu hỏi. Nếu phát hiện câu hỏi cần dữ liệu thực tế (như tìm kiếm sản phẩm), Gemini sẽ yêu cầu gọi Tool tương ứng. Hệ thống chạy code PHP của Tool đó và trả dữ liệu ngược lại cho AI xử lý tiếp.
+8. Sau khi có câu trả lời hoàn chỉnh từ AI, `ChatController` thực hiện lưu tin nhắn phản hồi vào bảng `agent_conversations_messages` với vai trò `role = 'assistant'` (Lưu kèm thông tin thống kê token đã sử dụng, thông tin cuộc gọi công cụ).
+9. Controller trả về kết quả dạng JSON chứa câu trả lời hoàn chỉnh để giao diện hiển thị cho người dùng.
 
-`SupportBot` sẽ gọi AI thông qua package `laravel/ai`.
-
-## 4. Luồng chạy
-
-1. User mở `/support-chat`
-2. `SupportChatController@index` tải conversation của user
-3. User nhập câu hỏi và bấm Send
-4. UI gọi `POST /chat/send` bằng `fetch`
-5. `ChatController` lưu message của user
-6. `SupportBot` gọi Gemini qua `laravel/ai`
-7. Assistant message được lưu lại vào database
-8. Controller trả JSON cho UI
-
-## 5. Cách nói khi vấn đáp
-
-Có thể nói ngắn gọn:
-
-> Em đã cài package `laravel/ai`, publish provider, cấu hình `config/ai.php` để default là Gemini, tạo `SupportBot` theo mẫu agent, và dùng `ChatController` dạng `__invoke` để lưu message user/assistant vào database. Các cột `attachments`, `tool_calls`, `tool_results`, `usage` và `meta` đã được để `nullable` đúng theo hướng dẫn.
-
-## 6. Ghi nhớ
-
-- Nút chatbot nhỏ cố định ở góc dưới bên phải vẫn được giữ lại
-- `clear chat` sẽ xoá hội thoại của user trong database
-- `make:agent` đã có trong Artisan command list
-- view chat gửi message tới `POST /chat/send` và nhận JSON trả về
+## 5. Ghi nhớ quan trọng cho thi vấn đáp
+- **Lưu lịch sử:** Không dùng session để lưu lịch sử, mà sử dụng hoàn toàn cơ sở dữ liệu giúp tin nhắn không bị mất đi khi người dùng tải lại trang hoặc đăng xuất.
+- **Nút xóa chat:** Nút "Xóa lịch sử chat" gọi tới route `POST /support-chat/clear` để xóa toàn bộ các bản ghi hội thoại của người dùng trong database.
+- **Cơ chế gọi công cụ (Tools):** Giúp AI trả lời thông tin chính xác về kho hàng, sản phẩm của shop thay vì tự suy đoán bừa bãi.
