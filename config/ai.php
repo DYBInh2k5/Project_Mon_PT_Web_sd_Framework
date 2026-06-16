@@ -59,6 +59,13 @@ return [
         'groq' => [
             'driver' => 'groq',
             'key' => env('GROQ_API_KEY'),
+            'models' => [
+                'text' => [
+                    'default' => env('GROQ_MODEL', 'llama-3.3-70b-versatile'),
+                    'cheapest' => env('GROQ_MODEL', 'llama-3.3-70b-versatile'),
+                    'smartest' => env('GROQ_MODEL', 'llama-3.3-70b-versatile'),
+                ],
+            ],
         ],
         'jina' => [
             'driver' => 'jina',

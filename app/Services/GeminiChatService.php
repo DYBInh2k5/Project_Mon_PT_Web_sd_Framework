@@ -23,6 +23,56 @@ class GeminiChatService
             return null;
         }
 
+        // Tự động phát hiện nếu người dùng cấu hình khóa API của Groq (bắt đầu bằng gsk_)
+        $isGroq = str_starts_with($apiKey, 'gsk_');
+
+        if ($isGroq) {
+            $payload = [
+                'model' => 'llama-3.3-70b-versatile',
+                'messages' => [
+                    [
+                        'role' => 'user',
+                        'content' => $this->buildPrompt($message, $context),
+                    ],
+                ],
+                'temperature' => 0.35,
+                'response_format' => ['type' => 'json_object'],
+            ];
+
+            try {
+                $response = Http::timeout(20)
+                    ->acceptJson()
+                    ->withHeaders([
+                        'Authorization' => 'Bearer '.$apiKey,
+                        'Content-Type' => 'application/json',
+                    ])
+                    ->post('https://api.groq.com/openai/v1/chat/completions', $payload);
+
+                if (! $response->successful()) {
+                    Log::warning('Groq chatbot request failed', [
+                        'status' => $response->status(),
+                        'body' => $response->body(),
+                    ]);
+
+                    return null;
+                }
+
+                $text = data_get($response->json(), 'choices.0.message.content');
+
+                if (! is_string($text) || trim($text) === '') {
+                    return null;
+                }
+
+                return $this->normalizeGeminiResponse($text);
+            } catch (Throwable $e) {
+                Log::warning('Groq chatbot exception', [
+                    'message' => $e->getMessage(),
+                ]);
+
+                return null;
+            }
+        }
+
         $model = config('ai.model', config('services.gemini.model', 'gemini-2.0-flash'));
         $baseUrl = rtrim(config('ai.providers.gemini.base_url', config('services.gemini.base_url', 'https://generativelanguage.googleapis.com')), '/');
 
