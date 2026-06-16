@@ -1,4 +1,4 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 
 @section('content')
     <x-common.page-breadcrumb :pageTitle="$order->order_number">
@@ -22,7 +22,7 @@
         @if ($errors->any())
             <x-package-alert
                 type="danger"
-                message="KhÃ´ng thá»ƒ xu ly yeu cau tren Ä‘Æ¡n hÃ ng."
+                message="Không thể xử lý yêu cầu trên đơn hàng."
                 :messages="$errors->all()"
             />
         @endif
@@ -34,7 +34,7 @@
                         <div>
                             <span class="toolbar-chip">Order detail</span>
                             <h2 class="mt-3 text-2xl font-semibold text-gray-900 dark:text-white">{{ $order->order_number }}</h2>
-                            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Äáº·t lÃºc {{ $order->placed_at?->format('d/m/Y H:i') }}.</p>
+                            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Đặt lúc {{ $order->placed_at?->format('d/m/Y H:i') }}.</p>
                         </div>
                         <span class="data-badge {{ match($order->status) {
                             'completed' => 'data-badge-success',
@@ -157,7 +157,7 @@
 
                 <section class="surface-panel p-6">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Update order status</h3>
-                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Khi Ä‘á»•i tráº¡ng thÃ¡i, service sáº½ ghi lá»‹ch sá»­ vÃ  phÃ¡t event Ä‘á»ƒ listener gá»­i email cho khÃ¡ch hÃ ng.</p>
+                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Khi đổi trạng thái, hệ thống sẽ tự động ghi nhận lịch sử và gửi email thông báo cho khách hàng.</p>
 
                     <form method="POST" action="{{ route('orders.update-status', $order) }}" class="mt-5 space-y-4" novalidate>
                         @csrf
@@ -197,7 +197,7 @@
                                 @endif
                             </div>
                         @empty
-                            <p class="text-sm text-gray-500 dark:text-gray-400">ChÆ°a cÃ³ lich su Ä‘á»•i tráº¡ng thÃ¡i cho Ä‘Æ¡n hÃ ng nay.</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Chưa có lịch sử thay đổi trạng thái cho đơn hàng này.</p>
                         @endforelse
                     </div>
                 </section>

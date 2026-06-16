@@ -16,7 +16,7 @@
                     </h2>
 
                     <p class="text-sm text-gray-500 dark:text-gray-400">
-                        AI tu van ban hang va hỗ trợ khách hàng
+                        AI tư vấn bán hàng và hỗ trợ khách hàng
                     </p>
                 </div>
 
@@ -74,7 +74,7 @@
                 <textarea
                     x-model="prompt"
                     rows="2"
-                    placeholder="Nhap cau hoi..."
+                    placeholder="Nhập câu hỏi..."
                     class="flex-1 resize-none rounded-xl border border-gray-300 px-4 py-3 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-brand-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                 ></textarea>
 
@@ -83,7 +83,7 @@
                     :disabled="loading || !prompt.trim()"
                     class="rounded-xl bg-brand-500 px-6 py-3 font-medium text-white transition hover:bg-brand-600 disabled:opacity-50"
                 >
-                    Gui
+                    Gửi
                 </button>
             </form>
         </div>
@@ -95,7 +95,7 @@
                 {
                     id: 1,
                     role: 'assistant',
-                    content: 'Xin chao, toi la Sales Coach AI. Toi co the giup gi cho ban?'
+                    content: 'Xin chào, tôi là Sales Coach AI. Tôi có thể giúp gì cho bạn?'
                 }
             ];
 
@@ -146,13 +146,13 @@
                         this.allMessages.push({
                             id: Date.now() + 1,
                             role: 'assistant',
-                            content: data.message || data.error || 'Chatbot chua tra ve noi dung.'
+                            content: data.message || data.error || 'Chatbot chưa trả về nội dung.'
                         });
                     } catch (e) {
                         this.allMessages.push({
                             id: Date.now() + 2,
                             role: 'assistant',
-                            content: e.message || 'Da co loi xay ra. Vui long thu lai.'
+                            content: e.message || 'Đã có lỗi xảy ra. Vui lòng thử lại.'
                         });
                     } finally {
                         this.loading = false;
