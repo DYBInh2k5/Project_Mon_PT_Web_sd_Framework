@@ -91,6 +91,14 @@ Dự án thay thế phương thức thanh toán ví Momo cũ bằng cổng **VNP
    - Nếu hợp lệ, hệ thống cập nhật đơn hàng thành đã thanh toán và hiển thị thông báo thành công cho khách hàng, đồng thời xóa sạch giỏ hàng hiện tại trong Session.
 6. **Xác nhận IPN bảo mật (ipnUrl):** Cổng VNPay tự động gọi ngầm một request bất đồng bộ tới đầu cuối IPN của shop. `ShopCheckoutController@ipn` thực hiện quy trình kiểm tra 5 bước bảo mật bắt buộc của VNPay. Nếu hợp lệ, cập nhật trạng thái đơn hàng sang `processing` và trạng thái thanh toán thành `paid` để đảm bảo đơn hàng được xác nhận thành công ngay cả khi khách hàng tắt trình duyệt.
 
+### Thông tin thẻ test VNPay Sandbox phục vụ Demo:
+Khi chuyển hướng sang cổng thanh toán VNPay Sandbox, để hoàn tất thanh toán thành công, bạn hãy chọn thanh toán qua **Ứng dụng thanh toán hỗ trợ VNPayQR** hoặc **Thẻ ATM và tài khoản ngân hàng**, sau đó nhập thông tin thẻ test như sau:
+*   **Ngân hàng:** NCB (Ngân hàng Quốc Dân)
+*   **Số thẻ (Card Number):** `9704198526191432185`
+*   **Tên chủ thẻ (Cardholder Name):** `NGUYEN VAN A`
+*   **Ngày phát hành (Release Date):** `07/15`
+*   **Mã xác thực OTP:** `123456` (nhập ở màn hình tiếp theo)
+
 ## 4. Cách demo nghiệp vụ khi vấn đáp
 1. **Demo Đơn hàng:** Vào trang chi tiết đơn hàng `/orders/{id}` bất kỳ. Thay đổi trạng thái đơn hàng và kiểm tra lịch sử trạng thái hiển thị bên dưới. Kiểm tra file log `storage/logs/laravel.log` để xem nội dung email thông báo dạng HTML đã được tạo thành công.
 2. **Demo Thanh toán VNPay:** Thêm sản phẩm vào giỏ hàng, mở trang `/checkout`, nhập thông tin giao hàng và chọn VNPay. Hệ thống sẽ redirect sang cổng thanh toán VNPay. Sử dụng thẻ test của VNPay Sandbox để thanh toán, sau đó trình duyệt tự động chuyển hướng về trang kết quả thành công của cửa hàng.
