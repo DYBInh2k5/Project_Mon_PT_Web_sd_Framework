@@ -67,11 +67,17 @@ class ProfileController extends Controller
         $fullName = $validated['full_name'] ?? $validated['name'] ?? $profile->full_name;
         $avatarPath = $profile->avatar;
 
+        // Xử lý tải lên ảnh đại diện (avatar) nếu có file mới được chọn
         if ($request->hasFile('avatar')) {
+            // 1. Xóa ảnh đại diện vật lý cũ trên ổ đĩa (disk 'public') để tránh tích tụ file rác
+            // Chỉ xóa các file upload nội bộ, bỏ qua các ảnh mẫu dạng URL (http)
             if ($avatarPath && ! str_starts_with($avatarPath, 'http')) {
                 Storage::disk('public')->delete($avatarPath);
             }
 
+            // 2. Lưu file ảnh mới vào thư mục 'storage/app/public/profiles/'
+            // Hàm store() sẽ tự động sinh tên ngẫu nhiên để bảo mật và tránh trùng lặp
+            // Kết quả trả về là đường dẫn tương đối (ví dụ: 'profiles/random_name.png') để lưu vào cột 'avatar' trong DB
             $avatarPath = $request->file('avatar')->store('profiles', 'public');
         }
 

@@ -68,7 +68,10 @@ class ProductController extends Controller
         $data = $request->validated();
 
         if ($request->hasFile('image')) {
-            // Upload ảnh lên disk public và lưu path vào database.
+            // Xử lý tải lên ảnh sản phẩm mới:
+            // 1. Lưu file ảnh thật vào 'storage/app/public/products/' với tên file ngẫu nhiên để bảo mật.
+            // 2. Gán đường dẫn tương đối dạng 'products/random_name.png' để lưu vào cột 'image_path' của database.
+            // Đường dẫn này được liên kết ra ngoài trình duyệt thông qua Symbolic Link /public/storage -> /storage/app/public
             $data['image_path'] = $request->file('image')->store('products', 'public');
         }
 
@@ -109,11 +112,13 @@ class ProductController extends Controller
         $data = $request->validated();
 
         if ($request->hasFile('image')) {
-            // Xoá ảnh cũ trước khi lưu ảnh mới để tránh rác trong storage.
+            // Xử lý cập nhật ảnh mới thay thế ảnh cũ:
+            // 1. Kiểm tra và xóa file ảnh vật lý cũ trên ổ đĩa (disk 'public') để tránh rác lưu trữ
             if ($product->image_path) {
                 Storage::disk('public')->delete($product->image_path);
             }
 
+            // 2. Lưu file ảnh mới và cập nhật đường dẫn tương đối mới vào database
             $data['image_path'] = $request->file('image')->store('products', 'public');
         }
 
@@ -126,7 +131,8 @@ class ProductController extends Controller
 
     public function destroy(Product $product): RedirectResponse
     {
-        // Xoá ảnh đi kèm nếu có, sau đó xoá luôn bản ghi sản phẩm.
+        // Xử lý xóa sản phẩm:
+        // Đảm bảo xóa hoàn toàn file ảnh vật lý của sản phẩm khỏi thư mục storage trước khi xóa bản ghi khỏi DB
         if ($product->image_path) {
             Storage::disk('public')->delete($product->image_path);
         }
