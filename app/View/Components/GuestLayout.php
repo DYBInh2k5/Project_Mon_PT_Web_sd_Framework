@@ -8,7 +8,7 @@ use Illuminate\View\View;
 class GuestLayout extends Component
 {
     /**
-     * Get the view / contents that represents the component.
+     * Trả về Blade view tương ứng làm khung giao diện (Layout) cho khách vãng lai chưa đăng nhập.
      */
     public function render(): View
     {

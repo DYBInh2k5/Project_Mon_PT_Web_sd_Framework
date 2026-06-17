@@ -10,10 +10,14 @@ class Tag extends Model
 {
     use HasFactory;
 
+    // Các thuộc tính có thể gán giá trị hàng loạt (Mass Assignment)
     protected $fillable = [
-        'tag',
+        'tag', // Nhãn bài viết (ví dụ: Laravel, PHP, Frontend,...)
     ];
 
+    /**
+     * Mối quan hệ nhiều-nhiều: Một tag có thể thuộc về nhiều bài viết.
+     */
     public function articles(): BelongsToMany
     {
         return $this->belongsToMany(Article::class);

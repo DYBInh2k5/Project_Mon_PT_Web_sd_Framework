@@ -11,13 +11,13 @@ class ShoppingCartService
 
     public function all(): array
     {
-        // Toàn bộ giỏ hàng được lưu trong session để không cần bảng riêng cho demo.
+        // Toàn bộ giỏ hàng được lưu trong session để không cần bảng riêng trong database cho việc demo.
         return session()->get(self::SESSION_KEY, []);
     }
 
     public function countItems(): int
     {
-        // Đếm tổng số lượng sản phẩm, không phải số dòng item.
+        // Đếm tổng số lượng sản phẩm trong giỏ hàng (cộng dồn số lượng của từng loại sản phẩm).
         return array_sum(array_map(
             fn (array $item) => (int) ($item['quantity'] ?? 0),
             $this->all()
@@ -26,7 +26,7 @@ class ShoppingCartService
 
     public function add(Product $product, int $quantity = 1): void
     {
-        // Khi cùng sản phẩm được thêm nhiều lần thì cộng dồn số lượng.
+        // Khi cùng một sản phẩm được thêm nhiều lần thì tiến hành cộng dồn số lượng.
         $items = $this->all();
         $id = (string) $product->id;
         $current = (int) Arr::get($items, "{$id}.quantity", 0);
@@ -40,7 +40,7 @@ class ShoppingCartService
 
     public function update(Product $product, int $quantity): void
     {
-        // quantity <= 0 thì coi như xoá item khỏi giỏ.
+        // Nếu số lượng truyền vào nhỏ hơn hoặc bằng 0 thì coi như xóa sản phẩm khỏi giỏ hàng.
         $items = $this->all();
         $id = (string) $product->id;
 
@@ -57,7 +57,7 @@ class ShoppingCartService
 
     public function remove(Product $product): void
     {
-        // Xoá đúng một sản phẩm khỏi session cart.
+        // Xóa một sản phẩm cụ thể khỏi giỏ hàng.
         $items = $this->all();
         unset($items[(string) $product->id]);
 
@@ -66,19 +66,19 @@ class ShoppingCartService
 
     public function clear(): void
     {
-        // Làm rỗng toàn bộ giỏ hàng sau khi checkout xong.
+        // Xóa sạch giỏ hàng (thường dùng sau khi thanh toán thành công).
         session()->forget(self::SESSION_KEY);
     }
 
     public function productIds(): array
     {
-        // Lấy danh sách ID để query lại database trước khi checkout.
+        // Lấy danh sách ID của các sản phẩm trong giỏ hàng để truy vấn lại database lấy giá và số lượng tồn kho thực tế.
         return array_map('intval', array_keys($this->all()));
     }
 
     public function quantityFor(Product $product): int
     {
-        // Dùng cho trang chi tiết sản phẩm để hiển thị số lượng đang có trong giỏ.
+        // Lấy số lượng hiện tại của một sản phẩm trong giỏ hàng để hiển thị trên giao diện chi tiết sản phẩm.
         return (int) Arr::get($this->all(), $product->id.'.quantity', 0);
     }
 }

@@ -11,35 +11,39 @@ class Order extends Model
 {
     use HasFactory;
 
+    // Các hằng số định nghĩa trạng thái của đơn hàng trong hệ thống
     public const STATUSES = [
-        'pending',
-        'processing',
-        'shipped',
-        'completed',
-        'cancelled',
+        'pending',    // Chờ xử lý (mới đặt hàng)
+        'processing', // Đang xử lý (đang đóng gói/chuẩn bị gửi)
+        'shipped',    // Đang giao hàng
+        'completed',  // Đã hoàn thành (giao thành công)
+        'cancelled',  // Đã hủy đơn
     ];
 
+    // Các hằng số định nghĩa trạng thái thanh toán của đơn hàng
     public const PAYMENT_STATUSES = [
-        'unpaid',
-        'paid',
+        'unpaid', // Chưa thanh toán
+        'paid',   // Đã thanh toán thành công
     ];
 
+    // Các thuộc tính cho phép gán dữ liệu hàng loạt
     protected $fillable = [
-        'order_number',
-        'customer_name',
-        'customer_email',
-        'customer_phone',
-        'customer_address',
-        'notes',
-        'status',
-        'payment_status',
-        'payment_method',
-        'transaction_code',
-        'paid_at',
-        'total_amount',
-        'placed_at',
+        'order_number',      // Mã đơn hàng duy nhất (ví dụ: ORD-20260617-1234)
+        'customer_name',     // Tên khách hàng mua hàng
+        'customer_email',    // Email khách hàng nhận hóa đơn/thông báo
+        'customer_phone',    // Số điện thoại khách hàng
+        'customer_address',  // Địa chỉ giao hàng
+        'notes',             // Ghi chú của khách hàng khi đặt hàng
+        'status',            // Trạng thái đơn hàng (mặc định pending)
+        'payment_status',    // Trạng thái thanh toán (mặc định unpaid)
+        'payment_method',    // Phương thức thanh toán (cod hoặc vnpay)
+        'transaction_code',  // Mã giao dịch từ cổng thanh toán đối tác (nếu có)
+        'paid_at',           // Thời gian thanh toán thành công
+        'total_amount',      // Tổng giá trị của đơn hàng
+        'placed_at',         // Thời điểm đơn hàng được khởi tạo thành công
     ];
 
+    // Ép kiểu các thuộc tính sang định dạng thích hợp
     protected function casts(): array
     {
         return [
@@ -49,17 +53,26 @@ class Order extends Model
         ];
     }
 
+    /**
+     * Mối quan hệ 1-nhiều: Một đơn hàng có nhiều chi tiết đơn hàng (các sản phẩm được mua).
+     */
     public function items(): HasMany
     {
         return $this->hasMany(OrderItem::class);
     }
 
+    /**
+     * Mối quan hệ 1-nhiều: Một đơn hàng có thể có nhiều bản ghi lịch sử thay đổi trạng thái.
+     * Phục vụ ghi nhận log để hiển thị quá trình xử lý đơn hàng.
+     */
     public function statusHistories(): HasMany
     {
-        // Mot don hang co nhieu lan doi trang thai.
         return $this->hasMany(OrderStatusHistory::class);
     }
 
+    /**
+     * Local Query Scope: Hỗ trợ tìm kiếm đơn hàng theo mã đơn hàng, tên, email hoặc số điện thoại.
+     */
     public function scopeSearch(Builder $query, ?string $search): Builder
     {
         if (! $search) {
@@ -74,17 +87,26 @@ class Order extends Model
         });
     }
 
+    /**
+     * Local Query Scope: Lọc đơn hàng theo trạng thái cụ thể.
+     * Giúp Controller gọi ->status($status) dễ dàng mà không cần lặp lại điều kiện if/else.
+     */
     public function scopeStatus(Builder $query, ?string $status): Builder
     {
-        // Local scope giup controller goi ->status($status) thay vi viet if/query lap lai.
         return $status ? $query->where('status', $status) : $query;
     }
 
+    /**
+     * Local Query Scope: Lọc đơn hàng đặt từ ngày cụ thể trở về sau.
+     */
     public function scopePlacedFrom(Builder $query, mixed $date): Builder
     {
         return $date ? $query->whereDate('placed_at', '>=', $date) : $query;
     }
 
+    /**
+     * Local Query Scope: Lọc đơn hàng đặt trước hoặc bằng ngày cụ thể.
+     */
     public function scopePlacedUntil(Builder $query, mixed $date): Builder
     {
         return $date ? $query->whereDate('placed_at', '<=', $date) : $query;

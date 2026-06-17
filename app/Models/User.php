@@ -24,12 +24,12 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        // role dung de phan quyen user trong he thong.
-        // Gia tri hien tai dang dung: admin, editor, user.
+        // role dùng để phân quyền người dùng trong hệ thống.
+        // Giá trị hiện tại đang dùng: admin, editor, user.
         'role',
-        // is_active la trang thai hoat dong cua tai khoan.
-        // true  = dang hoat dong
-        // false = tam khoa / ngung hoat dong
+        // is_active là trạng thái hoạt động của tài khoản.
+        // true  = đang hoạt động
+        // false = tạm khóa / ngừng hoạt động
         'is_active',
     ];
 
@@ -53,7 +53,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            // Ep kieu du lieu de code xu ly dung kieu gia tri.
+            // Ép kiểu dữ liệu để code xử lý đúng kiểu giá trị.
             'role' => 'string',
             'is_active' => 'boolean',
         ];
@@ -72,8 +72,8 @@ class User extends Authenticatable
 
     public function hasRole(string ...$roles): bool
     {
-        // Ham ho tro de kiem tra user hien tai co nam trong nhom role cho phep hay khong.
-        // Vi du:
+        // Hàm hỗ trợ để kiểm tra user hiện tại có nằm trong nhóm role cho phép hay không.
+        // Ví dụ:
         // $user->hasRole('admin')
         // $user->hasRole('editor', 'admin')
         return in_array($this->role, $roles, true);
@@ -81,16 +81,16 @@ class User extends Authenticatable
 
     public function profile(): HasOne
     {
-        // Quan he 1-1:
-        // Mot user chi co duy nhat 1 profile.
-        // Laravel se noi user.id voi profiles.user_id.
+        // Quan hệ 1-1:
+        // Một user chỉ có duy nhất 1 profile.
+        // Laravel sẽ nối user.id với profiles.user_id.
         return $this->hasOne(Profile::class);
     }
 
     public function articles(): HasMany
     {
-        // Quan he 1-n:
-        // Mot user co the viet nhieu article.
+        // Quan hệ 1-n:
+        // Một user có thể viết nhiều article (bài viết).
         return $this->hasMany(Article::class);
     }
 }

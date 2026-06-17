@@ -22,8 +22,8 @@ class Profile extends Model
 
     public function user(): BelongsTo
     {
-        // Chieu nguoc cua quan he 1-1:
-        // Moi profile thuoc ve duy nhat 1 user.
+        // Chiều ngược của quan hệ 1-1:
+        // Mỗi profile thuộc về duy nhất 1 user.
         return $this->belongsTo(User::class);
     }
 }

@@ -6,6 +6,11 @@ use Illuminate\Http\Request;
 
 class SidebarController extends Controller
 {
+    /**
+     * Hàm trả về cấu trúc dữ liệu của menu sidebar hệ thống.
+     * Cấu trúc này bao gồm các nhóm menu lớn (Menu, Support, Others) và các menu con tương ứng kèm icon.
+     * Giúp quản lý toàn bộ các mục điều hướng sidebar tập trung tại một nơi.
+     */
     public function getMenuData()
     {
         $menuGroups = [

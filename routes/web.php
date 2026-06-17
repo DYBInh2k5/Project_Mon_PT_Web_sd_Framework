@@ -15,14 +15,19 @@ use App\Http\Controllers\Settings\ProfileController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
+// Các route công cộng (Public) của hệ thống cửa hàng
 Route::get('/', [ShopController::class, 'index'])->name('home');
 Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
 Route::get('/shop/products/{product}', [ShopController::class, 'show'])->name('shop.products.show');
+
+// Các route quản lý giỏ hàng (Shopping Cart) sử dụng Session
 Route::get('/cart', [ShopCartController::class, 'index'])->name('shop.cart.index');
 Route::post('/cart/items/{product}', [ShopCartController::class, 'store'])->name('shop.cart.store');
 Route::patch('/cart/items/{product}', [ShopCartController::class, 'update'])->name('shop.cart.update');
 Route::delete('/cart/items/{product}', [ShopCartController::class, 'destroy'])->name('shop.cart.destroy');
 Route::delete('/cart', [ShopCartController::class, 'clear'])->name('shop.cart.clear');
+
+// Các route thực hiện quy trình Thanh toán và Đối soát qua cổng VNPay
 Route::get('/checkout', [ShopCheckoutController::class, 'create'])->name('shop.checkout.create');
 Route::post('/checkout', [ShopCheckoutController::class, 'store'])->name('shop.checkout.store');
 Route::get('/checkout/vnpay/return', [ShopCheckoutController::class, 'vnpayReturn'])->name('shop.checkout.return');
@@ -43,21 +48,20 @@ Route::get('/check_age/{age?}', function (?string $age = null) {
 Route::resource('articles', ArticleController::class);
 
 Route::middleware(['auth'])->group(function () {
-    // Toan bo route trong nhom nay deu yeu cau user phai dang nhap truoc.
+    // Toàn bộ route trong nhóm này đều yêu cầu người dùng phải đăng nhập trước.
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
 
-    // Chi admin moi duoc doi status user.
+    // Chỉ tài khoản quản trị viên (admin) mới được thay đổi trạng thái (toggle hoạt động) của người dùng khác.
     Route::patch('users/{user}/status', [UserController::class, 'toggleStatus'])
         ->middleware('role:admin')
         ->name('users.toggle-status');
 
-    // Resource users gom cac route:
-    // index, create, store, show, edit, update, destroy
-    // Tat ca deu chi danh cho admin.
+    // Resource users quản lý người dùng: index, create, store, show, edit, update, destroy.
+    // Chỉ cho phép admin truy cập.
     Route::resource('users', UserController::class)->middleware('role:admin');
 
-    // editor hoac admin duoc quan ly danh muc va san pham.
+    // Cả Editor và Admin đều được phép quản lý danh mục sản phẩm, sản phẩm và đơn hàng.
     Route::resource('product-categories', ProductCategoryController::class)
         ->middleware('role:editor,admin');
     Route::resource('products', ProductController::class)
@@ -71,6 +75,8 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('orders/{order}/status', [OrderController::class, 'updateStatus'])
         ->middleware('role:editor,admin')
         ->name('orders.update-status');
+
+    // Chatbot hỗ trợ khách hàng được mở cho tất cả người dùng (user, editor, admin).
     Route::get('support-chat', [SupportChatController::class, 'index'])
         ->middleware('role:user,editor,admin')
         ->name('support-chat.index');
@@ -84,7 +90,7 @@ Route::middleware(['auth'])->group(function () {
         ->middleware('role:user,editor,admin')
         ->name('support-chat.clear');
 
-    // Nhom route demo de kiem tra middleware role theo tung muc quyen.
+    // Nhóm các route demo phục vụ test hoạt động của middleware EnsureUserHasRole theo từng mức quyền hạn.
     Route::get('/role-demo', [RoleDemoController::class, 'index'])->name('role-demo.index');
     Route::get('/role-demo/admin', [RoleDemoController::class, 'admin'])
         ->middleware('role:admin')
@@ -96,7 +102,7 @@ Route::middleware(['auth'])->group(function () {
         ->middleware('role:user,editor,admin')
         ->name('role-demo.user');
 
-    // Route cu viewer duoc giu lai de tranh gay loi neu da tung truy cap bang URL cu.
+    // Tương thích ngược: route viewer cũ trỏ vào trang demo user
     Route::get('/role-demo/viewer', [RoleDemoController::class, 'user'])
         ->middleware('role:user,editor,admin');
 });

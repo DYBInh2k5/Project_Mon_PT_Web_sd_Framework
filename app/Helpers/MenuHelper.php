@@ -4,6 +4,9 @@ namespace App\Helpers;
 
 class MenuHelper
 {
+    /**
+     * Lấy danh sách các menu điều hướng chính của hệ thống.
+     */
     public static function getMainNavItems(): array
     {
         return [
@@ -15,6 +18,10 @@ class MenuHelper
         ];
     }
 
+    /**
+     * Lấy danh sách các menu quản trị hệ thống, áp dụng phân quyền hiển thị (role-based access control).
+     * Chỉ những người dùng đăng nhập có vai trò editor hoặc admin mới thấy menu Product Catalog và Order Management.
+     */
     public static function getAdministrationItems(): array
     {
         $items = [
@@ -86,6 +93,9 @@ class MenuHelper
         return $items;
     }
 
+    /**
+     * Nhóm các menu lớn của sidebar để dễ hiển thị dạng nhóm danh mục.
+     */
     public static function getMenuGroups(): array
     {
         return [
@@ -100,11 +110,17 @@ class MenuHelper
         ];
     }
 
+    /**
+     * Kiểm tra xem đường dẫn hiện tại của request có khớp với mục menu nào không để bôi đậm/active menu đó trên UI.
+     */
     public static function isActive($path): bool
     {
         return request()->is(ltrim($path, '/'));
     }
 
+    /**
+     * Lấy chuỗi SVG tương ứng cho từng loại Icon trên menu sidebar.
+     */
     public static function getIconSvg($iconName): string
     {
         $icons = [

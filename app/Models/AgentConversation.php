@@ -12,14 +12,16 @@ class AgentConversation extends Model
 {
     use HasFactory;
 
-    // Conversation dùng UUID để dễ đồng bộ với message và tránh đoán ID.
+    // Chỉ định khóa chính không tự động tăng vì dùng định dạng UUID
     public $incrementing = false;
 
+    // Kiểu dữ liệu của khóa chính là chuỗi ký tự (UUID)
     protected $keyType = 'string';
 
+    // Các thuộc tính có thể gán giá trị hàng loạt (Mass Assignment)
     protected $fillable = [
-        'title',
-        'user_id',
+        'title',   // Tiêu đề cuộc hội thoại (ví dụ: Chat hỗ trợ mua sản phẩm,...)
+        'user_id', // ID người dùng thực hiện cuộc trò chuyện này (có thể null nếu khách vãng lai)
     ];
 
     protected static function booted(): void

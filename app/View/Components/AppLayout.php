@@ -8,7 +8,7 @@ use Illuminate\View\View;
 class AppLayout extends Component
 {
     /**
-     * Get the view / contents that represents the component.
+     * Trả về Blade view tương ứng làm khung giao diện chính (Layout) cho người dùng đã đăng nhập.
      */
     public function render(): View
     {
