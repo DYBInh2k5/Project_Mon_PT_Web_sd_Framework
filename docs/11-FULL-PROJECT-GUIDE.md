@@ -69,16 +69,27 @@ php artisan migrate
 php artisan db:seed
 ```
 
-### Bước 8: Khởi chạy dự án
-```powershell
-php artisan serve
-```
-Mở trình duyệt truy cập đường dẫn: `http://127.0.0.1:8000`
+### Bước 8: Khởi chạy dự án (Local Server)
+Do máy tính có thể chưa cài đặt PHP toàn cục (Global), bạn hãy sử dụng bộ PHP cục bộ đi kèm dự án trong thư mục [tools/php/](file:///d:/HSU/2533Semester%203(2025-2026)/Phát%20triển%20Web%20sd%20Framework/Project/tools/php/) để khởi chạy:
 
-Đồng thời, khởi động trình biên dịch tài nguyên frontend:
+#### 1. Khởi chạy Laravel Web Server (Cửa sổ Terminal thứ nhất)
+Mở cửa sổ PowerShell tại thư mục dự án và chạy:
+```powershell
+.\tools\php\php.exe -c .\tools\php\php.ini -S 127.0.0.1:8000 -t public
+```
+*Mẹo:* Hoặc bạn có thể thêm tạm thời thư mục PHP cục bộ vào phiên làm việc hiện tại của PowerShell bằng lệnh `$env:Path += ";$(Get-Location)\tools\php"` rồi chạy lệnh chuẩn `php artisan serve`.
+
+#### 2. Khởi chạy Vite Dev Server (Cửa sổ Terminal thứ hai)
+Mở một cửa sổ PowerShell mới tại thư mục dự án và chạy:
 ```powershell
 npm run dev
 ```
+Mở trình duyệt truy cập đường dẫn: `http://127.0.0.1:8000`.
+
+### Bước 9: Cách tắt dự án (Shutdown)
+Để dừng chạy dự án hoàn toàn:
+1. Tại cửa sổ chạy Laravel Server (Terminal 1), nhấn tổ hợp phím `Ctrl + C` để tắt Web Server.
+2. Tại cửa sổ chạy Vite Server (Terminal 2), nhấn tổ hợp phím `Ctrl + C` (gõ `Y` và nhấn `Enter` nếu hệ thống hỏi xác nhận) để tắt trình biên dịch frontend.
 
 ---
 
