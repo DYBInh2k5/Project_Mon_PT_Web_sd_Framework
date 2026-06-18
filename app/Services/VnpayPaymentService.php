@@ -60,15 +60,13 @@ class VnpayPaymentService
             $data['vnp_BankCode'] = $bankCode;
         }
 
-        if ($ipnUrl) {
-            $data['vnp_IpnUrl'] = $ipnUrl;
-        }
+
 
         // Bước 1: Sắp xếp mảng tham số theo thứ tự alphabet của key (bắt buộc theo quy định VNPay).
         ksort($data);
 
         // Bước 2: Tạo chuỗi truy vấn (query string).
-        $query = http_build_query($data, '', '&', PHP_QUERY_RFC3986);
+        $query = http_build_query($data, '', '&', PHP_QUERY_RFC1738);
         $hashData = $this->buildHashData($data);
         
         // Bước 3: Tạo chữ ký bảo mật secureHash bằng thuật toán HMAC SHA512.

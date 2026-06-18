@@ -78,7 +78,7 @@ Gemini AI tổng hợp thông tin và phản hồi câu trả lời Tiếng Vi�
 Dự án thay thế phương thức thanh toán ví Momo cũ bằng cổng **VNPay Sandbox** (môi trường thử nghiệm):
 
 ### Các file xử lý:
-- [VnpayPaymentService.php](../app/Services/VnpayPaymentService.php) - Đóng gói logic sắp xếp tham số alphabet, mã hóa chữ ký SHA512 và trích xuất số tiền.
+- [VnpayPaymentService.php](../app/Services/VnpayPaymentService.php) - Đóng gói logic sắp xếp tham số alphabet, mã hóa chữ ký SHA512 bằng hàm băm HMAC-SHA512. Sử dụng chuẩn mã hóa RFC 1738 (`urlencode` với dấu khoảng trắng mã hóa thành `+`) và loại bỏ tham số không hợp lệ `vnp_IpnUrl` để khớp hoàn toàn chữ ký bảo mật với cổng VNPay.
 - [ShopCheckoutController.php](../app/Http/Controllers/ShopCheckoutController.php) - Quản lý quy trình đặt hàng từ giỏ hàng và tiếp nhận phản hồi từ VNPay.
 
 ### Luồng xử lý giao dịch VNPay:
@@ -94,7 +94,7 @@ Dự án thay thế phương thức thanh toán ví Momo cũ bằng cổng **VNP
 ### Thông tin thẻ test VNPay Sandbox phục vụ Demo:
 Khi chuyển hướng sang cổng thanh toán VNPay Sandbox, để hoàn tất thanh toán thành công, bạn hãy chọn thanh toán qua **Ứng dụng thanh toán hỗ trợ VNPayQR** hoặc **Thẻ ATM và tài khoản ngân hàng**, sau đó nhập thông tin thẻ test như sau:
 *   **Ngân hàng:** NCB (Ngân hàng Quốc Dân)
-*   **Số thẻ (Card Number):** `9704198526191432185`
+*   **Số thẻ (Card Number):** `9704198526191432198`
 *   **Tên chủ thẻ (Cardholder Name):** `NGUYEN VAN A`
 *   **Ngày phát hành (Release Date):** `07/15`
 *   **Mã xác thực OTP:** `123456` (nhập ở màn hình tiếp theo)
