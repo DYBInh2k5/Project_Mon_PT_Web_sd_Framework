@@ -23,7 +23,7 @@ class UserController extends Controller
 
         // Truy vấn chính để lấy danh sách người dùng hiển thị trong bảng.
         // Dữ liệu hỗ trợ tìm kiếm, lọc theo vai trò, trạng thái hoạt động và phân trang.
-        $users = User::query()
+        $users = User::with('profile')
             // Tìm kiếm theo tên hoặc địa chỉ email nếu có tham số 'search'.
             ->when($request->filled('search'), function ($query) use ($request) {
                 $search = $request->string('search')->toString();

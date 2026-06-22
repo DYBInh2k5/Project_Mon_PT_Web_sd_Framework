@@ -129,9 +129,17 @@
                                 <tr class="table-row-hover border-b border-gray-100 last:border-b-0 dark:border-gray-800">
                                     <td class="px-5 py-4 sm:px-6">
                                         <div class="flex items-center gap-3">
-                                            <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-50 text-sm font-semibold text-brand-700 dark:bg-brand-500/15 dark:text-brand-400">
-                                                {{ $user->initials() }}
-                                            </div>
+                                            @if ($user->profile?->avatar)
+                                                <img
+                                                    class="h-12 w-12 rounded-2xl object-cover"
+                                                    src="{{ str_starts_with($user->profile->avatar, 'http') ? $user->profile->avatar : asset('storage/'.$user->profile->avatar) }}"
+                                                    alt="{{ $user->name }}"
+                                                />
+                                            @else
+                                                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-50 text-sm font-semibold text-brand-700 dark:bg-brand-500/15 dark:text-brand-400">
+                                                    {{ $user->initials() }}
+                                                </div>
+                                            @endif
                                             <div>
                                                 <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ $user->name }}</p>
                                                 <p class="text-sm text-gray-500 dark:text-gray-400">{{ $user->email }}</p>
